@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -1048,10 +1048,17 @@ async function loadMarketNews() {
     const res = await fetch(WORKER_URL, {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({type:'news'})
+      body: JSON.stringify({type:'news', userId: window._currentUid||'anon'})
     });
     const data = await res.json();
+    if (data.error === 'RATE_LIMIT') {
+      document.getElementById('newsLoading').style.display='none';
+      document.getElementById('newsEmpty').style.display='block';
+      document.getElementById('newsEmpty').innerHTML='<div style="font-size:40px;margin-bottom:12px">⏳</div><div style="font-family:\'Playfair Display\',serif;font-size:20px;font-weight:700;margin-bottom:8px;color:var(--gold)">Limite giornaliero raggiunto</div><div style="font-size:13px;color:var(--muted);margin-bottom:8px">Hai usato le 3 analisi gratuite di oggi.</div><div style="font-size:12px;color:var(--muted)">Il limite si azzera a mezzanotte. Presto disponibile piano premium!</div>';
+      return;
+    }
     if (data.error) throw new Error(data.error);
+    if (data._remaining !== undefined) showToast('Analisi rimaste oggi: ' + data._remaining);
     document.getElementById('newsLoading').style.display='none';
     document.getElementById('newsContent').style.display='block';
     document.getElementById('newsMacro').innerHTML=
@@ -1089,9 +1096,16 @@ async function runAIAnalysisCloud() {
   const tot=assets.reduce((s,a)=>s+a.invested,0);
   const portfolio={totalInvested:tot,numAssets:assets.length,assets:assets.map(a=>({ticker:a.ticker,name:a.name,invested:a.invested,pct:tot>0?(a.invested/tot*100).toFixed(1):0,buyPrice:a.buyPrice||null,currentPrice:a.currentPrice||null,pnlPct:(a.currentPrice>0&&a.buyPrice>0)?((a.currentPrice-a.buyPrice)/a.buyPrice*100).toFixed(1):null,risk:a.risk,qty:a.qty||null}))};
   try {
-    const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'portfolio',portfolio})});
+    const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'portfolio',portfolio,userId:window._currentUid||'anon'})});
     const data=await res.json();
+    if(data.error==='RATE_LIMIT'){
+      document.getElementById('aiLoading').style.display='none';
+      document.getElementById('aiEmpty').style.display='block';
+      document.getElementById('aiEmpty').innerHTML='<div style="font-size:40px;margin-bottom:12px">⏳</div><div style="font-family:\'Playfair Display\',serif;font-size:20px;font-weight:700;margin-bottom:8px;color:var(--gold)">Limite giornaliero raggiunto</div><div style="font-size:13px;color:var(--muted);margin-bottom:8px">Hai usato le 3 analisi gratuite di oggi.</div><div style="font-size:12px;color:var(--muted)">Il limite si azzera a mezzanotte. Presto disponibile piano premium!</div>';
+      return;
+    }
     if(data.error)throw new Error(data.error);
+    if(data._remaining!==undefined)showToast('Analisi rimaste oggi: '+data._remaining);
     document.getElementById('aiLoading').style.display='none';
     renderAIResults(data);
     data.assets.forEach(ai=>{const a=assets.find(x=>x.ticker.toUpperCase()===ai.ticker.toUpperCase());if(a){a.risk=ai.risk;a.expectedReturn=ai.expectedReturn;}});
