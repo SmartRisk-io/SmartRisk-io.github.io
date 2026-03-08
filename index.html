@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -297,6 +297,7 @@ svg.donut{transform:rotate(-90deg);}
       <button class="tab" onclick="switchTab('verdetti',this)">Verdetti</button>
       <button class="tab" onclick="switchTab('heatmap',this)">&#127777; Heatmap</button>
       <button class="tab" onclick="switchTab('ai',this)">&#129302; Analisi AI</button>
+      <button class="tab" onclick="switchTab('news',this)">&#127757; Mercati</button>
     </div>
     <!-- PORTAFOGLIO -->
     <div class="tab-content active" id="tab-portafoglio">
@@ -428,6 +429,39 @@ svg.donut{transform:rotate(-90deg);}
         <div class="ai-asset-cards" id="aiAssetCards"></div>
         <div class="section-title">Suggerimenti concreti</div>
         <div id="aiRecList"></div>
+      </div>
+    </div>
+    <!-- MERCATI & NOTIZIE -->
+    <div class="tab-content" id="tab-news">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+        <div>
+          <div class="section-title" style="margin:0">Briefing mercati giornaliero</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">Analisi AI con contesto geopolitico aggiornato</div>
+        </div>
+        <button class="btn btn-blue" onclick="loadMarketNews()">&#127757; Aggiorna briefing</button>
+      </div>
+      <div id="newsLoading" style="display:none;text-align:center;padding:48px">
+        <div style="font-size:40px;margin-bottom:12px">&#127757;</div>
+        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:6px">Analisi in corso...</div>
+        <div style="font-size:12px;color:var(--muted)">Recupero dati macroeconomici e geopolitici</div>
+      </div>
+      <div id="newsEmpty" style="text-align:center;padding:48px">
+        <div style="font-size:40px;margin-bottom:12px">&#127757;</div>
+        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px">Briefing mercati</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:20px">Clicca "Aggiorna briefing" per ricevere l'analisi giornaliera dei mercati con contesto geopolitico.</div>
+        <button onclick="loadMarketNews()" class="btn btn-blue" style="padding:12px 28px;justify-content:center">&#127757; Carica briefing</button>
+      </div>
+      <div id="newsContent" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+          <div class="card" id="newsMacro"></div>
+          <div class="card" id="newsGeo"></div>
+        </div>
+        <div class="card" style="margin-bottom:16px" id="newsSettori"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+          <div class="card" id="newsOpportunita"></div>
+          <div class="card" id="newsRischi"></div>
+        </div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-align:right" id="newsDate"></div>
       </div>
     </div>
     <div class="disclaimer">&#9888; Solo a scopo informativo. Non costituisce consulenza finanziaria. I mercati comportano rischi di perdita del capitale.</div>
@@ -945,6 +979,7 @@ function switchTab(id,el){
   document.getElementById('tab-'+id).classList.add('active');el.classList.add('active');
   if(id==='performance')setTimeout(initPerfCharts,100);
   if(id==='rischio')renderRiskMatrix();
+  if(id==='news'&&document.getElementById('newsContent').style.display==='none'&&document.getElementById('newsLoading').style.display==='none')loadMarketNews();
 }
 
 // ─── EDIT PANEL ──────────────────────────────────────────────────────────────
@@ -1000,6 +1035,80 @@ function closeOnboarding(){localStorage.setItem('srm_ob','1');document.getElemen
 
 // ─── TOAST ────────────────────────────────────────────────────────────────────
 function showToast(msg){const t=document.createElement('div');t.style.cssText='position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--dark);padding:11px 22px;border-radius:8px;font-family:"DM Mono",monospace;font-size:13px;font-weight:500;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,.5);';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2500);}
+
+// ─── WORKER URL ──────────────────────────────────────────────────────────────
+const WORKER_URL = 'https://smartrisk-ai.nn2vrgnrfr.workers.dev';
+
+// ─── MARKET NEWS ─────────────────────────────────────────────────────────────
+async function loadMarketNews() {
+  document.getElementById('newsEmpty').style.display='none';
+  document.getElementById('newsContent').style.display='none';
+  document.getElementById('newsLoading').style.display='block';
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({type:'news'})
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    document.getElementById('newsLoading').style.display='none';
+    document.getElementById('newsContent').style.display='block';
+    document.getElementById('newsMacro').innerHTML=
+      '<div class="section-title">Macro</div><div style="font-size:13px;line-height:1.8;color:#C0BDB8">'+data.macro+'</div>';
+    document.getElementById('newsGeo').innerHTML=
+      '<div class="section-title">Geopolitica</div><div style="font-size:13px;line-height:1.8;color:#C0BDB8">'+data.geopolitica+'</div>';
+    document.getElementById('newsSettori').innerHTML=
+      '<div class="section-title">Settori in evidenza</div><div style="font-size:13px;line-height:1.8;color:#C0BDB8">'+data.settori+'</div>';
+    document.getElementById('newsOpportunita').innerHTML=
+      '<div class="section-title" style="color:var(--green)">Opportunita</div>'
+      +data.opportunita.map(o=>'<div style="display:flex;gap:10px;margin-bottom:10px;font-size:13px"><span style="color:var(--green);flex-shrink:0">&#9650;</span><span style="color:#C0BDB8;line-height:1.6">'+o+'</span></div>').join('');
+    document.getElementById('newsRischi').innerHTML=
+      '<div class="section-title" style="color:var(--red)">Rischi da monitorare</div>'
+      +data.rischi.map(r=>'<div style="display:flex;gap:10px;margin-bottom:10px;font-size:13px"><span style="color:var(--red);flex-shrink:0">&#9660;</span><span style="color:#C0BDB8;line-height:1.6">'+r+'</span></div>').join('');
+    document.getElementById('newsDate').textContent='Aggiornato: '+data.aggiornato;
+    showToast('Briefing aggiornato!');
+  } catch(e) {
+    document.getElementById('newsLoading').style.display='none';
+    document.getElementById('newsEmpty').style.display='block';
+    document.getElementById('newsEmpty').innerHTML='<div style="font-size:40px;margin-bottom:12px">&#9888;&#65039;</div><div style="font-size:16px;margin-bottom:8px">Errore caricamento</div><div style="font-size:13px;color:var(--muted);margin-bottom:20px">'+e.message+'</div><button onclick="loadMarketNews()" class="btn btn-blue" style="padding:12px 28px;justify-content:center">Riprova</button>';
+    console.error('News error:', e);
+  }
+}
+
+// Also update runAIAnalysis to use Worker
+async function runAIAnalysisCloud() {
+  if (assets.length===0){ showToast('Aggiungi prima degli asset!'); return; }
+  document.getElementById('aiEmpty').style.display='none';
+  document.getElementById('aiResults').style.display='none';
+  document.getElementById('aiLoading').style.display='block';
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-ai').classList.add('active');
+  document.querySelector('[onclick="switchTab(\'ai\',this)"]')?.classList.add('active');
+  const tot=assets.reduce((s,a)=>s+a.invested,0);
+  const portfolio={totalInvested:tot,numAssets:assets.length,assets:assets.map(a=>({ticker:a.ticker,name:a.name,invested:a.invested,pct:tot>0?(a.invested/tot*100).toFixed(1):0,buyPrice:a.buyPrice||null,currentPrice:a.currentPrice||null,pnlPct:(a.currentPrice>0&&a.buyPrice>0)?((a.currentPrice-a.buyPrice)/a.buyPrice*100).toFixed(1):null,risk:a.risk,qty:a.qty||null}))};
+  try {
+    const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'portfolio',portfolio})});
+    const data=await res.json();
+    if(data.error)throw new Error(data.error);
+    document.getElementById('aiLoading').style.display='none';
+    renderAIResults(data);
+    data.assets.forEach(ai=>{const a=assets.find(x=>x.ticker.toUpperCase()===ai.ticker.toUpperCase());if(a){a.risk=ai.risk;a.expectedReturn=ai.expectedReturn;}});
+    saveData();saveToCloud();renderAll();
+    showToast('Analisi AI completata!');
+  } catch(e) {
+    console.warn('Cloud AI failed, using local:', e);
+    const res=computeAnalysis();
+    document.getElementById('aiLoading').style.display='none';
+    renderAIResults(res);
+    showToast('Analisi locale completata');
+  }
+}
+
+// Override runAIAnalysis to use cloud version
+const _localAI = runAIAnalysis;
+runAIAnalysis = function() { runAIAnalysisCloud(); };
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 document.getElementById('headerDate').textContent=new Date().toLocaleDateString('it-IT',{month:'long',year:'numeric'});
