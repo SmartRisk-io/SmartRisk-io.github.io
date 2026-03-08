@@ -304,6 +304,7 @@ svg.donut{transform:rotate(-90deg);}
       <button class="tab" onclick="switchTab('heatmap',this)">&#127777; Heatmap</button>
       <button class="tab" onclick="switchTab('ai',this)">&#129302; Analisi AI</button>
       <button class="tab" onclick="switchTab('news',this)">&#127757; Mercati</button>
+      <button class="tab" onclick="switchTab('storico',this)">&#128196; Storico</button>
     </div>
     <!-- PORTAFOGLIO -->
     <div class="tab-content active" id="tab-portafoglio">
@@ -329,6 +330,33 @@ svg.donut{transform:rotate(-90deg);}
         <div style="font-size:48px;margin-bottom:16px">&#128202;</div>
         <div style="font-size:16px;margin-bottom:8px">Nessun asset</div>
         <div style="font-size:13px">Clicca <strong style="color:var(--gold)">&#9998; Modifica</strong> per aggiungere il primo asset.</div>
+      </div>
+      <!-- BUDGET PANEL -->
+      <div style="margin-top:32px">
+        <div class="section-title">Budget e liquidita</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+          <div class="card">
+            <div class="sum-label">Budget totale</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
+              <input type="number" id="budgetInput" placeholder="es. 10000" step="100"
+                style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;font-family:'DM Mono',monospace;font-size:14px;width:100%;outline:none;"
+                oninput="saveBudget()" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border)'">
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-top:6px">Inserisci il tuo capitale totale</div>
+          </div>
+          <div class="card">
+            <div class="sum-label">Investito</div>
+            <div class="sum-value" id="budgetInvested" style="font-size:22px">---</div>
+            <div style="margin-top:8px"><div class="mini-bar"><div class="mini-fill" id="budgetInvestedBar" style="width:0%;background:var(--gold)"></div></div></div>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px" id="budgetInvestedPct">0% del budget</div>
+          </div>
+          <div class="card">
+            <div class="sum-label">Liquidita disponibile</div>
+            <div class="sum-value" id="budgetLiquid" style="font-size:22px">---</div>
+            <div style="margin-top:8px"><div class="mini-bar"><div class="mini-fill" id="budgetLiquidBar" style="width:0%;background:var(--green)"></div></div></div>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px" id="budgetLiquidPct">0% del budget</div>
+          </div>
+        </div>
       </div>
     </div>
     <!-- PERFORMANCE -->
@@ -470,7 +498,53 @@ svg.donut{transform:rotate(-90deg);}
         <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-align:right" id="newsDate"></div>
       </div>
     </div>
+    <!-- STORICO POSIZIONI -->
+    <div class="tab-content" id="tab-storico">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+        <div>
+          <div class="section-title" style="margin:0">Storico posizioni chiuse</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">Registro di tutti i trade completati</div>
+        </div>
+        <button class="btn btn-gold" onclick="openClosePosition()">+ Chiudi posizione</button>
+      </div>
+      <div id="storicoEmpty" style="text-align:center;padding:48px;color:var(--muted)">
+        <div style="font-size:40px;margin-bottom:12px">&#128196;</div>
+        <div style="font-size:16px;margin-bottom:8px">Nessuna posizione chiusa</div>
+        <div style="font-size:13px">Quando chiudi una posizione, apparira qui con il P&L finale.</div>
+      </div>
+      <div id="storicoSummary" style="display:none;margin-bottom:20px">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+          <div class="sum-card"><div class="sum-label">P&L totale realizzato</div><div class="sum-value" id="storPnlTot" style="font-size:22px">---</div></div>
+          <div class="sum-card"><div class="sum-label">Trade vincenti</div><div class="sum-value" id="storWin" style="font-size:22px;color:var(--green)">---</div></div>
+          <div class="sum-card"><div class="sum-label">Trade perdenti</div><div class="sum-value" id="storLoss" style="font-size:22px;color:var(--red)">---</div></div>
+        </div>
+      </div>
+      <table class="table" id="storicoTable" style="display:none">
+        <thead><tr><th>Asset</th><th>Investito</th><th>Prezzo acquisto</th><th>Prezzo chiusura</th><th>P&L</th><th>Data chiusura</th><th></th></tr></thead>
+        <tbody id="storicoBody"></tbody>
+      </table>
+    </div>
     <div class="disclaimer">&#9888; Solo a scopo informativo. Non costituisce consulenza finanziaria. I mercati comportano rischi di perdita del capitale.</div>
+  </div>
+</div>
+<!-- CLOSE POSITION MODAL -->
+<div id="closeOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)" onclick="if(event.target===this)closeCloseModal()">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:440px;width:92%;position:relative">
+    <button onclick="closeCloseModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer">&#x2715;</button>
+    <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:20px">Chiudi <span style="color:var(--gold)">posizione</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="ef span2"><label>Asset</label>
+        <select id="closeAssetSel" style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:6px;font-family:'DM Mono',monospace;font-size:12px;outline:none"></select>
+      </div>
+      <div class="ef"><label>Prezzo chiusura (EUR)</label><input type="number" id="closePrice" placeholder="es. 150.00" step="0.01"></div>
+      <div class="ef"><label>Data chiusura</label><input type="date" id="closeDate"></div>
+    </div>
+    <div id="closePnlPreview" style="margin-top:16px;padding:14px;background:var(--surface2);border-radius:8px;display:none">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">Anteprima P&L</div>
+      <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700" id="closePnlVal">---</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:3px" id="closePnlPct">---</div>
+    </div>
+    <button onclick="confirmClosePosition()" style="width:100%;padding:13px;background:var(--gold);color:var(--dark);border:none;border-radius:8px;font-family:'DM Mono',monospace;font-size:13px;font-weight:500;cursor:pointer;margin-top:16px">Conferma chiusura</button>
   </div>
 </div>
 <!-- EDIT PANEL -->
@@ -986,6 +1060,7 @@ function switchTab(id,el){
   if(id==='performance')setTimeout(initPerfCharts,100);
   if(id==='rischio')renderRiskMatrix();
   if(id==='news'&&document.getElementById('newsContent').style.display==='none'&&document.getElementById('newsLoading').style.display==='none')loadMarketNews();
+  if(id==='storico')renderStorico();
 }
 
 // ─── EDIT PANEL ──────────────────────────────────────────────────────────────
@@ -1129,6 +1204,156 @@ async function runAIAnalysisCloud() {
 // Override runAIAnalysis to use cloud version
 const _localAI = runAIAnalysis;
 runAIAnalysis = function() { runAIAnalysisCloud(); };
+
+// ─── BUDGET ──────────────────────────────────────────────────────────────────
+function saveBudget() {
+  const val = parseFloat(document.getElementById('budgetInput').value) || 0;
+  localStorage.setItem('srm_budget', val);
+  updateBudgetPanel();
+}
+
+function updateBudgetPanel() {
+  const budget = parseFloat(localStorage.getItem('srm_budget')) || 0;
+  const invested = assets.reduce((s,a) => s + (a.invested||0), 0);
+  const liquid = Math.max(0, budget - invested);
+  const invPct = budget > 0 ? Math.min(100, (invested/budget*100)) : 0;
+  const liqPct = budget > 0 ? Math.min(100, (liquid/budget*100)) : 0;
+
+  if (document.getElementById('budgetInput')) {
+    const inp = document.getElementById('budgetInput');
+    if (!inp.value && budget > 0) inp.value = budget;
+  }
+  const fmt = v => v > 0 ? '€' + v.toLocaleString('it-IT', {minimumFractionDigits:0, maximumFractionDigits:0}) : '---';
+  const el = id => document.getElementById(id);
+  if (el('budgetInvested')) el('budgetInvested').textContent = fmt(invested);
+  if (el('budgetLiquid')) el('budgetLiquid').textContent = budget > 0 ? fmt(liquid) : '---';
+  if (el('budgetInvestedBar')) el('budgetInvestedBar').style.width = invPct + '%';
+  if (el('budgetLiquidBar')) el('budgetLiquidBar').style.width = liqPct + '%';
+  if (el('budgetInvestedPct')) el('budgetInvestedPct').textContent = budget > 0 ? invPct.toFixed(1) + '% del budget' : 'Imposta budget';
+  if (el('budgetLiquidPct')) el('budgetLiquidPct').textContent = budget > 0 ? liqPct.toFixed(1) + '% del budget' : 'Imposta budget';
+}
+
+// ─── STORICO ──────────────────────────────────────────────────────────────────
+let closedPositions = JSON.parse(localStorage.getItem('srm_storico') || '[]');
+
+function saveStorico() {
+  localStorage.setItem('srm_storico', JSON.stringify(closedPositions));
+  if (auth.currentUser) {
+    const uid = auth.currentUser.uid;
+    setDoc(doc(db, 'storico', uid), { positions: closedPositions });
+  }
+}
+
+function renderStorico() {
+  const empty = document.getElementById('storicoEmpty');
+  const table = document.getElementById('storicoTable');
+  const summary = document.getElementById('storicoSummary');
+  if (!empty) return;
+  if (closedPositions.length === 0) {
+    empty.style.display = 'block';
+    table.style.display = 'none';
+    summary.style.display = 'none';
+    return;
+  }
+  empty.style.display = 'none';
+  table.style.display = 'table';
+  summary.style.display = 'block';
+
+  // Summary stats
+  const totalPnl = closedPositions.reduce((s,p) => s + p.pnl, 0);
+  const wins = closedPositions.filter(p => p.pnl >= 0).length;
+  const losses = closedPositions.filter(p => p.pnl < 0).length;
+  const fmtPnl = v => (v >= 0 ? '+' : '') + '€' + Math.abs(v).toLocaleString('it-IT', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+  document.getElementById('storPnlTot').textContent = fmtPnl(totalPnl);
+  document.getElementById('storPnlTot').style.color = totalPnl >= 0 ? 'var(--green)' : 'var(--red)';
+  document.getElementById('storWin').textContent = wins;
+  document.getElementById('storLoss').textContent = losses;
+
+  // Table rows
+  const tbody = document.getElementById('storicoBody');
+  tbody.innerHTML = closedPositions.slice().reverse().map((p,i) => {
+    const idx = closedPositions.length - 1 - i;
+    const pnlColor = p.pnl >= 0 ? 'var(--green)' : 'var(--red)';
+    const pnlStr = fmtPnl(p.pnl);
+    const pnlPct = p.invested > 0 ? ((p.pnl / p.invested) * 100).toFixed(2) : '0.00';
+    return `<tr>
+      <td><strong style="color:var(--gold)">${p.ticker}</strong><div style="font-size:11px;color:var(--muted)">${p.name||''}</div></td>
+      <td>€${(p.invested||0).toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+      <td>€${(p.buyPrice||0).toFixed(2)}</td>
+      <td>€${(p.closePrice||0).toFixed(2)}</td>
+      <td style="color:${pnlColor};font-family:'DM Mono',monospace;font-weight:700">${pnlStr}<div style="font-size:11px">${pnlPct}%</div></td>
+      <td style="font-size:12px;color:var(--muted)">${p.closeDate||'---'}</td>
+      <td><button onclick="deleteStorico(${idx})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px">&#128465;</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function deleteStorico(idx) {
+  if (!confirm('Eliminare questa voce dallo storico?')) return;
+  closedPositions.splice(idx, 1);
+  saveStorico();
+  renderStorico();
+}
+
+function openClosePosition() {
+  if (assets.length === 0) { showToast('Aggiungi prima degli asset!'); return; }
+  const sel = document.getElementById('closeAssetSel');
+  sel.innerHTML = assets.map((a,i) => `<option value="${i}">${a.ticker} — ${a.name} (€${(a.invested||0).toFixed(0)} investiti)</option>`).join('');
+  document.getElementById('closeDate').value = new Date().toISOString().slice(0,10);
+  document.getElementById('closePrice').value = '';
+  document.getElementById('closePnlPreview').style.display = 'none';
+  document.getElementById('closeOverlay').style.display = 'flex';
+
+  // Live P&L preview
+  function updatePreview() {
+    const idx = parseInt(sel.value);
+    const price = parseFloat(document.getElementById('closePrice').value);
+    if (isNaN(idx) || isNaN(price) || price <= 0) { document.getElementById('closePnlPreview').style.display='none'; return; }
+    const a = assets[idx];
+    if (!a || !a.buyPrice || !a.qty) { document.getElementById('closePnlPreview').style.display='none'; return; }
+    const pnl = (price - a.buyPrice) * a.qty;
+    const pnlPct = ((price - a.buyPrice) / a.buyPrice * 100).toFixed(2);
+    const color = pnl >= 0 ? 'var(--green)' : 'var(--red)';
+    document.getElementById('closePnlPreview').style.display = 'block';
+    document.getElementById('closePnlVal').textContent = (pnl >= 0 ? '+' : '') + '€' + Math.abs(pnl).toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2});
+    document.getElementById('closePnlVal').style.color = color;
+    document.getElementById('closePnlPct').textContent = (pnl >= 0 ? '+' : '') + pnlPct + '%';
+    document.getElementById('closePnlPct').style.color = color;
+  }
+  document.getElementById('closePrice').addEventListener('input', updatePreview);
+  sel.addEventListener('change', updatePreview);
+}
+
+function closeCloseModal() {
+  document.getElementById('closeOverlay').style.display = 'none';
+}
+
+function confirmClosePosition() {
+  const idx = parseInt(document.getElementById('closeAssetSel').value);
+  const closePrice = parseFloat(document.getElementById('closePrice').value);
+  const closeDate = document.getElementById('closeDate').value;
+  if (isNaN(closePrice) || closePrice <= 0) { showToast('Inserisci un prezzo di chiusura valido!'); return; }
+  const a = assets[idx];
+  const pnl = a.qty && a.buyPrice ? (closePrice - a.buyPrice) * a.qty : 0;
+  closedPositions.push({
+    ticker: a.ticker,
+    name: a.name,
+    invested: a.invested,
+    buyPrice: a.buyPrice || 0,
+    closePrice: closePrice,
+    qty: a.qty || 0,
+    pnl: pnl,
+    closeDate: closeDate
+  });
+  saveStorico();
+  // Remove from active portfolio
+  assets.splice(idx, 1);
+  saveData(); saveToCloud(); renderAll();
+  closeCloseModal();
+  renderStorico();
+  showToast('Posizione chiusa! P&L: ' + (pnl >= 0 ? '+' : '') + '€' + Math.abs(pnl).toFixed(2));
+}
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 document.getElementById('headerDate').textContent=new Date().toLocaleDateString('it-IT',{month:'long',year:'numeric'});
