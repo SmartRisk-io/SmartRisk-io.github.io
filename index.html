@@ -3746,7 +3746,7 @@ async function loadScreenerPrices() {
 
   var btn    = document.getElementById('scrBtn');
   var status = document.getElementById('scrStatus');
-  if (btn) { btn.textContent = '⏳ Fase 1...'; btn.disabled = true; }
+  if (btn) { btn.textContent = '⏳ Aggiornamento...'; btn.disabled = true; }
 
   // ── FASE 1: prezzo + 1D per TUTTI — batch da 15, niente storico ──────────
   var BATCH = 15;
@@ -3758,7 +3758,7 @@ async function loadScreenerPrices() {
     await Promise.allSettled(batch.map(async function(a) {
       try {
         var r = await fetch(WORKER_URL + '/price?ticker=' + encodeURIComponent(a.t),
-          { signal: AbortSignal.timeout(7000) });
+          { signal: AbortSignal.timeout(5000) });
         var d = await r.json();
         if (d && d.price != null) {
           if (!_screenerPrices[a.t]) _screenerPrices[a.t] = {};
@@ -3768,7 +3768,7 @@ async function loadScreenerPrices() {
         }
       } catch(e) {}
     }));
-    if (status) status.textContent = done + '/' + total + ' prezzi caricati';
+    if (status) status.textContent = done + ' / ' + total;
     renderScreenerList();
   }
 
