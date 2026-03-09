@@ -550,17 +550,17 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
     </div>
     
     <!-- SCREENER ══════════════════════════════════════════════════════════ -->
-    <div class="tab-content" id="tab-screener" style="display:none;padding:0;flex-direction:column">
+    <div class="tab-content" id="tab-screener" style="display:none;padding:0">
 
-      <!-- ① Toolbar filtri — sticky in cima -->
-      <div id="scrToolbar" style="background:#141414;border-bottom:1px solid rgba(201,168,76,.15);padding:10px 16px;display:flex;align-items:center;gap:8px;flex-wrap:nowrap;flex-shrink:0">
-        <div style="display:flex;align-items:center;gap:6px;background:#1C1C1C;border:1px solid rgba(255,255,255,.07);border-radius:7px;padding:5px 10px;flex:1;max-width:280px">
+      <!-- Toolbar filtri -->
+      <div style="background:#141414;border-bottom:1px solid rgba(201,168,76,.15);padding:10px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:6px;background:#1C1C1C;border:1px solid rgba(255,255,255,.07);border-radius:7px;padding:5px 10px;flex:1;min-width:180px;max-width:300px">
           <span style="color:#5a5550;font-size:13px">🔍</span>
           <input id="scrSearch" type="text" placeholder="Cerca ticker o nome..."
-            style="background:none;border:none;color:#F0EDE6;font-family:DM Mono,monospace;font-size:12px;width:100%;outline:none;min-width:0"
+            style="background:none;border:none;color:#F0EDE6;font-family:DM Mono,monospace;font-size:12px;width:100%;outline:none"
             oninput="filterScreener()">
         </div>
-        <select id="scrCat" onchange="filterScreener()" style="background:#1C1C1C;border:1px solid rgba(255,255,255,.07);border-radius:7px;padding:6px 10px;color:#F0EDE6;font-size:11px;font-family:DM Mono,monospace;cursor:pointer;flex-shrink:0">
+        <select id="scrCat" onchange="filterScreener()" style="background:#1C1C1C;border:1px solid rgba(255,255,255,.07);border-radius:7px;padding:6px 10px;color:#F0EDE6;font-size:11px;font-family:DM Mono,monospace;cursor:pointer">
           <option value="">Tutte le categorie</option>
           <option value="azioni-usa">🇺🇸 Azioni USA</option>
           <option value="azioni-europa">🇪🇺 Azioni Europa</option>
@@ -571,30 +571,30 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
           <option value="obbligazioni">🏛 Obbligazioni</option>
           <option value="indici">📈 Indici</option>
         </select>
-        <select id="scrSort" onchange="sortScreener()" style="background:#1C1C1C;border:1px solid rgba(255,255,255,.07);border-radius:7px;padding:6px 10px;color:#F0EDE6;font-size:11px;font-family:DM Mono,monospace;cursor:pointer;flex-shrink:0">
+        <select id="scrSort" onchange="sortScreener()" style="background:#1C1C1C;border:1px solid rgba(255,255,255,.07);border-radius:7px;padding:6px 10px;color:#F0EDE6;font-size:11px;font-family:DM Mono,monospace;cursor:pointer">
           <option value="name">Nome A→Z</option>
           <option value="change-desc">1D migliori ↓</option>
           <option value="change-asc">1D peggiori ↑</option>
           <option value="price-desc">Prezzo ↓</option>
         </select>
-        <button onclick="loadScreenerPrices()" id="scrBtn" style="background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);border-radius:7px;padding:6px 12px;color:#C9A84C;font-size:11px;cursor:pointer;font-family:DM Mono,monospace;white-space:nowrap;flex-shrink:0">⚡ Aggiorna</button>
-        <span id="scrStatus" style="font-family:DM Mono,monospace;font-size:10px;color:#5a5550;margin-left:auto;white-space:nowrap;flex-shrink:0"></span>
+        <button onclick="loadScreenerPrices()" id="scrBtn" style="background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);border-radius:7px;padding:6px 12px;color:#C9A84C;font-size:11px;cursor:pointer;font-family:DM Mono,monospace;white-space:nowrap">⚡ Aggiorna</button>
+        <span id="scrStatus" style="font-family:DM Mono,monospace;font-size:10px;color:#5a5550;margin-left:auto;white-space:nowrap"></span>
       </div>
 
-      <!-- ② Header colonne — stesso grid delle righe -->
-      <div id="scrHeader" style="display:grid;grid-template-columns:44px 1fr 110px 90px 90px 90px 90px 90px;align-items:center;padding:6px 16px;background:#0D0D0D;border-bottom:1px solid rgba(255,255,255,.05);flex-shrink:0">
+      <!-- Header colonne -->
+      <div style="display:grid;grid-template-columns:44px 1fr 110px 90px 90px 90px 90px 90px;align-items:center;padding:7px 16px;background:#0a0a0a;border-bottom:1px solid rgba(255,255,255,.06)">
         <div></div>
-        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:#4a4a45;text-transform:uppercase">Asset</div>
-        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:#4a4a45;text-transform:uppercase;text-align:right">Prezzo</div>
-        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:#4a4a45;text-transform:uppercase;text-align:center;cursor:pointer" onclick="document.getElementById('scrSort').value='change-desc';sortScreener()">1D ↕</div>
-        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:#4a4a45;text-transform:uppercase;text-align:center">1W</div>
-        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:#4a4a45;text-transform:uppercase;text-align:center">1M</div>
-        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:#4a4a45;text-transform:uppercase;text-align:center">3M</div>
-        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:#4a4a45;text-transform:uppercase;text-align:center">1Y</div>
+        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:#404040;text-transform:uppercase">Asset</div>
+        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:#404040;text-transform:uppercase;text-align:right;padding-right:4px">Prezzo</div>
+        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:#404040;text-transform:uppercase;text-align:center;cursor:pointer" onclick="document.getElementById('scrSort').value='change-desc';sortScreener()" title="Clicca per ordinare">1D ↕</div>
+        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:#404040;text-transform:uppercase;text-align:center">1W</div>
+        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:#404040;text-transform:uppercase;text-align:center">1M</div>
+        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:#404040;text-transform:uppercase;text-align:center">3M</div>
+        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:#404040;text-transform:uppercase;text-align:center">1Y</div>
       </div>
 
-      <!-- ③ Lista scrollabile -->
-      <div id="screenerList" style="overflow-y:auto;flex:1"></div>
+      <!-- Lista asset (scroll normale della pagina) -->
+      <div id="screenerList"></div>
     </div>
 
     <!-- PANORAMICA -->
@@ -3589,9 +3589,6 @@ var _screenerInitialized = false;
 var _screenerAbort = null;
 
 function initScreener() {
-  // Assicura layout flex sul container
-  var tab = document.getElementById('tab-screener');
-  if (tab) tab.style.flexDirection='column';
   if (_screenerInitialized) { renderScreenerList(); return; }
   _screenerInitialized = true;
   _screenerFiltered = SCREENER_DB.slice();
