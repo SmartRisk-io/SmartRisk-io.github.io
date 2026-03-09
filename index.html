@@ -538,7 +538,6 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
       <button class="tab" id="tab-btn-ai" onclick="switchTab('ai',this)" data-tab="ai">Analisi AI</button>
       <button class="tab" id="tab-btn-news" onclick="switchTab('news',this)" data-tab="news">Mercati</button>
       <button class="tab" id="tab-btn-segnali" onclick="switchTab('segnali',this)" data-tab="segnali">Segnali CFD</button>
-      <button class="tab" id="tab-btn-screener" onclick="switchTab('screener',this)" data-tab="screener">🔍 Screener</button>
       <div class="tab-dropdown" id="altroDropdown">
         <button class="tab" id="tab-btn-altro" onclick="toggleAltro(event)">Altro &#9660;</button>
         <div class="tab-dropdown-menu" id="altroMenu">
@@ -3593,6 +3592,13 @@ function initScreener() {
   if (_screenerInitialized) { renderScreenerList(); return; }
   _screenerInitialized = true;
   _screenerFiltered = SCREENER_DB.slice();
+  // Mostra subito placeholder mentre carica
+  var list = document.getElementById('screenerList');
+  if (list) list.innerHTML = '<div style="text-align:center;padding:60px 20px;color:#8A8580;font-family:DM Mono,monospace;font-size:12px">'
+    + '<div style="font-size:24px;margin-bottom:12px">📊</div>'
+    + SCREENER_DB.length + ' asset disponibili<br>'
+    + '<span style="color:#5a5550;font-size:11px">Premi ⚡ Aggiorna per caricare i prezzi</span>'
+    + '</div>';
   renderScreenerList();
   loadScreenerPrices();
 }
@@ -3705,33 +3711,63 @@ function formatScrPrice(p, cat) {
 async function loadScreenerPrices() {
   if (_screenerLoading) return;
   _screenerLoading = true;
-  var btn = document.querySelector('#tab-screener button[onclick="loadScreenerPrices()"]');
-  if (btn) { btn.textContent='⏳ Caricamento...'; btn.disabled=true; }
 
-  // Batch parallelo da 8 — molto più veloce del sequenziale
-  var BATCH = 8;
-  var toLoad = SCREENER_DB;
-  for (var i=0; i<toLoad.length; i+=BATCH) {
-    var batch = toLoad.slice(i, i+BATCH);
+  var btn    = document.getElementById('scrBtn');
+  var status = document.getElementById('scrStatus');
+  if (btn) { btn.textContent = '⏳ Fase 1...'; btn.disabled = true; }
+
+  // ── FASE 1: prezzo + 1D per TUTTI — batch da 15, niente storico ──────────
+  var BATCH = 15;
+  var done = 0;
+  var total = SCREENER_DB.length;
+
+  for (var i = 0; i < total; i += BATCH) {
+    var batch = SCREENER_DB.slice(i, i + BATCH);
     await Promise.allSettled(batch.map(async function(a) {
       try {
-        var r = await fetch(WORKER_URL+'/price?ticker='+encodeURIComponent(a.t), {signal:AbortSignal.timeout(9000)});
+        var r = await fetch(WORKER_URL + '/price?ticker=' + encodeURIComponent(a.t),
+          { signal: AbortSignal.timeout(7000) });
         var d = await r.json();
-        if (d && d.price!=null) {
-          _screenerPrices[a.t] = {
-            price: d.price, d1: d.change||0,
-            d5: d.week||null, d30: d.month||null,
-            d90: d.quarter||null, d365: d.year||null,
-          };
+        if (d && d.price != null) {
+          if (!_screenerPrices[a.t]) _screenerPrices[a.t] = {};
+          _screenerPrices[a.t].price = d.price;
+          _screenerPrices[a.t].d1   = d.change || 0;
+          done++;
         }
       } catch(e) {}
     }));
+    if (status) status.textContent = done + '/' + total + ' prezzi caricati';
     renderScreenerList();
-    await new Promise(function(r){setTimeout(r,50);});
   }
+
+  // Fase 1 completata
   _screenerLoading = false;
-  if (btn) { btn.textContent='⚡ Aggiorna prezzi'; btn.disabled=false; }
+  if (btn) { btn.textContent = '⚡ Aggiorna'; btn.disabled = false; }
+  if (status) status.textContent = done + ' prezzi · ' + _screenerFiltered.length + ' asset';
   renderScreenerList();
+
+  // ── FASE 2: storico 1W/1M/3M/1Y per i primi 40, silenzioso ──────────────
+  setTimeout(async function() {
+    var hist = SCREENER_DB.slice(0, 40);
+    for (var j = 0; j < hist.length; j += 5) {
+      var hb = hist.slice(j, j + 5);
+      await Promise.allSettled(hb.map(async function(a) {
+        try {
+          var r = await fetch(WORKER_URL + '/price?ticker=' + encodeURIComponent(a.t) + '&history=1',
+            { signal: AbortSignal.timeout(10000) });
+          var d = await r.json();
+          if (d && d.price != null && _screenerPrices[a.t]) {
+            _screenerPrices[a.t].d5   = d.week    || null;
+            _screenerPrices[a.t].d30  = d.month   || null;
+            _screenerPrices[a.t].d90  = d.quarter || null;
+            _screenerPrices[a.t].d365 = d.year    || null;
+          }
+        } catch(e) {}
+      }));
+      renderScreenerList();
+      await new Promise(function(r) { setTimeout(r, 200); });
+    }
+  }, 500);
 }
 
 function addToPortfolio(ticker, name) {
