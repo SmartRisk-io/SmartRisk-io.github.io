@@ -1552,78 +1552,189 @@ async function loadSegnali() {
   document.getElementById('segnaliEmpty').style.display='none';
   document.getElementById('segnaliContent').style.display='none';
   document.getElementById('segnaliLoading').style.display='block';
-  const tot=assets.reduce((s,a)=>s+a.invested,0);
-  const portfolioCtx=assets.map(a=>({
-    ticker:a.ticker,name:a.name,invested:a.invested,
-    pct:tot>0?(a.invested/tot*100).toFixed(1):0,
-    buyPrice:a.buyPrice||null,currentPrice:a.currentPrice||null,
-    pnlPct:(a.currentPrice>0&&a.buyPrice>0)?((a.currentPrice-a.buyPrice)/a.buyPrice*100).toFixed(2):null,
-    change1d:livePrices[a.id]?.change?.toFixed(2)||null,risk:a.risk
-  }));
+
+  const tot = assets.reduce((s,a)=>s+a.invested,0);
+  const portfolioCtx = assets.map(a=>{
+    const pnlPct = (a.currentPrice>0&&a.buyPrice>0) ? ((a.currentPrice-a.buyPrice)/a.buyPrice*100) : null;
+    return {
+      ticker: a.ticker, name: a.name,
+      invested: Math.round(a.invested),
+      pct: tot>0 ? +(a.invested/tot*100).toFixed(1) : 0,
+      buyPrice: a.buyPrice||null,
+      currentPrice: a.currentPrice||null,
+      pnlPct: pnlPct!==null ? +pnlPct.toFixed(2) : null,
+      change1d: livePrices[a.id]?.change||null,
+      risk: a.risk
+    };
+  });
+
+  // Prompt con schema JSON esatto richiesto
+  const systemPrompt = `Sei un analista di portafogli CFD. Analizza il portafoglio e rispondi SOLO con JSON valido, nessun testo fuori dal JSON.
+
+Schema ESATTO richiesto:
+{
+  "segnali": [
+    {
+      "ticker": "string",
+      "nome": "string",
+      "azione": "compra|vendi|mantieni|riduci|aumenta",
+      "motivazione": "string (2-3 frasi concrete con % e livelli di prezzo)",
+      "entryZone": "string (es. '€42.50 – €43.20')",
+      "targetPrice": "string (es. '€48.00')",
+      "stopLoss": "string (es. '€40.00')",
+      "momentum": "rialzista|ribassista|neutro",
+      "confidenza": "alta|media|bassa",
+      "pnlPct": number_or_null
+    }
+  ],
+  "alerts": [
+    {
+      "type": "danger|warning|success|info",
+      "icon": "emoji",
+      "urgenza": "string",
+      "title": "string",
+      "text": "string"
+    }
+  ],
+  "strategia": "string (2-3 frasi di strategia complessiva)"
+}
+
+Regole:
+- Usa SEMPRE i nomi di campo esatti dello schema
+- Per ogni asset del portafoglio genera un segnale
+- Sii specifico: usa prezzi reali, percentuali concrete, livelli tecnici
+- I CFD hanno leva: evidenzia rischio/reward con stop precisi
+- motivazione deve contenere almeno un livello di prezzo o percentuale
+- Non usare parole generiche: sii operativo`;
+
   try {
-    const res=await fetch(WORKER_URL,{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({type:'segnali',portfolio:{totalInvested:tot,assets:portfolioCtx},userId:window._currentUid||'anon'})
+    const res = await fetch(WORKER_URL, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        type:'segnali',
+        portfolio:{totalInvested:tot, assets:portfolioCtx},
+        systemPrompt,
+        userId: window._currentUid||'anon'
+      })
     });
-    const data=await res.json();
+    const data = await res.json();
+
     if(data.error==='RATE_LIMIT'){
       document.getElementById('segnaliLoading').style.display='none';
       document.getElementById('segnaliEmpty').style.display='block';
-      document.getElementById('segnaliEmpty').innerHTML='<div style="font-size:40px;margin-bottom:12px">⏳</div><div style="font-family:Playfair Display,serif;font-size:20px;font-weight:700;margin-bottom:8px;color:var(--gold)">'+t('dailyLimitReached')+'</div><div style="font-size:13px;color:var(--muted)">Si azzera a mezzanotte.</div>';
+      document.getElementById('segnaliEmpty').innerHTML='<div style="font-size:40px;margin-bottom:12px">⏳</div><div style="font-family:Playfair Display,serif;font-size:20px;font-weight:700;margin-bottom:8px;color:var(--gold)">Limite giornaliero raggiunto</div><div style="font-size:13px;color:var(--muted)">Si azzera a mezzanotte.</div>';
       return;
     }
-    if(data.error)throw new Error(data.error);
+    if(data.error) throw new Error(data.error);
+
+    // Normalizza i campi: gestisce sia nomi italiani che inglesi
+    const normalizzaSegnale = (s) => ({
+      ticker:      s.ticker || s.symbol || '???',
+      nome:        s.nome || s.name || s.ticker || '',
+      azione:      (s.azione || s.action || s.signal || 'mantieni').toLowerCase(),
+      motivazione: s.motivazione || s.motivation || s.reasoning || s.rationale || s.description || '—',
+      entryZone:   s.entryZone || s.entry_zone || s.entry || null,
+      targetPrice: s.targetPrice || s.target_price || s.target || null,
+      stopLoss:    s.stopLoss || s.stop_loss || s.stop || null,
+      momentum:    s.momentum || 'neutro',
+      confidenza:  s.confidenza || s.confidence || s.strength || 'media',
+      pnlPct:      s.pnlPct ?? s.pnl ?? null,
+    });
+
+    const segnaliRaw = data.segnali || data.signals || data.results || [];
+    const segnali = segnaliRaw.map(normalizzaSegnale);
+    const alerts  = data.alerts  || data.alert || [];
+
     document.getElementById('segnaliLoading').style.display='none';
     document.getElementById('segnaliContent').style.display='block';
-    // Alerts
-    const alertsEl=document.getElementById('segnaliAlerts');
-    if(data.alerts&&data.alerts.length>0){
-      alertsEl.innerHTML=data.alerts.map(a=>{
-        const colors={danger:'var(--red)',warning:'#F59E0B',success:'var(--green)',info:'var(--blue)'};
+
+    // ── ALERTS ──────────────────────────────────────────────────
+    const alertsEl = document.getElementById('segnaliAlerts');
+    if(alerts.length>0){
+      const colors={danger:'var(--red)',warning:'#F59E0B',success:'var(--green)',info:'var(--blue)'};
+      alertsEl.innerHTML = alerts.map(a=>{
         const cc=colors[a.type]||'var(--gold)';
-        return '<div style="border:1px solid '+cc+';border-radius:10px;padding:14px 18px;margin-bottom:10px;display:flex;gap:14px;align-items:flex-start"><div style="font-size:22px;flex-shrink:0">'+a.icon+'</div><div><div style="font-family:DM Mono,monospace;font-size:11px;color:'+cc+';letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">'+a.urgenza+'</div><div style="font-size:14px;font-weight:600;margin-bottom:4px">'+a.title+'</div><div style="font-size:13px;color:var(--muted);line-height:1.6">'+a.text+'</div></div></div>';
+        return `<div style="border:1px solid ${cc};border-radius:10px;padding:14px 18px;margin-bottom:10px;display:flex;gap:14px;align-items:flex-start">
+          <div style="font-size:22px;flex-shrink:0">${a.icon||'⚠️'}</div>
+          <div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:${cc};letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">${a.urgenza||''}</div>
+            <div style="font-size:14px;font-weight:600;margin-bottom:4px">${a.title||''}</div>
+            <div style="font-size:13px;color:var(--muted);line-height:1.6">${a.text||''}</div>
+          </div>
+        </div>`;
       }).join('');
-    } else {alertsEl.innerHTML='';}
-    // Grid
-    const grid=document.getElementById('segnaliGrid');
-    if(data.segnali&&data.segnali.length>0){
-      const actionColors={compra:'var(--green)',vendi:'var(--red)',mantieni:'var(--gold)',riduci:'#F59E0B',aumenta:'var(--blue)'};
-      const actionLabels={compra:'Considera +',vendi:'Considera -',mantieni:'Mantieni',riduci:'Riduci?',aumenta:'Aumenta?'};
-      grid.innerHTML=data.segnali.map(s=>{
-        const cc=actionColors[s.azione]||'var(--gold)';
-        const textOnColor = (s.azione==='vendi'||s.azione==='riduci')?'#fff':'#0D0C0A';
+    } else { alertsEl.innerHTML=''; }
+
+    // ── SEGNALI CARD ─────────────────────────────────────────────
+    const grid = document.getElementById('segnaliGrid');
+    const actionColors = {compra:'var(--green)',vendi:'var(--red)',mantieni:'var(--gold)',riduci:'#F59E0B',aumenta:'var(--blue)'};
+    const actionLabels = {compra:'▲ Considera +',vendi:'▼ Considera −',mantieni:'◆ Mantieni',riduci:'▽ Riduci',aumenta:'△ Aumenta'};
+    const momentumIcon = {rialzista:'↑',ribassista:'↓',neutro:'→'};
+    const momentumColor = {rialzista:'var(--green)',ribassista:'var(--red)',neutro:'var(--muted)'};
+    const confColor = (c)=>c.includes('alta')?'var(--green)':c.includes('bassa')?'var(--red)':'var(--gold)';
+
+    if(segnali.length>0){
+      grid.innerHTML = segnali.map(s=>{
+        const cc = actionColors[s.azione]||'var(--gold)';
+        const textOn = (s.azione==='vendi'||s.azione==='riduci')?'#fff':'#0D0C0A';
         const pnlVal = parseFloat(s.pnlPct);
+        const pnlStr = !isNaN(pnlVal) ? `${pnlVal>=0?'+':''}${pnlVal.toFixed(2)}%` : null;
         const pnlColor = pnlVal>=0?'var(--green)':'var(--red)';
-        const pnlStr = s.pnlPct!==null ? (pnlVal>=0?'+':'')+s.pnlPct+'%' : null;
-        const conf = (s.confidenza||'').toLowerCase();
-        const confColor = conf.includes('alta')?'var(--green)':conf.includes('bassa')?'var(--red)':'var(--gold)';
-        return `<div style="background:var(--surface2);border-radius:12px;border:1px solid var(--border);border-top:3px solid ${cc};padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap">
+        const mom = (s.momentum||'neutro').toLowerCase();
+        const conf = (s.confidenza||'media').toLowerCase();
+        return `<div style="background:var(--surface2);border-radius:12px;border:1px solid var(--border);border-top:3px solid ${cc};padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0">
+
+          <!-- Header: ticker + badge azione -->
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
             <div style="min-width:0">
-              <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.ticker}</div>
-              <div style="font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px">${s.name||''}</div>
+              <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--gold)">${s.ticker}</div>
+              <div style="font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px">${s.nome}</div>
             </div>
-            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
-              <div style="background:${cc};color:${textOnColor};padding:4px 12px;border-radius:20px;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;text-transform:uppercase;white-space:nowrap">${s.azione}</div>
-              ${pnlStr?`<div style="font-family:'DM Mono',monospace;font-size:11px;color:${pnlColor}">${pnlStr} acq.</div>`:''}
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0">
+              <div style="background:${cc};color:${textOn};padding:5px 12px;border-radius:20px;font-family:'DM Mono',monospace;font-size:10px;font-weight:700;white-space:nowrap">${actionLabels[s.azione]||s.azione.toUpperCase()}</div>
+              ${pnlStr ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:${pnlColor}">${pnlStr} acq.</div>` : ''}
             </div>
           </div>
-          <div style="font-size:12px;color:#C0BDB8;line-height:1.65;flex:1">${s.motivazione}</div>
-          ${s.targetPrice?`<div style="display:flex;gap:8px;flex-wrap:wrap">
-            <span style="font-family:'DM Mono',monospace;font-size:10px;padding:3px 8px;background:rgba(76,175,126,.1);border-radius:4px;color:var(--green)">T €${s.targetPrice}</span>
-            ${s.stopLoss?`<span style="font-family:'DM Mono',monospace;font-size:10px;padding:3px 8px;background:rgba(224,90,90,.1);border-radius:4px;color:var(--red)">SL €${s.stopLoss}</span>`:''}
-          </div>`:''}
-          <div style="padding-top:8px;border-top:1px solid rgba(255,255,255,.05);font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em">RILEVANZA AI: <span style="color:${confColor}">${s.confidenza||'---'}</span></div>
+
+          <!-- Motivazione -->
+          <div style="font-size:12px;color:#C0BDB8;line-height:1.7;flex:1">${s.motivazione}</div>
+
+          <!-- Livelli operativi -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+            ${s.entryZone ? `<div style="background:rgba(74,144,217,.1);border:1px solid rgba(74,144,217,.2);border-radius:6px;padding:6px;text-align:center"><div style="font-size:9px;color:var(--muted);letter-spacing:.06em;margin-bottom:3px">ENTRY</div><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--blue);font-weight:600">${s.entryZone}</div></div>` : ''}
+            ${s.targetPrice ? `<div style="background:rgba(76,175,126,.1);border:1px solid rgba(76,175,126,.2);border-radius:6px;padding:6px;text-align:center"><div style="font-size:9px;color:var(--muted);letter-spacing:.06em;margin-bottom:3px">TARGET</div><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--green);font-weight:600">${s.targetPrice}</div></div>` : ''}
+            ${s.stopLoss ? `<div style="background:rgba(224,90,90,.1);border:1px solid rgba(224,90,90,.2);border-radius:6px;padding:6px;text-align:center"><div style="font-size:9px;color:var(--muted);letter-spacing:.06em;margin-bottom:3px">STOP</div><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--red);font-weight:600">${s.stopLoss}</div></div>` : ''}
+          </div>
+
+          <!-- Footer: momentum + confidenza -->
+          <div style="display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid rgba(255,255,255,.05)">
+            <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)">
+              MOMENTUM <span style="color:${momentumColor[mom]||'var(--muted)'}">${momentumIcon[mom]||'→'} ${(s.momentum||'neutro').toUpperCase()}</span>
+            </div>
+            <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)">
+              RILEVANZA <span style="color:${confColor(conf)}">${conf.toUpperCase()}</span>
+            </div>
+          </div>
         </div>`;
       }).join('');
     }
-    if(data.strategia){document.getElementById('segnaliStrategia').innerHTML='<div class="section-title">'+t('recommendedStrategy')+'</div><div style="font-size:13px;color:#C0BDB8;line-height:1.8">'+data.strategia+'</div>';}
-    document.getElementById('segnaliDate').textContent='Aggiornato: '+new Date().toLocaleString('it-IT');
-    if(data._remaining!==undefined && data._remaining >= 0) showToast('Analisi AI rimaste oggi: '+data._remaining);
+
+    if(data.strategia){
+      document.getElementById('segnaliStrategia').innerHTML =
+        '<div class="section-title">Strategia consigliata</div>'
+        +'<div style="font-size:13px;color:#C0BDB8;line-height:1.8">'+data.strategia+'</div>';
+    }
+    document.getElementById('segnaliDate').textContent = 'Aggiornato: '+new Date().toLocaleString('it-IT');
+    if(data._remaining!==undefined && data._remaining>=0) showToast('Analisi AI rimaste oggi: '+data._remaining);
+
   } catch(e) {
     document.getElementById('segnaliLoading').style.display='none';
     document.getElementById('segnaliEmpty').style.display='block';
-    document.getElementById('segnaliEmpty').innerHTML='<div style="font-size:40px;margin-bottom:12px">⚠️</div><div style="font-size:16px;margin-bottom:8px">'+t('error')+'</div><div style="font-size:13px;color:var(--muted);margin-bottom:20px">'+e.message+'</div><button onclick="loadSegnali()" class="btn btn-blue" style="padding:12px 28px;justify-content:center">'+t('retry')+'</button>';
+    document.getElementById('segnaliEmpty').innerHTML=
+      '<div style="font-size:40px;margin-bottom:12px">⚠️</div>'
+      +'<div style="font-size:16px;margin-bottom:8px">Errore</div>'
+      +'<div style="font-size:13px;color:var(--muted);margin-bottom:20px">'+e.message+'</div>'
+      +'<button onclick="loadSegnali()" class="btn btn-blue" style="padding:12px 28px;justify-content:center">Riprova</button>';
   }
 }
 
