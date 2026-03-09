@@ -550,51 +550,65 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
     </div>
     
     <!-- SCREENER ══════════════════════════════════════════════════════════ -->
-    <div class="tab-content" id="tab-screener" style="display:none;padding:0">
+    <div class="tab-content" id="tab-screener" style="display:none;padding:0;min-height:500px;flex-direction:column">
 
-      <!-- Toolbar filtri -->
-      <div style="background:#141414;border-bottom:1px solid rgba(201,168,76,.15);padding:10px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <div style="display:flex;align-items:center;gap:6px;background:#1C1C1C;border:1px solid rgba(255,255,255,.07);border-radius:7px;padding:5px 10px;flex:1;min-width:180px;max-width:300px">
-          <span style="color:#5a5550;font-size:13px">🔍</span>
-          <input id="scrSearch" type="text" placeholder="Cerca ticker o nome..."
-            style="background:none;border:none;color:#F0EDE6;font-family:DM Mono,monospace;font-size:12px;width:100%;outline:none"
+      <!-- ═══ TOOLBAR ═══════════════════════════════════════════════════════ -->
+      <div style="padding:14px 24px;background:#111;border-bottom:1px solid rgba(201,168,76,.12);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+
+        <!-- Ricerca -->
+        <div style="display:flex;align-items:center;gap:8px;background:#1a1a1a;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:8px 14px;flex:1;min-width:200px;max-width:320px">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="5.5" cy="5.5" r="4.5" stroke="#5a5550" stroke-width="1.5"/><path d="M9 9l2.5 2.5" stroke="#5a5550" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <input id="scrSearch" type="text" placeholder="Cerca ticker, nome..."
+            style="background:none;border:none;color:#F0EDE6;font-family:DM Mono,monospace;font-size:12px;width:100%;outline:none;letter-spacing:.02em"
             oninput="filterScreener()">
         </div>
-        <select id="scrCat" onchange="filterScreener()" style="background:#1C1C1C;border:1px solid rgba(255,255,255,.07);border-radius:7px;padding:6px 10px;color:#F0EDE6;font-size:11px;font-family:DM Mono,monospace;cursor:pointer">
+
+        <!-- Categoria -->
+        <select id="scrCat" onchange="filterScreener()" style="background:#1a1a1a;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:8px 12px;color:#F0EDE6;font-size:11px;font-family:DM Mono,monospace;cursor:pointer;letter-spacing:.03em">
           <option value="">Tutte le categorie</option>
-          <option value="azioni-usa">🇺🇸 Azioni USA</option>
-          <option value="azioni-europa">🇪🇺 Azioni Europa</option>
-          <option value="etf">📊 ETF</option>
-          <option value="crypto">₿ Crypto</option>
-          <option value="forex">💱 Forex</option>
-          <option value="materie-prime">🥇 Materie Prime</option>
-          <option value="obbligazioni">🏛 Obbligazioni</option>
-          <option value="indici">📈 Indici</option>
+          <option value="azioni-usa">🇺🇸  Azioni USA</option>
+          <option value="azioni-europa">🇪🇺  Azioni Europa</option>
+          <option value="etf">📊  ETF</option>
+          <option value="crypto">₿  Crypto</option>
+          <option value="forex">💱  Forex</option>
+          <option value="materie-prime">🥇  Materie Prime</option>
+          <option value="obbligazioni">🏛  Obbligazioni</option>
+          <option value="indici">📈  Indici</option>
         </select>
-        <select id="scrSort" onchange="sortScreener()" style="background:#1C1C1C;border:1px solid rgba(255,255,255,.07);border-radius:7px;padding:6px 10px;color:#F0EDE6;font-size:11px;font-family:DM Mono,monospace;cursor:pointer">
-          <option value="name">Nome A→Z</option>
-          <option value="change-desc">1D migliori ↓</option>
-          <option value="change-asc">1D peggiori ↑</option>
+
+        <!-- Ordinamento -->
+        <select id="scrSort" onchange="sortScreener()" style="background:#1a1a1a;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:8px 12px;color:#F0EDE6;font-size:11px;font-family:DM Mono,monospace;cursor:pointer;letter-spacing:.03em">
+          <option value="name">A → Z</option>
+          <option value="change-desc">Migliori oggi ↓</option>
+          <option value="change-asc">Peggiori oggi ↑</option>
           <option value="price-desc">Prezzo ↓</option>
         </select>
-        <button onclick="loadScreenerPrices()" id="scrBtn" style="background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);border-radius:7px;padding:6px 12px;color:#C9A84C;font-size:11px;cursor:pointer;font-family:DM Mono,monospace;white-space:nowrap">⚡ Aggiorna</button>
-        <span id="scrStatus" style="font-family:DM Mono,monospace;font-size:10px;color:#5a5550;margin-left:auto;white-space:nowrap"></span>
+
+        <!-- Aggiorna -->
+        <button onclick="loadScreenerPrices()" id="scrBtn"
+          style="background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:8px;padding:8px 16px;color:#C9A84C;font-size:11px;cursor:pointer;font-family:DM Mono,monospace;white-space:nowrap;letter-spacing:.05em;font-weight:600">
+          ⚡ Aggiorna prezzi
+        </button>
+
+        <!-- Status -->
+        <span id="scrStatus" style="font-family:DM Mono,monospace;font-size:10px;color:#404040;margin-left:auto;white-space:nowrap;letter-spacing:.05em"></span>
       </div>
 
-      <!-- Header colonne -->
-      <div style="display:grid;grid-template-columns:44px 1fr 110px 90px 90px 90px 90px 90px;align-items:center;padding:7px 16px;background:#0a0a0a;border-bottom:1px solid rgba(255,255,255,.06)">
+      <!-- ═══ HEADER COLONNE ════════════════════════════════════════════════ -->
+      <div id="scrColHeader" style="display:grid;grid-template-columns:48px 1fr 120px 88px 88px 88px 88px 88px;padding:7px 24px;background:#0c0c0c;border-bottom:1px solid rgba(255,255,255,.05)">
         <div></div>
-        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:#404040;text-transform:uppercase">Asset</div>
-        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:#404040;text-transform:uppercase;text-align:right;padding-right:4px">Prezzo</div>
-        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:#404040;text-transform:uppercase;text-align:center;cursor:pointer" onclick="document.getElementById('scrSort').value='change-desc';sortScreener()" title="Clicca per ordinare">1D ↕</div>
-        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:#404040;text-transform:uppercase;text-align:center">1W</div>
-        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:#404040;text-transform:uppercase;text-align:center">1M</div>
-        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:#404040;text-transform:uppercase;text-align:center">3M</div>
-        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:#404040;text-transform:uppercase;text-align:center">1Y</div>
+        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.12em;color:#383838;text-transform:uppercase">Asset</div>
+        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.12em;color:#383838;text-transform:uppercase;text-align:right;padding-right:8px">Prezzo</div>
+        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.12em;color:#383838;text-transform:uppercase;text-align:center;cursor:pointer;user-select:none" onclick="document.getElementById('scrSort').value='change-desc';sortScreener()" title="Ordina per variazione giornaliera">1D ↕</div>
+        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.12em;color:#383838;text-transform:uppercase;text-align:center">1W</div>
+        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.12em;color:#383838;text-transform:uppercase;text-align:center">1M</div>
+        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.12em;color:#383838;text-transform:uppercase;text-align:center">3M</div>
+        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.12em;color:#383838;text-transform:uppercase;text-align:center">1Y</div>
       </div>
 
-      <!-- Lista asset (scroll normale della pagina) -->
+      <!-- ═══ LISTA ══════════════════════════════════════════════════════════ -->
       <div id="screenerList"></div>
+
     </div>
 
     <!-- PANORAMICA -->
@@ -1774,7 +1788,8 @@ function switchTab(id, el) {
   document.querySelectorAll('.tab-content').forEach(t => t.style.display='none');
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   const tab = document.getElementById('tab-'+id);
-  if (tab) tab.style.display='flex';
+  if (tab) tab.style.display = (id==='screener') ? 'flex' : 'block';
+  if (id==='screener') tab.style.flexDirection='column';
   // Attiva il bottone corretto nella tab bar
   const btn = document.getElementById('tab-btn-'+id);
   if (btn) btn.classList.add('active');
@@ -3629,12 +3644,30 @@ function sortScreener(skipRender) {
 function renderScreenerList() {
   var list = document.getElementById('screenerList');
   if (!list) return;
-  var total = Object.keys(_screenerPrices).length;
-  var status = document.getElementById('scrStatus');
-  if (status) status.textContent = total + ' prezzi · ' + _screenerFiltered.length + ' asset';
 
+  var loaded = Object.keys(_screenerPrices).length;
+  var status = document.getElementById('scrStatus');
+  if (status && !_screenerLoading) {
+    status.textContent = loaded + ' prezzi · ' + _screenerFiltered.length + ' asset';
+  }
+
+  // Placeholder se ancora vuoto
   if (_screenerFiltered.length === 0) {
-    list.innerHTML = '<div style="text-align:center;padding:80px 20px;color:#5a5550;font-family:DM Mono,monospace;font-size:12px">Nessun risultato</div>';
+    list.innerHTML = '<div style="padding:60px 24px;text-align:center;color:#404040;font-family:DM Mono,monospace;font-size:12px;letter-spacing:.05em">Nessun asset trovato</div>';
+    return;
+  }
+
+  // Se nessun prezzo ancora, mostra skeleton
+  if (loaded === 0) {
+    var skRows = '';
+    for (var s=0; s<12; s++) {
+      skRows += '<div style="display:grid;grid-template-columns:' + '48px 1fr 120px 88px 88px 88px 88px 88px' + ';align-items:center;padding:11px 24px;border-bottom:1px solid rgba(255,255,255,.03)">'
+        + '<div style="width:32px;height:32px;border-radius:8px;background:#1a1a1a"></div>'
+        + '<div style="height:10px;width:' + (60+Math.floor(s*7)%40) + 'px;background:#1a1a1a;border-radius:4px;margin:2px 0"></div>'
+        + '<div></div><div></div><div></div><div></div><div></div><div></div>'
+        + '</div>';
+    }
+    list.innerHTML = '<div style="padding:16px 24px 8px;font-family:DM Mono,monospace;font-size:10px;color:#383838;letter-spacing:.1em">CARICAMENTO PREZZI IN CORSO...</div>' + skRows;
     return;
   }
 
@@ -3648,40 +3681,38 @@ function renderScreenerList() {
     var p = _screenerPrices[a.t] || {};
     var hasPrice = p.price != null;
     var logoHtml = getAssetLogo(a);
-    var priceStr = hasPrice ? formatScrPrice(p.price, a.cat) : '';
     var catColor = catColors[a.cat] || '#8A8580';
-    var rowBg = i % 2 === 0 ? 'rgba(255,255,255,.013)' : 'transparent';
+    var rowBg = i % 2 === 0 ? '#111' : '#0e0e0e';
 
-    // Usa data-rowbg per il mouseleave invece di interpolazione con apici
-    return '<div class="scr-row" data-rowbg="' + rowBg + '" style="'
-      + 'display:grid;grid-template-columns:' + GRID + ';'
-      + 'align-items:center;padding:8px 16px;border-bottom:1px solid rgba(255,255,255,.04);'
-      + 'transition:background .12s;background:' + rowBg + '"'
-      + ' onmouseenter="this.style.background=\'rgba(201,168,76,.06)\'"'
-      + ' onmouseleave="this.style.background=this.dataset.rowbg">'
+    return '<div class="scr-row" data-bg="' + rowBg + '" style="'
+      + 'display:grid;grid-template-columns:' + '48px 1fr 120px 88px 88px 88px 88px 88px' + ';'
+      + 'align-items:center;padding:10px 24px;border-bottom:1px solid rgba(255,255,255,.035);'
+      + 'background:' + rowBg + ';transition:background .1s;cursor:default"'
+      + ' onmouseenter="this.style.background=\'#1c1a14\'"'
+      + ' onmouseleave="this.style.background=this.dataset.bg">'
 
-      // Logo (44px)
+      // Logo 48px
       + '<div style="display:flex;align-items:center;justify-content:center">' + logoHtml + '</div>'
 
-      // Nome + ticker + badge (1fr)
-      + '<div style="display:flex;flex-direction:column;gap:2px;min-width:0;padding-right:8px">'
-        + '<div style="display:flex;align-items:center;gap:5px;flex-wrap:nowrap">'
-          + '<span style="font-family:DM Mono,monospace;font-size:12px;font-weight:700;color:#F0EDE6;letter-spacing:.04em;white-space:nowrap">' + a.t + '</span>'
-          + '<span style="font-size:9px;padding:1px 5px;border-radius:3px;background:' + catColor + '1a;color:' + catColor + ';letter-spacing:.05em;text-transform:uppercase;font-family:DM Mono,monospace;white-space:nowrap;flex-shrink:0">' + a.sec + '</span>'
+      // Ticker + nome + badge (1fr)
+      + '<div style="min-width:0;padding-right:12px">'
+        + '<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:3px">'
+          + '<span style="font-family:DM Mono,monospace;font-size:12px;font-weight:700;color:#E8E4DC;letter-spacing:.06em">' + a.t + '</span>'
+          + '<span style="font-size:9px;padding:1px 6px;border-radius:3px;border:1px solid ' + catColor + '44;color:' + catColor + ';letter-spacing:.08em;text-transform:uppercase;font-family:DM Mono,monospace;white-space:nowrap">' + a.sec + '</span>'
         + '</div>'
-        + '<div style="font-size:11px;color:#6a6a65;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + a.n + '</div>'
+        + '<div style="font-size:11px;color:#4a4a45;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.01em">' + a.n + '</div>'
       + '</div>'
 
-      // Prezzo (110px)
-      + '<div style="text-align:right;font-family:DM Mono,monospace;font-size:12px;color:#F0EDE6;font-weight:500;padding-right:4px">'
-        + (hasPrice ? priceStr : '<span style="color:#2a2a2a">—</span>')
+      // Prezzo 120px
+      + '<div style="text-align:right;font-family:DM Mono,monospace;font-size:12px;color:#D4CFCA;font-weight:600;padding-right:8px;letter-spacing:.02em">'
+        + (hasPrice ? formatScrPrice(p.price, a.cat) : '<span style="color:#252525">—</span>')
       + '</div>'
 
-      // % colonne (90px x5)
-      + '<div style="text-align:center">' + fmtChgBadge(p.d1) + '</div>'
-      + '<div style="text-align:center">' + fmtChgBadge(p.d5) + '</div>'
-      + '<div style="text-align:center">' + fmtChgBadge(p.d30) + '</div>'
-      + '<div style="text-align:center">' + fmtChgBadge(p.d90) + '</div>'
+      // Variazioni 88px x5
+      + '<div style="text-align:center">' + fmtChgBadge(p.d1)   + '</div>'
+      + '<div style="text-align:center">' + fmtChgBadge(p.d5)   + '</div>'
+      + '<div style="text-align:center">' + fmtChgBadge(p.d30)  + '</div>'
+      + '<div style="text-align:center">' + fmtChgBadge(p.d90)  + '</div>'
       + '<div style="text-align:center">' + fmtChgBadge(p.d365) + '</div>'
     + '</div>';
   }).join('');
@@ -3690,13 +3721,14 @@ function renderScreenerList() {
 }
 
 function fmtChgBadge(v) {
-  if (v==null) return '<span style="color:#2a2a2a;font-family:DM Mono,monospace;font-size:11px">—</span>';
-  var up = v>=0;
-  var col = up ? '#4CAF7E' : '#E05A5A';
-  var bg  = up ? 'rgba(76,175,126,.12)' : 'rgba(224,90,90,.12)';
+  if (v == null) return '<span style="color:#252525;font-family:DM Mono,monospace;font-size:10px">—</span>';
+  var up   = v >= 0;
+  var col  = up ? '#3DB86A' : '#D94F4F';
+  var bg   = up ? 'rgba(61,184,106,.1)' : 'rgba(217,79,79,.1)';
   var sign = up ? '+' : '';
-  return '<span style="font-family:DM Mono,monospace;font-size:11px;font-weight:500;color:'+col+';'
-    +'background:'+bg+';padding:2px 5px;border-radius:4px;display:inline-block">'+sign+v.toFixed(2)+'%</span>';
+  return '<span style="font-family:DM Mono,monospace;font-size:11px;font-weight:600;color:' + col + ';'
+    + 'background:' + bg + ';padding:3px 7px;border-radius:4px;display:inline-block;letter-spacing:.02em">'
+    + sign + v.toFixed(2) + '%</span>';
 }
 
 function formatScrPrice(p, cat) {
