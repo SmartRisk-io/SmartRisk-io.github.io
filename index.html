@@ -2896,23 +2896,53 @@ function _renderApChart(a, period) {
   var pts = period === 'W' ? 7 : period === 'M' ? 30 : 90;
   var labels = [], data = [];
   var now = Date.now(), dayMs = 86400000;
+  // Rumore proporzionale al prezzo (0.5% max) per simulazione realistica
+  var volatility = cp * 0.005;
   for (var i = pts; i >= 0; i--) {
     var d = new Date(now - i * dayMs);
     labels.push(d.toLocaleDateString('it-IT', {day:'numeric', month:'short'}));
     var t2 = (pts - i) / pts;
     var trend = bp + (cp - bp) * t2;
-    var noise = (Math.random() - 0.5) * Math.abs(cp - bp) * 0.3;
+    var noise = (Math.random() - 0.5) * 2 * volatility;
     data.push(parseFloat((trend + noise).toFixed(2)));
   }
   data[data.length-1] = cp;
   var isUp = cp >= bp;
+  var minVal = Math.min.apply(null, data) * 0.999;
+  var maxVal = Math.max.apply(null, data) * 1.001;
   _apChart = new Chart(canvas, {
-    type:'line',
-    data:{ labels:labels, datasets:[{ data:data, borderColor:isUp?'#4CAF7E':'#E05A5A', backgroundColor:isUp?'rgba(76,175,126,.1)':'rgba(224,90,90,.1)', borderWidth:1.5, pointRadius:0, fill:true, tension:0.3 }] },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} }, scales:{
-      x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#8A8580',font:{size:9},maxTicksLimit:5}},
-      y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#8A8580',font:{size:9},callback:function(v){return '€'+v.toFixed(0);}}}
-    }}
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: data,
+        borderColor: isUp ? '#4CAF7E' : '#E05A5A',
+        backgroundColor: isUp ? 'rgba(76,175,126,.08)' : 'rgba(224,90,90,.08)',
+        borderWidth: 1.5,
+        pointRadius: 0,
+        fill: true,
+        tension: 0.4
+      }]
+    },
+    options: {
+      responsive: false,
+      animation: false,
+      plugins: { legend: { display: false }, tooltip: {
+        callbacks: { label: function(ctx) { return ctx.parsed.y.toLocaleString('it-IT',{style:'currency',currency:'EUR',minimumFractionDigits:2}); } }
+      }},
+      scales: {
+        x: { grid:{color:'rgba(255,255,255,.04)'}, ticks:{color:'#8A8580',font:{size:9},maxTicksLimit:6} },
+        y: {
+          min: minVal, max: maxVal,
+          grid: {color:'rgba(255,255,255,.04)'},
+          ticks: { color:'#8A8580', font:{size:9}, maxTicksLimit:4,
+            callback: function(v) {
+              return v >= 1000 ? '€'+v.toFixed(0) : '€'+v.toFixed(2);
+            }
+          }
+        }
+      }
+    }
   });
 }
 
@@ -2989,7 +3019,7 @@ async function runApAi(idx) {
         <span style="font-size:10px;letter-spacing:.1em;color:#8A8580;text-transform:uppercase">Andamento P&L</span>
         <div style="display:flex;gap:4px" id="apChartBtns"></div>
       </div>
-      <canvas id="apChart" height="100" style="width:100%"></canvas>
+      <canvas id="apChart" width="340" height="120" style="display:block;max-width:100%"></canvas>
     </div>
 
     <!-- Posizione -->
