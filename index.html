@@ -640,6 +640,7 @@ svg.donut{transform:rotate(-90deg);}
 
 
 
+
 // ─── STATE ───────────────────────────────────────────────────────────────────
 let assets = [];
 let livePrices = {};
@@ -682,6 +683,309 @@ const ASSET_KB = {
   'SGLD':  {risk:'medium',ret:5, vol:2, sector:'Oro',              desc:'ETF Oro fisico'},
   'SGLD.MI':{risk:'medium',ret:5,vol:2, sector:'Oro',              desc:'ETF Oro su Borsa Italiana'},
 };
+
+// ─── LANGUAGE ────────────────────────────────────────────────────────────────
+const TRANSLATIONS = {
+  it: {
+    // Topbar
+    logout: 'Esci',
+    // Header buttons
+    updatePrices: 'Aggiorna prezzi',
+    aiAnalysis: 'Analisi AI',
+    edit: 'Modifica',
+    update: 'Aggiorna',
+    // Summary cards
+    totalInvested: 'Totale investito',
+    openPositions: 'Posizioni aperte',
+    livePositions: 'Su posizioni con prezzo live',
+    portfolioAssets: 'Asset in portafoglio',
+    lastUpdate: 'Ultimo aggiornamento',
+    liveYahoo: 'Prezzi live Yahoo Finance',
+    // Tabs
+    portfolio: 'Portafoglio',
+    calculator: 'Calcolatore',
+    riskMatrix: 'Matrice Rischio',
+    strategy: 'Strategia',
+    heatmap: 'Heatmap',
+    aiTab: 'Analisi AI',
+    markets: 'Mercati',
+    signals: 'Segnali',
+    other: 'Altro',
+    verdetti: 'Verdetti',
+    storico: 'Storico',
+    // Portfolio tab
+    allocation: 'Allocazione',
+    riskExposure: 'Esposizione per livello di rischio',
+    detailedPositions: 'Posizioni dettagliate',
+    asset: 'Asset',
+    invested: 'Investito',
+    buyPrice: 'Prezzo acquisto',
+    livePrice: 'Prezzo live',
+    target: 'Target',
+    risk: 'Rischio',
+    noAsset: 'Nessun asset',
+    addAsset: 'Aggiungi asset',
+    saveCloud: 'Salva su cloud',
+    budget: 'Budget e liquidita',
+    totalBudget: 'Budget totale',
+    budgetPlaceholder: 'Inserisci il tuo capitale totale',
+    availableLiquidity: 'Liquidita disponibile',
+    unrealizedGain: 'Guadagno non realizzato',
+    unrealizedLoss: 'Perdita non realizzata',
+    lowRiskLabel: 'Basso rischio',
+    medRiskLabel: 'Rischio medio',
+    highRiskLabel: 'Alto rischio',
+    unrealizedGain: 'Guadagno non realizzato',
+    unrealizedLoss: 'Perdita non realizzata',
+    lowRiskLabel: 'Basso rischio',
+    medRiskLabel: 'Rischio medio',
+    highRiskLabel: 'Alto rischio',
+    unrealizedGain: 'Guadagno non realizzato',
+    unrealizedLoss: 'Perdita non realizzata',
+    lowRiskLabel: 'Basso rischio',
+    medRiskLabel: 'Rischio medio',
+    highRiskLabel: 'Alto rischio',
+    lowRisk: 'Basso',
+    medRisk: 'Medio',
+    highRisk: 'Alto',
+    // Calculator
+    expectedReturn: 'Rendimento atteso per asset',
+    results: 'Risultati',
+    currentValue: 'Valore attuale',
+    dcaSimulator: 'Simulatore DCA',
+    // Risk Matrix
+    positionEval: 'Valutazione posizioni',
+    // Heatmap
+    heatmapPerf: 'Heatmap performance',
+    // AI tab
+    aiPortfolio: 'Analisi AI del portafoglio',
+    analyzeNow: 'Analizza ora',
+    portfolioEval: 'Valutazione del portafoglio',
+    aiReady: 'Analisi AI pronta',
+    analyzePortfolio: 'Analizza portafoglio',
+    perAssetEval: 'Valutazione per asset',
+    concreteHints: 'Suggerimenti concreti',
+    // Markets
+    dailyBriefing: 'Briefing mercati giornaliero',
+    updateBriefing: 'Aggiorna briefing',
+    briefingMarkets: 'Briefing mercati',
+    loadBriefing: 'Carica briefing',
+    macro: 'Macro',
+    geopolitics: 'Geopolitica',
+    sectors: 'Settori in evidenza',
+    opportunities: 'Opportunita',
+    riskMonitor: 'Rischi da monitorare',
+    // Storico
+    closedPositions: 'Storico posizioni chiuse',
+    tradeLog: 'Registro di tutti i trade completati',
+    noClosedPos: 'Nessuna posizione chiusa',
+    winTrades: 'Trade vincenti',
+    lossTrades: 'Trade perdenti',
+    closePrice: 'Prezzo chiusura',
+    closeDate: 'Data chiusura',
+    // Signals
+    tradingSignals: 'Segnali di trading',
+    updateSignals: 'Aggiorna segnali',
+    generateSignals: 'Genera segnali',
+    perAssetSignals: 'Segnali per asset',
+    marketSignals: 'Segnali di mercato',
+    aiAnalyzing: 'Claude sta analizzando i mercati',
+    // Strategy
+    recommendedStrategy: 'Strategia consigliata',
+    weekly: 'SETTIMANALE',
+    monthly: 'MENSILE',
+    quarterly: 'TRIMESTRALE',
+    annual: 'ANNUALE',
+    rebalancing: 'Ribilanciamento',
+    strategicReview: 'Revisione strategica',
+    updatePricesHint: t('updatePricesHint'),
+    personalHints: 'Suggerimenti personalizzati',
+    score: 'SCORE',
+    riskLabel: 'RISCHIO',
+    // Form fields
+    ticker: 'Ticker',
+    name: 'Nome',
+    quantity: 'Quantita',
+    tickerSuggestion: 'Suggerimento Ticker',
+    // Misc
+    confirmClose: 'Conferma chiusura',
+    dailyLimitReached: 'Limite giornaliero raggiunto',
+    loadError: 'Errore caricamento',
+    retry: 'Riprova',
+    error: 'Errore',
+    positions: 'Posizioni',
+    livePrices: 'Prezzi live',
+    controlledRisk: 'Esposizione al rischio controllata',
+    timeplan: 'Piano temporale',
+    yahooFinance: 'Yahoo Finance',
+  },
+  en: {
+    logout: 'Logout',
+    updatePrices: 'Update prices',
+    aiAnalysis: 'AI Analysis',
+    edit: 'Edit',
+    update: 'Update',
+    totalInvested: 'Total invested',
+    openPositions: 'Open positions',
+    livePositions: 'On positions with live price',
+    portfolioAssets: 'Portfolio assets',
+    lastUpdate: 'Last update',
+    liveYahoo: 'Live prices via Yahoo Finance',
+    portfolio: 'Portfolio',
+    calculator: 'Calculator',
+    riskMatrix: 'Risk Matrix',
+    strategy: 'Strategy',
+    heatmap: 'Heatmap',
+    aiTab: 'AI Analysis',
+    markets: 'Markets',
+    signals: 'Signals',
+    other: 'More',
+    verdetti: 'Verdicts',
+    storico: 'History',
+    allocation: 'Allocation',
+    riskExposure: 'Exposure by risk level',
+    detailedPositions: 'Detailed positions',
+    asset: 'Asset',
+    invested: 'Invested',
+    buyPrice: 'Buy price',
+    livePrice: 'Live price',
+    target: 'Target',
+    risk: 'Risk',
+    noAsset: 'No assets',
+    addAsset: 'Add asset',
+    saveCloud: 'Save to cloud',
+    budget: 'Budget & liquidity',
+    totalBudget: 'Total budget',
+    budgetPlaceholder: 'Enter your total capital',
+    availableLiquidity: 'Available liquidity',
+    unrealizedGain: 'Unrealized gain',
+    unrealizedLoss: 'Unrealized loss',
+    lowRiskLabel: 'Low risk',
+    medRiskLabel: 'Medium risk',
+    highRiskLabel: 'High risk',
+    unrealizedGain: 'Unrealized gain',
+    unrealizedLoss: 'Unrealized loss',
+    lowRiskLabel: 'Low risk',
+    medRiskLabel: 'Medium risk',
+    highRiskLabel: 'High risk',
+    unrealizedGain: 'Unrealized gain',
+    unrealizedLoss: 'Unrealized loss',
+    lowRiskLabel: 'Low risk',
+    medRiskLabel: 'Medium risk',
+    highRiskLabel: 'High risk',
+    lowRisk: 'Low',
+    medRisk: 'Medium',
+    highRisk: 'High',
+    expectedReturn: 'Expected return per asset',
+    results: 'Results',
+    currentValue: 'Current value',
+    dcaSimulator: 'DCA Simulator',
+    positionEval: 'Position evaluation',
+    heatmapPerf: 'Performance heatmap',
+    aiPortfolio: 'AI portfolio analysis',
+    analyzeNow: 'Analyze now',
+    portfolioEval: 'Portfolio evaluation',
+    aiReady: 'AI analysis ready',
+    analyzePortfolio: 'Analyze portfolio',
+    perAssetEval: 'Per-asset evaluation',
+    concreteHints: 'Concrete suggestions',
+    dailyBriefing: 'Daily market briefing',
+    updateBriefing: 'Update briefing',
+    briefingMarkets: 'Market briefing',
+    loadBriefing: 'Load briefing',
+    macro: 'Macro',
+    geopolitics: 'Geopolitics',
+    sectors: 'Sectors in focus',
+    opportunities: 'Opportunities',
+    riskMonitor: 'Risks to monitor',
+    closedPositions: 'Closed positions history',
+    tradeLog: 'Log of all completed trades',
+    noClosedPos: 'No closed positions',
+    winTrades: 'Winning trades',
+    lossTrades: 'Losing trades',
+    closePrice: 'Close price',
+    closeDate: 'Close date',
+    tradingSignals: 'Trading signals',
+    updateSignals: 'Update signals',
+    generateSignals: 'Generate signals',
+    perAssetSignals: 'Per-asset signals',
+    marketSignals: 'Market signals',
+    aiAnalyzing: 'Claude is analyzing markets',
+    recommendedStrategy: 'Recommended strategy',
+    weekly: 'WEEKLY',
+    monthly: 'MONTHLY',
+    quarterly: 'QUARTERLY',
+    annual: 'ANNUAL',
+    rebalancing: 'Rebalancing',
+    strategicReview: 'Strategic review',
+    updatePricesHint: 'Update prices',
+    personalHints: 'Personalized suggestions',
+    score: 'SCORE',
+    riskLabel: 'RISK',
+    ticker: 'Ticker',
+    name: 'Name',
+    quantity: 'Quantity',
+    tickerSuggestion: 'Ticker Suggestion',
+    confirmClose: 'Confirm close',
+    dailyLimitReached: 'Daily limit reached',
+    loadError: 'Load error',
+    retry: 'Retry',
+    error: 'Error',
+    positions: 'Positions',
+    livePrices: 'Live prices',
+    controlledRisk: 'Controlled risk exposure',
+    timeplan: 'Time plan',
+    yahooFinance: 'Yahoo Finance',
+  }
+};
+let currentLang = localStorage.getItem('srm_lang') || 'it';
+
+function toggleLang() {
+  currentLang = currentLang === 'it' ? 'en' : 'it';
+  localStorage.setItem('srm_lang', currentLang);
+  applyLang();
+}
+
+function t(key) {
+  const keys = key.split('.');
+  let val = TRANSLATIONS[currentLang];
+  for (const k of keys) val = val?.[k];
+  return val || key;
+}
+
+function applyLang() {
+  const btn = document.getElementById('langBtn');
+  if (btn) btn.textContent = currentLang === 'it' ? 'EN' : 'IT';
+
+  // Update all elements with data-i18n attribute
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = t(key);
+    if (!val) return;
+    if (el.tagName === 'INPUT') {
+      el.placeholder = val;
+    } else {
+      el.textContent = val;
+    }
+  });
+
+  // Update tab labels
+  const tabMap = {
+    portafoglio: t('portfolio'), calcolatore: t('calculator'),
+    rischio: t('riskMatrix'), strategia: t('strategy'),
+    heatmap: t('heatmap'), ai: t('aiTab'),
+    news: t('markets'), segnali: t('signals'),
+    verdetti: t('verdetti'), storico: t('storico')
+  };
+  document.querySelectorAll('.tab[onclick]').forEach(btn => {
+    const match = btn.getAttribute('onclick')?.match(/switchTab\('(\w+)'/);
+    if (match && tabMap[match[1]]) btn.textContent = tabMap[match[1]];
+  });
+  const altroBtn = document.querySelector('#altroDropdown > .tab');
+  if (altroBtn) altroBtn.innerHTML = t('other') + ' &#9660;';
+}
+
+
 
 function getProfile(ticker) {
   const t = ticker.toUpperCase();
@@ -1714,307 +2018,6 @@ switchTab = function(id, btn) {
     document.querySelectorAll('.tab-dropdown-menu button').forEach(b => b.classList.remove('active-item'));
   }
 };
-
-// ─── LANGUAGE ────────────────────────────────────────────────────────────────
-const TRANSLATIONS = {
-  it: {
-    // Topbar
-    logout: 'Esci',
-    // Header buttons
-    updatePrices: 'Aggiorna prezzi',
-    aiAnalysis: 'Analisi AI',
-    edit: 'Modifica',
-    update: 'Aggiorna',
-    // Summary cards
-    totalInvested: 'Totale investito',
-    openPositions: 'Posizioni aperte',
-    livePositions: 'Su posizioni con prezzo live',
-    portfolioAssets: 'Asset in portafoglio',
-    lastUpdate: 'Ultimo aggiornamento',
-    liveYahoo: 'Prezzi live Yahoo Finance',
-    // Tabs
-    portfolio: 'Portafoglio',
-    calculator: 'Calcolatore',
-    riskMatrix: 'Matrice Rischio',
-    strategy: 'Strategia',
-    heatmap: 'Heatmap',
-    aiTab: 'Analisi AI',
-    markets: 'Mercati',
-    signals: 'Segnali',
-    other: 'Altro',
-    verdetti: 'Verdetti',
-    storico: 'Storico',
-    // Portfolio tab
-    allocation: 'Allocazione',
-    riskExposure: 'Esposizione per livello di rischio',
-    detailedPositions: 'Posizioni dettagliate',
-    asset: 'Asset',
-    invested: 'Investito',
-    buyPrice: 'Prezzo acquisto',
-    livePrice: 'Prezzo live',
-    target: 'Target',
-    risk: 'Rischio',
-    noAsset: 'Nessun asset',
-    addAsset: 'Aggiungi asset',
-    saveCloud: 'Salva su cloud',
-    budget: 'Budget e liquidita',
-    totalBudget: 'Budget totale',
-    budgetPlaceholder: 'Inserisci il tuo capitale totale',
-    availableLiquidity: 'Liquidita disponibile',
-    unrealizedGain: 'Guadagno non realizzato',
-    unrealizedLoss: 'Perdita non realizzata',
-    lowRiskLabel: 'Basso rischio',
-    medRiskLabel: 'Rischio medio',
-    highRiskLabel: 'Alto rischio',
-    unrealizedGain: 'Guadagno non realizzato',
-    unrealizedLoss: 'Perdita non realizzata',
-    lowRiskLabel: 'Basso rischio',
-    medRiskLabel: 'Rischio medio',
-    highRiskLabel: 'Alto rischio',
-    unrealizedGain: 'Guadagno non realizzato',
-    unrealizedLoss: 'Perdita non realizzata',
-    lowRiskLabel: 'Basso rischio',
-    medRiskLabel: 'Rischio medio',
-    highRiskLabel: 'Alto rischio',
-    lowRisk: 'Basso',
-    medRisk: 'Medio',
-    highRisk: 'Alto',
-    // Calculator
-    expectedReturn: 'Rendimento atteso per asset',
-    results: 'Risultati',
-    currentValue: 'Valore attuale',
-    dcaSimulator: 'Simulatore DCA',
-    // Risk Matrix
-    positionEval: 'Valutazione posizioni',
-    // Heatmap
-    heatmapPerf: 'Heatmap performance',
-    // AI tab
-    aiPortfolio: 'Analisi AI del portafoglio',
-    analyzeNow: 'Analizza ora',
-    portfolioEval: 'Valutazione del portafoglio',
-    aiReady: 'Analisi AI pronta',
-    analyzePortfolio: 'Analizza portafoglio',
-    perAssetEval: 'Valutazione per asset',
-    concreteHints: 'Suggerimenti concreti',
-    // Markets
-    dailyBriefing: 'Briefing mercati giornaliero',
-    updateBriefing: 'Aggiorna briefing',
-    briefingMarkets: 'Briefing mercati',
-    loadBriefing: 'Carica briefing',
-    macro: 'Macro',
-    geopolitics: 'Geopolitica',
-    sectors: 'Settori in evidenza',
-    opportunities: 'Opportunita',
-    riskMonitor: 'Rischi da monitorare',
-    // Storico
-    closedPositions: 'Storico posizioni chiuse',
-    tradeLog: 'Registro di tutti i trade completati',
-    noClosedPos: 'Nessuna posizione chiusa',
-    winTrades: 'Trade vincenti',
-    lossTrades: 'Trade perdenti',
-    closePrice: 'Prezzo chiusura',
-    closeDate: 'Data chiusura',
-    // Signals
-    tradingSignals: 'Segnali di trading',
-    updateSignals: 'Aggiorna segnali',
-    generateSignals: 'Genera segnali',
-    perAssetSignals: 'Segnali per asset',
-    marketSignals: 'Segnali di mercato',
-    aiAnalyzing: 'Claude sta analizzando i mercati',
-    // Strategy
-    recommendedStrategy: 'Strategia consigliata',
-    weekly: 'SETTIMANALE',
-    monthly: 'MENSILE',
-    quarterly: 'TRIMESTRALE',
-    annual: 'ANNUALE',
-    rebalancing: 'Ribilanciamento',
-    strategicReview: 'Revisione strategica',
-    updatePricesHint: t('updatePricesHint'),
-    personalHints: 'Suggerimenti personalizzati',
-    score: 'SCORE',
-    riskLabel: 'RISCHIO',
-    // Form fields
-    ticker: 'Ticker',
-    name: 'Nome',
-    quantity: 'Quantita',
-    tickerSuggestion: 'Suggerimento Ticker',
-    // Misc
-    confirmClose: 'Conferma chiusura',
-    dailyLimitReached: 'Limite giornaliero raggiunto',
-    loadError: 'Errore caricamento',
-    retry: 'Riprova',
-    error: 'Errore',
-    positions: 'Posizioni',
-    livePrices: 'Prezzi live',
-    controlledRisk: 'Esposizione al rischio controllata',
-    timeplan: 'Piano temporale',
-    yahooFinance: 'Yahoo Finance',
-  },
-  en: {
-    logout: 'Logout',
-    updatePrices: 'Update prices',
-    aiAnalysis: 'AI Analysis',
-    edit: 'Edit',
-    update: 'Update',
-    totalInvested: 'Total invested',
-    openPositions: 'Open positions',
-    livePositions: 'On positions with live price',
-    portfolioAssets: 'Portfolio assets',
-    lastUpdate: 'Last update',
-    liveYahoo: 'Live prices via Yahoo Finance',
-    portfolio: 'Portfolio',
-    calculator: 'Calculator',
-    riskMatrix: 'Risk Matrix',
-    strategy: 'Strategy',
-    heatmap: 'Heatmap',
-    aiTab: 'AI Analysis',
-    markets: 'Markets',
-    signals: 'Signals',
-    other: 'More',
-    verdetti: 'Verdicts',
-    storico: 'History',
-    allocation: 'Allocation',
-    riskExposure: 'Exposure by risk level',
-    detailedPositions: 'Detailed positions',
-    asset: 'Asset',
-    invested: 'Invested',
-    buyPrice: 'Buy price',
-    livePrice: 'Live price',
-    target: 'Target',
-    risk: 'Risk',
-    noAsset: 'No assets',
-    addAsset: 'Add asset',
-    saveCloud: 'Save to cloud',
-    budget: 'Budget & liquidity',
-    totalBudget: 'Total budget',
-    budgetPlaceholder: 'Enter your total capital',
-    availableLiquidity: 'Available liquidity',
-    unrealizedGain: 'Unrealized gain',
-    unrealizedLoss: 'Unrealized loss',
-    lowRiskLabel: 'Low risk',
-    medRiskLabel: 'Medium risk',
-    highRiskLabel: 'High risk',
-    unrealizedGain: 'Unrealized gain',
-    unrealizedLoss: 'Unrealized loss',
-    lowRiskLabel: 'Low risk',
-    medRiskLabel: 'Medium risk',
-    highRiskLabel: 'High risk',
-    unrealizedGain: 'Unrealized gain',
-    unrealizedLoss: 'Unrealized loss',
-    lowRiskLabel: 'Low risk',
-    medRiskLabel: 'Medium risk',
-    highRiskLabel: 'High risk',
-    lowRisk: 'Low',
-    medRisk: 'Medium',
-    highRisk: 'High',
-    expectedReturn: 'Expected return per asset',
-    results: 'Results',
-    currentValue: 'Current value',
-    dcaSimulator: 'DCA Simulator',
-    positionEval: 'Position evaluation',
-    heatmapPerf: 'Performance heatmap',
-    aiPortfolio: 'AI portfolio analysis',
-    analyzeNow: 'Analyze now',
-    portfolioEval: 'Portfolio evaluation',
-    aiReady: 'AI analysis ready',
-    analyzePortfolio: 'Analyze portfolio',
-    perAssetEval: 'Per-asset evaluation',
-    concreteHints: 'Concrete suggestions',
-    dailyBriefing: 'Daily market briefing',
-    updateBriefing: 'Update briefing',
-    briefingMarkets: 'Market briefing',
-    loadBriefing: 'Load briefing',
-    macro: 'Macro',
-    geopolitics: 'Geopolitics',
-    sectors: 'Sectors in focus',
-    opportunities: 'Opportunities',
-    riskMonitor: 'Risks to monitor',
-    closedPositions: 'Closed positions history',
-    tradeLog: 'Log of all completed trades',
-    noClosedPos: 'No closed positions',
-    winTrades: 'Winning trades',
-    lossTrades: 'Losing trades',
-    closePrice: 'Close price',
-    closeDate: 'Close date',
-    tradingSignals: 'Trading signals',
-    updateSignals: 'Update signals',
-    generateSignals: 'Generate signals',
-    perAssetSignals: 'Per-asset signals',
-    marketSignals: 'Market signals',
-    aiAnalyzing: 'Claude is analyzing markets',
-    recommendedStrategy: 'Recommended strategy',
-    weekly: 'WEEKLY',
-    monthly: 'MONTHLY',
-    quarterly: 'QUARTERLY',
-    annual: 'ANNUAL',
-    rebalancing: 'Rebalancing',
-    strategicReview: 'Strategic review',
-    updatePricesHint: 'Update prices',
-    personalHints: 'Personalized suggestions',
-    score: 'SCORE',
-    riskLabel: 'RISK',
-    ticker: 'Ticker',
-    name: 'Name',
-    quantity: 'Quantity',
-    tickerSuggestion: 'Ticker Suggestion',
-    confirmClose: 'Confirm close',
-    dailyLimitReached: 'Daily limit reached',
-    loadError: 'Load error',
-    retry: 'Retry',
-    error: 'Error',
-    positions: 'Positions',
-    livePrices: 'Live prices',
-    controlledRisk: 'Controlled risk exposure',
-    timeplan: 'Time plan',
-    yahooFinance: 'Yahoo Finance',
-  }
-};
-let currentLang = localStorage.getItem('srm_lang') || 'it';
-
-function toggleLang() {
-  currentLang = currentLang === 'it' ? 'en' : 'it';
-  localStorage.setItem('srm_lang', currentLang);
-  applyLang();
-}
-
-function t(key) {
-  const keys = key.split('.');
-  let val = TRANSLATIONS[currentLang];
-  for (const k of keys) val = val?.[k];
-  return val || key;
-}
-
-function applyLang() {
-  const btn = document.getElementById('langBtn');
-  if (btn) btn.textContent = currentLang === 'it' ? 'EN' : 'IT';
-
-  // Update all elements with data-i18n attribute
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    const val = t(key);
-    if (!val) return;
-    if (el.tagName === 'INPUT') {
-      el.placeholder = val;
-    } else {
-      el.textContent = val;
-    }
-  });
-
-  // Update tab labels
-  const tabMap = {
-    portafoglio: t('portfolio'), calcolatore: t('calculator'),
-    rischio: t('riskMatrix'), strategia: t('strategy'),
-    heatmap: t('heatmap'), ai: t('aiTab'),
-    news: t('markets'), segnali: t('signals'),
-    verdetti: t('verdetti'), storico: t('storico')
-  };
-  document.querySelectorAll('.tab[onclick]').forEach(btn => {
-    const match = btn.getAttribute('onclick')?.match(/switchTab\('(\w+)'/);
-    if (match && tabMap[match[1]]) btn.textContent = tabMap[match[1]];
-  });
-  const altroBtn = document.querySelector('#altroDropdown > .tab');
-  if (altroBtn) altroBtn.innerHTML = t('other') + ' &#9660;';
-}
 
 // ─── NOTIFICHE PUSH ──────────────────────────────────────────────────────────
 const NOTIF_THRESHOLD_DAY = 5;   // % variazione giornaliera
