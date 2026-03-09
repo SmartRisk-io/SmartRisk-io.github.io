@@ -500,7 +500,7 @@ svg.donut{transform:rotate(-90deg);}
     </div>
 
 
-    <div class="brief-text" id="briefText">Caricamento...</div>
+    <div class="brief-text" id="briefText"></div>
     <div class="brief-pills" id="briefPills"></div>
   </div>
   <!-- MARKET TICKER -->
@@ -584,22 +584,11 @@ svg.donut{transform:rotate(-90deg);}
           <span class="brief-date" id="briefDate"></span>
           <button onclick="document.getElementById('morningBrief').style.display='none'" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;margin-left:8px">×</button>
         </div>
-        <div class="brief-text" id="briefText">Caricamento...</div>
+        <div class="brief-text" id="briefText"></div>
         <div class="brief-pills" id="briefPills"></div>
       </div>
-      <div class="two-col">
-        <div class="card">
-          <div class="section-title" data-i18n="allocation">Allocazione</div>
-          <div class="donut-wrap">
-            <svg class="donut" id="donutSvg" width="160" height="160" viewBox="0 0 160 160">
-              <circle cx="80" cy="80" r="60" fill="none" stroke="#252525" stroke-width="22"/>
-            </svg>
-            <div class="donut-center"><div class="donut-val" id="donutVal">&#8212;</div><div style="font-size:11px;color:var(--muted)">investito</div></div>
-          </div>
-          <div id="legendList"><div style="text-align:center;padding:16px;color:var(--muted);font-size:12px">Aggiungi asset &#8594;</div></div>
-        </div>
-        <div class="card"><div class="section-title" data-i18n="riskExposure">Esposizione per livello di rischio</div><div id="sectorBars" style="margin-top:16px"></div></div>
-      </div>
+      <div id="portfolioHeader" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:20px"></div>
+
       <div class="section-title" data-i18n="detailedPositions">Posizioni dettagliate</div>
       <table class="table">
         <thead><tr><th data-i18n="asset">Asset</th><th data-i18n="invested">Investito</th><th data-i18n="buyPrice">Prezzo acquisto</th><th data-i18n="livePrice">Prezzo live</th><th>P&amp;L</th><th>7g</th><th data-i18n="target">Target</th><th data-i18n="risk">Rischio</th></tr></thead>
@@ -610,32 +599,7 @@ svg.donut{transform:rotate(-90deg);}
         <div style="font-size:16px;margin-bottom:8px" data-i18n="noAsset">Nessun asset</div>
         <div style="font-size:13px">Clicca <strong style="color:var(--gold)">Modifica</strong> per aggiungere il primo asset.</div>
       </div>
-      <div style="margin-top:32px">
-        <div class="section-title" data-i18n="budget">Budget e liquidita</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
-          <div class="card">
-            <div class="sum-label" data-i18n="totalBudget">Budget totale</div>
-            <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
-              <input type="number" id="budgetInput" placeholder="es. 10000" step="100"
-                style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;font-family:'DM Mono',monospace;font-size:14px;width:100%;outline:none;"
-                oninput="saveBudget()" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border)'">
-            </div>
-            <div style="font-size:11px;color:var(--muted);margin-top:6px" data-i18n="budgetPlaceholder">Inserisci il tuo capitale totale</div>
-          </div>
-          <div class="card">
-            <div class="sum-label" data-i18n="invested">Investito</div>
-            <div class="sum-value" id="budgetInvested" style="font-size:22px">---</div>
-            <div style="margin-top:8px"><div class="mini-bar"><div class="mini-fill" id="budgetInvestedBar" style="width:0%;background:var(--gold)"></div></div></div>
-            <div style="font-size:11px;color:var(--muted);margin-top:4px" id="budgetInvestedPct">0% del budget</div>
-          </div>
-          <div class="card">
-            <div class="sum-label" data-i18n="availableLiquidity">Liquidita disponibile</div>
-            <div class="sum-value" id="budgetLiquid" style="font-size:22px">---</div>
-            <div style="margin-top:8px"><div class="mini-bar"><div class="mini-fill" id="budgetLiquidBar" style="width:0%;background:var(--green)"></div></div></div>
-            <div style="font-size:11px;color:var(--muted);margin-top:4px" id="budgetLiquidPct">0% del budget</div>
-          </div>
-        </div>
-      </div>
+      
     </div>
     <!-- CALCOLATORE -->
     <div class="tab-content" id="tab-calcolatore">
@@ -678,7 +642,6 @@ svg.donut{transform:rotate(-90deg);}
           <div class="section-title" style="margin:0">Matrice Rischio</div>
           <div style="font-size:12px;color:var(--muted);margin-top:4px">Probabilità × Impatto — aggiornata automaticamente</div>
         </div>
-        <button class="btn btn-blue" onclick="switchTab('ai', document.getElementById('tab-btn-ai'))">🤖 Esegui Analisi AI</button>
       </div>
       <div style="display:grid;grid-template-columns:1fr 260px;gap:20px;align-items:start">
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px">
@@ -1270,7 +1233,32 @@ async function refreshPrices() {
 }
 
 // ─── RENDER ALL ───────────────────────────────────────────────────────────────
+// ─── PORTFOLIO HEADER KPI ──────────────────────────────────────────────────────
+function renderPortfolioHeader() {
+  const el = document.getElementById('portfolioHeader'); if (!el) return;
+  const tot = assets.reduce((s,a) => s+a.invested, 0);
+  const pnlAssets = assets.filter(a => a.currentPrice>0 && a.buyPrice>0);
+  const totalPnl = pnlAssets.reduce((s,a) => s+((a.currentPrice-a.buyPrice)/a.buyPrice*a.invested), 0);
+  const pnlPct = tot>0 ? totalPnl/tot*100 : 0;
+  const pnlColor = pnlPct >= 0 ? 'var(--green)' : 'var(--red)';
+  const winners = pnlAssets.filter(a => a.currentPrice > a.buyPrice).length;
+  const hiPct = tot>0 ? assets.filter(a=>a.risk==='high').reduce((s,a)=>s+a.invested,0)/tot*100 : 0;
+  const kpis = [
+    { label:'Totale investito', value: tot>0 ? '€'+tot.toLocaleString('it-IT',{maximumFractionDigits:0}) : '—', color:'var(--gold)' },
+    { label:'P&L totale', value: pnlAssets.length>0 ? (pnlPct>=0?'+':'')+pnlPct.toFixed(2)+'%' : '—', color: pnlColor },
+    { label:'P&L valore', value: pnlAssets.length>0 ? (totalPnl>=0?'+':'')+' €'+Math.abs(totalPnl).toLocaleString('it-IT',{maximumFractionDigits:0}) : '—', color: pnlColor },
+    { label:'Asset in portafoglio', value: assets.length, color:'var(--text)' },
+    { label:'In guadagno', value: pnlAssets.length>0 ? winners+'/'+pnlAssets.length : '—', color:'var(--green)' },
+    { label:'Rischio alto', value: tot>0 ? hiPct.toFixed(0)+'%' : '—', color: hiPct>40?'var(--red)':hiPct>25?'var(--orange)':'var(--green)' },
+  ];
+  el.innerHTML = kpis.map(k => `<div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px">
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:6px">${k.label}</div>
+    <div style="font-size:20px;font-weight:700;color:${k.color};font-family:'Playfair Display',serif">${k.value}</div>
+  </div>`).join('');
+}
+
 function renderAll() {
+  renderPortfolioHeader();
   renderSummary();renderTable();renderDonut();renderSectors();
   renderHeatmap();renderVerdetti();renderStrategia();
   populateCalcSelect();updateBudgetPanel();
@@ -2331,44 +2319,55 @@ function drawDNA() {
 // ─── MORNING BRIEF ────────────────────────────────────────────────────────────
 async function loadMorningBrief() {
   if (assets.length === 0) return;
-  // Make sure morningBrief is in panoramica tab
   const today = new Date().toISOString().slice(0,10);
   const cached = localStorage.getItem('srm_brief_' + today);
   const el = document.getElementById('morningBrief');
   const textEl = document.getElementById('briefText');
   const pillsEl = document.getElementById('briefPills');
   const dateEl = document.getElementById('briefDate');
-  if (!el) return;
-  dateEl.textContent = new Date().toLocaleDateString('it-IT', {weekday:'long', day:'numeric', month:'long'});
+  if (!el || !textEl) return;
+  if (dateEl) dateEl.textContent = new Date().toLocaleDateString('it-IT', {weekday:'long', day:'numeric', month:'long'});
+  // Mostra dalla cache se disponibile
   if (cached) {
     try {
       const d = JSON.parse(cached);
-      textEl.innerHTML = d.text;
-      pillsEl.innerHTML = (d.pills||[]).map(p=>`<span class="brief-pill" style="color:${p.color};border-color:${p.color}">${p.label}</span>`).join('');
-      el.style.display = 'block'; return;
+      if (d.text) {
+        textEl.innerHTML = d.text;
+        if (pillsEl) pillsEl.innerHTML = (d.pills||[]).map(p=>`<span class="brief-pill" style="color:${p.color};border-color:${p.color}">${p.label}</span>`).join('');
+        el.style.display = 'block';
+        return;
+      }
     } catch(_) {}
   }
+  // Mostra loading solo se il fetch parte
   el.style.display = 'block';
-  textEl.textContent = 'Preparazione del brief di oggi...';
+  textEl.innerHTML = '<span style="color:var(--muted);font-size:12px">⏳ Generazione brief in corso...</span>';
   try {
     const tot = assets.reduce((s,a)=>s+a.invested,0);
     const assetList = assets.map(a=>a.ticker+(a.currentPrice>0&&a.buyPrice>0?' (P&L: '+(((a.currentPrice-a.buyPrice)/a.buyPrice*100).toFixed(1))+'%)':'')).join(', ');
+    // Timeout di 10 secondi
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
     const res = await fetch(WORKER_URL, {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ type:'brief', portfolio:{ assets:assetList, total:tot }, userId: window._currentUid||'anon' })
+      body: JSON.stringify({ type:'brief', portfolio:{ assets:assetList, total:tot }, userId: window._currentUid||'anon' }),
+      signal: controller.signal
     });
+    clearTimeout(timeout);
     const data = await res.json();
-    if (data.error === 'RATE_LIMIT') { el.style.display='none'; return; }
+    if (data.error === 'RATE_LIMIT' || data.error) { el.style.display='none'; return; }
     if (data.text) {
       textEl.innerHTML = data.text;
       const pills = data.pills || [];
-      pillsEl.innerHTML = pills.map(p=>`<span class="brief-pill" style="color:${p.color};border-color:${p.color}">${p.label}</span>`).join('');
+      if (pillsEl) pillsEl.innerHTML = pills.map(p=>`<span class="brief-pill" style="color:${p.color};border-color:${p.color}">${p.label}</span>`).join('');
       localStorage.setItem('srm_brief_'+today, JSON.stringify({text:data.text, pills}));
       logActivity('brief', 'Morning Brief', 'Briefing giornaliero generato');
+    } else {
+      el.style.display='none';
     }
   } catch(e) {
-    textEl.textContent = 'Brief non disponibile oggi.';
-    setTimeout(() => { if(el) el.style.display='none'; }, 3000);
+    // Timeout o errore — nascondi silenziosamente
+    el.style.display='none';
   }
 }
 
