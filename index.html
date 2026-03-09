@@ -52,7 +52,7 @@ window.addEventListener('load', () => {
       if (data&&data.assets) { assets=data.assets; localStorage.setItem('srm_assets',JSON.stringify(assets)); }
       else { const l=localStorage.getItem('srm_assets'); if(l) assets=JSON.parse(l); }
       renderAll(); checkOnboarding(); updateNotifBtn(); applyLang();
-      setTimeout(()=>switchTab('panoramica', document.getElementById('tab-btn-panoramica')), 0);
+      setTimeout(()=>switchTab('portafoglio', document.getElementById('tab-btn-portafoglio')), 0);
       loadMorningBrief();
     } else {
       document.getElementById('loginScreen').style.display='flex';
@@ -277,7 +277,9 @@ input[type=range].wi-range::-webkit-slider-thumb{-webkit-appearance:none;width:1
 .tab-dropdown-menu button{display:block;width:100%;padding:9px 14px;background:none;border:none;color:var(--muted);font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;border-radius:5px;text-align:left;transition:all .15s;}
 .tab-dropdown-menu button:hover{background:var(--surface2);color:var(--text);}
 .tab-dropdown-menu button.active-item{color:var(--gold);}
-.tab-content{display:none;}.tab-content.active{display:flex;flex-direction:column;flex:1;min-height:calc(100vh - 180px);}
+.tab-content{display:none;}
+.tab-content.active{display:flex;flex-direction:column;flex:1;padding:24px 0;overflow-y:auto;}
+.tab-page{display:flex;flex-direction:column;flex:1;gap:20px;}
 .tab-content.active{display:block;}
 .section-title{font-family:DM Mono,monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
 .table{width:100%;border-collapse:collapse;margin-bottom:24px;}
@@ -489,7 +491,6 @@ svg.donut{transform:rotate(-90deg);}
   </div>
     <!-- TABS -->
     <div class="tabs" id="mainTabs">
-      <button class="tab" id="tab-btn-panoramica" onclick="switchTab('panoramica',this)" data-tab="panoramica">Panoramica</button>
       <button class="tab" id="tab-btn-portafoglio" onclick="switchTab('portafoglio',this)" data-tab="portafoglio">Portafoglio</button>
       <button class="tab" id="tab-btn-calcolatore" onclick="switchTab('calcolatore',this)" data-tab="calcolatore">Calcolatore</button>
       <button class="tab" id="tab-btn-rischio" onclick="switchTab('rischio',this)" data-tab="rischio">Matrice Rischio</button>
@@ -497,14 +498,13 @@ svg.donut{transform:rotate(-90deg);}
       <button class="tab" id="tab-btn-heatmap" onclick="switchTab('heatmap',this)" data-tab="heatmap">Heatmap</button>
       <button class="tab" id="tab-btn-ai" onclick="switchTab('ai',this)" data-tab="ai">Analisi AI</button>
       <button class="tab" id="tab-btn-news" onclick="switchTab('news',this)" data-tab="news">Mercati</button>
-      <button class="tab" id="tab-btn-segnali" onclick="switchTab('segnali',this)" data-tab="segnali">Segnali</button>
+      <button class="tab" id="tab-btn-segnali" onclick="switchTab('segnali',this)" data-tab="segnali">Segnali CFD</button>
       <div class="tab-dropdown" id="altroDropdown">
         <button class="tab" id="tab-btn-altro" onclick="toggleAltro(event)">Altro &#9660;</button>
         <div class="tab-dropdown-menu" id="altroMenu">
-          <button onclick="switchTab('mappa',this);closeAltro()">Mappa Geo</button>
-          <button onclick="switchTab('obiettivo',this);closeAltro()">Obiettivo</button>
-          <button onclick="switchTab('verdetti',this);closeAltro()">Verdetti</button>
-          <button onclick="switchTab('storico',this);closeAltro()">Storico</button>
+          <button onclick="switchTab('mappa',this);closeAltro()">🗺 Mappa Geo</button>
+          <button onclick="switchTab('verdetti',this);closeAltro()">⚖️ Verdetti</button>
+          <button onclick="switchTab('storico',this);closeAltro()">📋 Storico</button>
         </div>
       </div>
     </div>
