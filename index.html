@@ -266,21 +266,32 @@ input[type=range].wi-range::-webkit-slider-thumb{-webkit-appearance:none;width:1
 .tab-content.active{display:flex;flex-direction:column;flex:1;padding:24px 0 40px;overflow-y:auto;}
 .section-title{font-family:DM Mono,monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
 /* ── TABS BAR ── */
-.tabs{display:flex;overflow-x:auto;scrollbar-width:none;position:sticky;top:48px;z-index:20;margin-bottom:24px;background:var(--surface);border:1px solid var(--border);border-radius:10px;}
+.tabs{display:flex;overflow:visible;position:sticky;top:48px;z-index:20;margin-bottom:24px;background:var(--surface);border:1px solid var(--border);border-radius:10px;}
 .tabs::-webkit-scrollbar{display:none;}
 .tab{flex:1;min-width:fit-content;padding:11px 20px;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;letter-spacing:.01em;white-space:nowrap;background:none;border:none;border-right:1px solid var(--border);color:var(--muted);cursor:pointer;transition:color .15s,background .15s;text-align:center;}
 .tab:last-of-type{border-right:none;}
 .tab:hover{color:var(--text);background:rgba(255,255,255,.03);}
 .tab.active{color:var(--gold);background:rgba(201,168,76,.09);font-weight:700;}
 /* ── DROPDOWN ALTRO ── */
-.tab-dropdown{position:relative;display:flex;flex:1;}
+.tab-dropdown{position:relative;display:flex;flex:1;overflow:visible;}
 .tab-dropdown>.tab{width:100%;border-right:none;}
-.tab-dropdown-menu{display:none;position:absolute;top:calc(100% + 6px);right:0;background:var(--surface2);border:1px solid var(--border);border-radius:10px;min-width:170px;overflow:hidden;z-index:100;box-shadow:0 8px 32px rgba(0,0,0,.5);}
+.tab-dropdown-menu{display:none;position:fixed;background:var(--surface2);border:1px solid var(--border);border-radius:10px;min-width:170px;overflow:hidden;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,.6);}
 .tab-dropdown-menu.open{display:block;}
 .tab-dropdown-menu button{display:block;width:100%;padding:12px 18px;background:none;border:none;border-bottom:1px solid var(--border);color:var(--text);text-align:left;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;transition:background .15s,color .15s;}
 .tab-dropdown-menu button:last-child{border-bottom:none;}
 .tab-dropdown-menu button:hover{background:rgba(201,168,76,.08);color:var(--gold);}
 .tab-dropdown-menu button.active-item{color:var(--gold);}
+
+
+/* Timeline */
+.tl-item{display:grid;grid-template-columns:16px 1fr;column-gap:14px;padding-bottom:22px;position:relative;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-item::before{content:'';position:absolute;left:7px;top:18px;bottom:0;width:1px;background:var(--border);}
+.tl-item:last-child::before{display:none;}
+.tl-dot{width:16px;height:16px;border-radius:50%;background:var(--gold);border:2px solid #0D0D0D;flex-shrink:0;margin-top:2px;z-index:1;}
+.tl-phase{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;font-weight:700;margin-bottom:3px;}
+.tl-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.tl-text{font-size:12px;color:var(--muted);line-height:1.65;}
 
 .table{width:100%;border-collapse:collapse;margin-bottom:24px;}
 .table th{font-family:DM Mono,monospace;font-size:10px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;text-align:left;padding:0 10px 10px;border-bottom:1px solid var(--border);}
@@ -323,11 +334,11 @@ svg.donut{transform:rotate(-90deg);}
 .strategy-text{font-size:12px;line-height:1.6;color:#A0A0A0;}
 .timeline{position:relative;padding-left:24px;margin-bottom:24px;}
 .timeline::before{content:'';position:absolute;left:6px;top:4px;bottom:4px;width:1px;background:var(--border);}
-.tl-item{position:relative;margin-bottom:20px;}
-.tl-dot{position:absolute;left:-24px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--surface2);border:2px solid var(--gold);}
-.tl-phase{font-family:DM Mono,monospace;font-size:10px;color:var(--gold);letter-spacing:.1em;margin-bottom:3px;}
-.tl-title{font-size:13px;font-weight:600;margin-bottom:4px;}
-.tl-text{font-size:12px;color:#A0A0A0;line-height:1.6;}
+
+
+
+
+
 .verdict-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-radius:6px;margin-bottom:8px;background:var(--surface2);border:1px solid rgba(255,255,255,.05);}
 .v-ticker{font-family:DM Mono,monospace;font-size:12px;min-width:80px;}
 .v-desc{color:#A0A0A0;font-size:13px;flex:1;margin:0 12px;}
@@ -638,18 +649,31 @@ svg.donut{transform:rotate(-90deg);}
     </div>
     <!-- RISCHIO -->
     <div class="tab-content" id="tab-rischio">
-      <div class="card" style="margin-bottom:24px">
-        <div class="section-title">Matrice Probabilita' x Impatto</div>
-        <p style="font-size:12px;color:var(--muted);margin:8px 0 20px">Aggiornata automaticamente dall'Analisi AI.</p>
-        <div id="riskMatrixDyn"></div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+        <div>
+          <div class="section-title" style="margin:0">Matrice Rischio</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">Probabilità × Impatto — aggiornata automaticamente</div>
+        </div>
+        <button class="btn btn-blue" onclick="switchTab('ai', document.getElementById('tab-btn-ai'))">🤖 Esegui Analisi AI</button>
       </div>
-      <div id="riskAlerts"></div>
+      <div style="display:grid;grid-template-columns:1fr 260px;gap:20px;align-items:start">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px">
+          <div id="riskMatrixDyn"></div>
+        </div>
+        <div id="riskAlerts" style="display:flex;flex-direction:column;gap:12px"></div>
+      </div>
     </div>
-    <!-- STRATEGIA -->
+    
+<!-- STRATEGIA -->
     <div class="tab-content" id="tab-strategia">
-      <div id="strategiaContent"></div>
-      <div class="section-title" style="margin-top:8px" data-i18n="timeplan">Piano temporale</div>
-      <div class="timeline" id="timelineContent"></div>
+      <div id="strategiaContent" style="width:100%"></div>
+      <div style="display:grid;grid-template-columns:1fr 310px;gap:24px;margin-top:28px;align-items:start">
+        <div id="strategiaNotes"></div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 22px;position:sticky;top:90px">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--muted);margin-bottom:16px">PIANO TEMPORALE</div>
+          <div class="timeline" id="timelineContent"></div>
+        </div>
+      </div>
     </div>
     <!-- VERDETTI -->
     <div class="tab-content" id="tab-verdetti">
@@ -1348,10 +1372,13 @@ function renderSectors() {
 
 // ─── RISK MATRIX ──────────────────────────────────────────────────────────────
 function renderRiskMatrix() {
-  const el=document.getElementById('riskMatrixDyn');if(!el)return;
-  if(assets.length===0){el.innerHTML='<div style="text-align:center;padding:32px;color:var(--muted)">Aggiungi asset per visualizzare la matrice.</div>';return;}
+  const el=document.getElementById('riskMatrixDyn'); if(!el)return;
+  if(assets.length===0){
+    el.innerHTML='<div style="text-align:center;padding:48px;color:var(--muted)"><div style="font-size:40px;margin-bottom:12px">📊</div><div style="font-size:16px;margin-bottom:6px">Matrice vuota</div><div style="font-size:12px">Aggiungi asset dal tab Portafoglio</div></div>';
+    return;
+  }
   const cellOf=a=>{
-    const p=getProfile(a.ticker);const v=p.vol||0;
+    const p=getProfile(a.ticker); const v=p.vol||0;
     const row=p.risk==='high'?0:p.risk==='medium'?1:v>0?2:3;
     const col=v>=4?3:v>=3?3:v>=2?2:v>=1?1:0;
     return {row,col};
@@ -1359,49 +1386,168 @@ function renderRiskMatrix() {
   let cells=Array.from({length:4},()=>Array.from({length:4},()=>[]));
   assets.forEach(a=>{const {row,col}=cellOf(a);cells[row][col].push(a);});
   const cc=[['mc-3','mc-4','mc-5','mc-5'],['mc-2','mc-3','mc-4','mc-5'],['mc-1','mc-2','mc-3','mc-4'],['mc-1','mc-1','mc-2','mc-3']];
-  const rl=['Alta','Media','Bassa','Minima'],xl=['Trascurabile','Limitato','Significativo','Critico'];
+  const rl=['Alta','Media','Bassa','Minima'];
+  const xl=['Trascurabile','Limitato','Significativo','Critico'];
+  const rlIcons=['🔴','🟠','🟡','🟢'];
+
+  // Matrice
   let html='<div class="matrix-grid">';
   for(let r=0;r<4;r++){
-    html+='<div class="matrix-label-y">'+rl[r]+'</div>';
+    html+=`<div class="matrix-label-y">${rlIcons[r]} ${rl[r]}</div>`;
     for(let c=0;c<4;c++){
-      html+='<div class="matrix-cell '+cc[r][c]+'">';
-      cells[r][c].forEach(a=>{html+='<div class="matrix-chip" style="background:'+a.color+';color:#000" title="'+a.name+'">'+a.ticker+'</div>';});
+      const isEmpty=cells[r][c].length===0;
+      html+=`<div class="matrix-cell ${cc[r][c]}" style="${isEmpty?'opacity:.5':''}">`;
+      cells[r][c].forEach(a=>{
+        const pnl=a.currentPrice>0&&a.buyPrice>0?((a.currentPrice-a.buyPrice)/a.buyPrice*100):null;
+        const pnlStr=pnl!==null?` ${pnl>=0?'+':''}${pnl.toFixed(1)}%`:'';
+        const pnlColor=pnl===null?'#000':pnl>=0?'#000':'#fff';
+        html+=`<div class="matrix-chip" style="background:${a.color};color:${pnlColor};cursor:default" title="${a.name}: ${a.ticker}${pnlStr}">
+          <span style="font-weight:700">${a.ticker}</span>
+          ${pnl!==null?`<span style="font-size:8px;opacity:.8">${pnlStr}</span>`:''}
+        </div>`;
+      });
       html+='</div>';
     }
   }
   html+='</div><div class="matrix-labels-x"><div></div>';
-  xl.forEach(l=>{html+='<div class="mlx">'+l+'</div>';});
+  xl.forEach(l=>{html+=`<div class="mlx">${l}</div>`;});
   html+='</div>';
   el.innerHTML=html;
-  const ae=document.getElementById('riskAlerts');if(!ae)return;
-  const hi=assets.filter(a=>a.risk==='high');
+
+  // Panel destro: stats dettagliate
+  const ae=document.getElementById('riskAlerts'); if(!ae)return;
   const tot=assets.reduce((s,a)=>s+a.invested,0);
+  const hi=assets.filter(a=>a.risk==='high');
+  const me=assets.filter(a=>a.risk==='medium');
+  const lo=assets.filter(a=>a.risk==='low');
   const hiPct=tot>0?hi.reduce((s,a)=>s+a.invested,0)/tot*100:0;
-  ae.innerHTML=hiPct>30
-    ?'<div class="alert-card ac-red"><div style="font-size:22px">⚠️</div><div><div class="ac-title" style="color:var(--red)">Esposizione speculativa elevata ('+hiPct.toFixed(0)+'%)</div><div class="ac-text">'+hi.map(a=>a.ticker).join(', ')+' — valuta stop-loss e ribilanciamento.</div></div></div>'
-    :'<div class="alert-card ac-green"><div style="font-size:22px">✅</div><div><div class="ac-title" style="color:var(--green)">'+t('controlledRisk')+'</div><div class="ac-text">Solo '+hiPct.toFixed(0)+'% in asset ad alto rischio.</div></div></div>';
+  const mePct=tot>0?me.reduce((s,a)=>s+a.invested,0)/tot*100:0;
+  const loPct=tot>0?lo.reduce((s,a)=>s+a.invested,0)/tot*100:0;
+
+  // Asset con P&L
+  const pnlAssets=assets.filter(a=>a.currentPrice>0&&a.buyPrice>0);
+  const gainers=pnlAssets.filter(a=>a.currentPrice>a.buyPrice).sort((a,b)=>(b.currentPrice-b.buyPrice)/b.buyPrice-(a.currentPrice-a.buyPrice)/a.buyPrice);
+  const losers=pnlAssets.filter(a=>a.currentPrice<a.buyPrice).sort((a,b)=>(a.currentPrice-a.buyPrice)/a.buyPrice-(b.currentPrice-b.buyPrice)/b.buyPrice);
+
+  const bar=(pct,color)=>`<div style="height:6px;background:var(--surface3);border-radius:3px;margin-top:4px"><div style="width:${Math.min(100,pct)}%;height:100%;background:${color};border-radius:3px;transition:width .4s"></div></div>`;
+
+  let alertHtml='';
+
+  // Composizione per rischio
+  alertHtml+=`<div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px">
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:var(--muted);margin-bottom:12px">COMPOSIZIONE RISCHIO</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--red)">🔴 Alto rischio</span><span style="font-weight:700;font-family:'DM Mono',monospace">${hiPct.toFixed(1)}%</span></div>${bar(hiPct,'var(--red)')}</div>
+      <div><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--orange)">🟠 Medio rischio</span><span style="font-weight:700;font-family:'DM Mono',monospace">${mePct.toFixed(1)}%</span></div>${bar(mePct,'var(--orange)')}</div>
+      <div><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--green)">🟢 Basso rischio</span><span style="font-weight:700;font-family:'DM Mono',monospace">${loPct.toFixed(1)}%</span></div>${bar(loPct,'var(--green)')}</div>
+    </div>
+  </div>`;
+
+  // Alert principale
+  if(hiPct>40){
+    alertHtml+=`<div class="alert-card ac-red"><div style="font-size:22px">⚠️</div><div><div class="ac-title" style="color:var(--red)">Rischio speculativo elevato</div><div class="ac-text">${hiPct.toFixed(0)}% in asset ad alto rischio: ${hi.map(a=>a.ticker).join(', ')}. Considera stop-loss o ribilanciamento.</div></div></div>`;
+  } else if(hiPct>25){
+    alertHtml+=`<div class="alert-card" style="border-color:var(--orange)"><div style="font-size:22px">🔶</div><div><div class="ac-title" style="color:var(--orange)">Attenzione: rischio medio-alto</div><div class="ac-text">${hiPct.toFixed(0)}% speculativo. Monitorare: ${hi.map(a=>a.ticker).join(', ')}.</div></div></div>`;
+  } else {
+    alertHtml+=`<div class="alert-card ac-green"><div style="font-size:22px">✅</div><div><div class="ac-title" style="color:var(--green)">Rischio controllato</div><div class="ac-text">Solo ${hiPct.toFixed(0)}% in asset speculativi. Struttura difensiva solida.</div></div></div>`;
+  }
+
+  // Top gainer e loser
+  if(gainers.length>0){
+    const g=gainers[0]; const gPct=((g.currentPrice-g.buyPrice)/g.buyPrice*100);
+    alertHtml+=`<div style="background:rgba(76,175,126,.08);border:1px solid rgba(76,175,126,.2);border-radius:10px;padding:12px 14px;margin-top:10px;display:flex;justify-content:space-between;align-items:center"><div style="font-size:12px"><div style="color:var(--green);font-weight:700;margin-bottom:2px">🏆 Best performer</div><div style="color:var(--muted)">${g.name||g.ticker}</div></div><div style="font-family:'DM Mono',monospace;font-size:16px;font-weight:700;color:var(--green)">+${gPct.toFixed(1)}%</div></div>`;
+  }
+  if(losers.length>0){
+    const l=losers[0]; const lPct=((l.currentPrice-l.buyPrice)/l.buyPrice*100);
+    alertHtml+=`<div style="background:rgba(224,90,90,.08);border:1px solid rgba(224,90,90,.2);border-radius:10px;padding:12px 14px;margin-top:8px;display:flex;justify-content:space-between;align-items:center"><div style="font-size:12px"><div style="color:var(--red);font-weight:700;margin-bottom:2px">📉 Worst performer</div><div style="color:var(--muted)">${l.name||l.ticker}</div></div><div style="font-family:'DM Mono',monospace;font-size:16px;font-weight:700;color:var(--red)">${lPct.toFixed(1)}%</div></div>`;
+  }
+
+  ae.innerHTML=alertHtml;
 }
 
 // ─── STRATEGIA ────────────────────────────────────────────────────────────────
 function renderStrategia() {
-  const el=document.getElementById('strategiaContent'),tl=document.getElementById('timelineContent');if(!el)return;
+  const el=document.getElementById('strategiaContent'),tl=document.getElementById('timelineContent');
+  if(!el)return;
   const tot=assets.reduce((s,a)=>s+a.invested,0);
   const hiPct=tot>0?assets.filter(a=>a.risk==='high').reduce((s,a)=>s+a.invested,0)/tot*100:0;
   const loPct=tot>0?assets.filter(a=>a.risk==='low').reduce((s,a)=>s+a.invested,0)/tot*100:0;
+  const midPct=tot>0?assets.filter(a=>a.risk==='medium').reduce((s,a)=>s+a.invested,0)/tot*100:0;
+  const numAssets=assets.length;
+  const pnlAssets=assets.filter(a=>a.currentPrice>0&&a.buyPrice>0);
+  const winners=pnlAssets.filter(a=>a.currentPrice>a.buyPrice).length;
+  const losers=pnlAssets.filter(a=>a.currentPrice<a.buyPrice).length;
+  const totalPnl=pnlAssets.reduce((s,a)=>s+((a.currentPrice-a.buyPrice)/a.buyPrice*a.invested),0);
+  const pnlPct=tot>0?totalPnl/tot*100:0;
+
+  // Score salute portafoglio
+  let score=100;
+  if(hiPct>40)score-=20; else if(hiPct>25)score-=10;
+  if(loPct<30)score-=15; else if(loPct<40)score-=5;
+  if(numAssets<3)score-=20; else if(numAssets<5)score-=10;
+  if(numAssets>15)score-=10;
+  score=Math.max(0,Math.min(100,score));
+  const scoreColor=score>=75?'var(--green)':score>=50?'var(--gold)':'var(--red)';
+  const scoreLabel=score>=75?'Ottimo':'Buono';
+
+  // Tips dinamici
   const tips=[];
-  if(assets.length===0)tips.push({i:'🚀',tt:'Inizia ora',d:'Aggiungi il primo asset. Parti da un ETF come VWCE o VUAA come base solida.'});
-  if(hiPct>30)tips.push({i:'⚠️',tt:'Alto rischio '+hiPct.toFixed(0)+'%',d:'Oltre il 30% in asset speculativi. Considera ETF obbligazionari per bilanciare.'});
-  if(loPct<40&&assets.length>2)tips.push({i:'🛡️',tt:'Base difensiva debole',d:'Meno del 40% in asset sicuri. Aggiungi ETF globali o obbligazionari.'});
-  if(assets.length>0&&loPct>=40&&hiPct<=30)tips.push({i:'✅',tt:'Struttura equilibrata',d:'Buona base difensiva. Continua a monitorare trimestralmente.'});
-  tips.push({i:'🔄',tt:t('rebalancing'),d:'Ogni 3 mesi controlla la tab Verdetti.'});
-  if(assets.length>0)tips.push({i:'📡',tt:t('livePrices'),d:'Clicca "'+t('updatePrices')+'" per quotazioni in tempo reale con conversione automatica USD/EUR.'});
-  if(assets.length>0)tips.push({i:'🤖',tt:t('aiTab'),d:'Usa la tab Analisi AI per valutazione automatica del rischio e rendimento atteso.'});
-  el.innerHTML='<div class="section-title">'+t('personalHints')+'</div><div class="strategy-grid">'+tips.map(tip=>'<div class="strategy-card"><div class="strategy-icon">'+tip.i+'</div><div class="strategy-title">'+tip.tt+'</div><div class="strategy-text">'+tip.d+'</div></div>').join('')+'</div>';
-  if(tl)tl.innerHTML=
-    '<div class="tl-item"><div class="tl-dot"></div><div class="tl-phase">'+t('weekly')+'</div><div class="tl-title">'+t('updatePricesHint')+'</div><div class="tl-text">Clicca Aggiorna prezzi per sincronizzare le quotazioni in EUR.</div></div>'
-    +'<div class="tl-item"><div class="tl-dot"></div><div class="tl-phase">'+t('monthly')+'</div><div class="tl-title">DCA — aggiungi capitale</div><div class="tl-text">Usa il Simulatore DCA per pianificare contributi mensili.</div></div>'
-    +'<div class="tl-item"><div class="tl-dot"></div><div class="tl-phase">'+t('quarterly')+'</div><div class="tl-title">'+t('rebalancing')+'</div><div class="tl-text">Controlla Verdetti e Matrice Rischio. Se un asset supera il 15%, valuta di alleggerire.</div></div>'
-    +'<div class="tl-item"><div class="tl-dot"></div><div class="tl-phase">'+t('annual')+'</div><div class="tl-title">'+t('strategicReview')+'</div><div class="tl-text">Rivaluta gli obiettivi e adatta la composizione del portafoglio al contesto di mercato.</div></div>';
+  if(numAssets===0){
+    tips.push({i:'🚀',color:'var(--blue)',tag:'AZIONE',tt:'Inizia ora',d:'Aggiungi il primo asset dal tab Portafoglio. Un buon punto di partenza è un ETF globale come VWCE o VUAA che replica 3.500+ aziende.'});
+  } else {
+    if(hiPct>40)tips.push({i:'⚠️',color:'var(--red)',tag:'RISCHIO',tt:'Esposizione speculativa alta: '+hiPct.toFixed(0)+'%',d:'Oltre il 40% in asset ad alto rischio. Considera di alleggerire le posizioni più speculative e ribilanciare verso ETF difensivi.'});
+    else if(hiPct>25)tips.push({i:'🔶',color:'var(--orange)',tag:'ATTENZIONE',tt:'Rischio elevato: '+hiPct.toFixed(0)+'%',d:'Tra il 25-40% in asset speculativi. Monitorare attentamente. Valuta un ETF obbligazionario come buffer.'});
+    if(loPct<30&&numAssets>2)tips.push({i:'🛡️',color:'var(--orange)',tag:'DIFESA',tt:'Base difensiva debole: '+loPct.toFixed(0)+'%',d:'Meno del 30% in asset stabili. Gli ETF globali (VWCE, VUAA) o obbligazionari dovrebbero pesare almeno il 40% del portafoglio.'});
+    else if(loPct>=40&&hiPct<=25)tips.push({i:'✅',color:'var(--green)',tag:'OK',tt:'Struttura equilibrata',d:'Buona base difensiva ('+loPct.toFixed(0)+'%) con esposizione speculativa contenuta ('+hiPct.toFixed(0)+'%). Continua a monitorare trimestralmente.'});
+    if(numAssets<4)tips.push({i:'📊',color:'var(--blue)',tag:'DIVERSIFICA',tt:'Portafoglio concentrato ('+numAssets+' asset)',d:'Con meno di 4 asset il rischio idiosincratico è elevato. Aggiungi almeno 2-3 strumenti in settori diversi.'});
+    if(pnlAssets.length>0&&pnlPct<-10)tips.push({i:'📉',color:'var(--red)',tag:'DRAWDOWN',tt:'Perdita complessiva: '+pnlPct.toFixed(1)+'%',d:'Il portafoglio è in perdita significativa. Evita di vendere in preda alla paura — valuta il DCA per abbassare il prezzo medio di carico.'});
+    else if(pnlAssets.length>0&&pnlPct>20)tips.push({i:'💰',color:'var(--green)',tag:'PROFIT',tt:'Guadagno complessivo: +'+pnlPct.toFixed(1)+'%',d:'Ottima performance. Considera di prendere profitto parziale su asset in gain >30% per ridurre il rischio asimmetrico.'});
+    tips.push({i:'🔄',color:'var(--muted)',tag:'ROUTINE',tt:'Ribilanciamento trimestrale',d:'Ogni 3 mesi controlla la tab Verdetti. Se un asset supera il 25% del totale, valuta di alleggerire.'});
+    tips.push({i:'🤖',color:'var(--purple)',tag:'AI',tt:'Analisi AI del portafoglio',d:'Usa la tab Analisi AI per una valutazione automatica del rischio, rendimento atteso e suggerimenti operativi personalizzati.'});
+  }
+
+  // Header con score
+  const header=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:16px">
+    <div>
+      <div class="section-title" style="margin:0">Suggerimenti Personalizzati</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px">${numAssets} asset · aggiornato in tempo reale</div>
+    </div>
+    ${numAssets>0?`<div style="display:flex;align-items:center;gap:12px">
+      <div style="text-align:right">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em">SALUTE PORTAFOGLIO</div>
+        <div style="font-size:28px;font-weight:900;color:${scoreColor};font-family:'Playfair Display',serif">${score}<span style="font-size:14px">/100</span></div>
+      </div>
+      <div style="width:2px;height:40px;background:var(--border)"></div>
+      <div style="text-align:right">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em">P&L TOTALE</div>
+        <div style="font-size:20px;font-weight:700;color:${pnlPct>=0?'var(--green)':'var(--red)'}">${pnlPct>=0?'+':''}${pnlPct.toFixed(1)}%</div>
+      </div>
+    </div>`:''}
+  </div>`;
+
+  // Cards
+  const cards=tips.map(tip=>`
+    <div style="background:var(--surface2);border:1px solid var(--border);border-left:3px solid ${tip.color};border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px;transition:border-color .2s">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:24px">${tip.i}</span>
+        <span style="font-family:'DM Mono',monospace;font-size:9px;color:${tip.color};letter-spacing:.12em;font-weight:700">${tip.tag}</span>
+      </div>
+      <div style="font-size:15px;font-weight:700;color:var(--text)">${tip.tt}</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.7">${tip.d}</div>
+    </div>`).join('');
+
+  el.innerHTML=header+`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px">${cards}</div>`;
+
+  // Timeline migliorata
+  if(tl){
+    tl.innerHTML=`
+    <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-phase" style="color:var(--blue)">SETTIMANALE</div><div class="tl-title">Aggiorna i prezzi</div><div class="tl-text">Clicca Aggiorna prezzi per sincronizzare le quotazioni in EUR. I prezzi live attivano Heatmap, P&L e Verdetti.</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--gold)"></div><div class="tl-phase" style="color:var(--gold)">MENSILE</div><div class="tl-title">DCA — aggiungi capitale</div><div class="tl-text">Usa il Calcolatore DCA per pianificare contributi mensili costanti. Il DCA riduce il rischio di market timing.</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-phase" style="color:var(--orange)">TRIMESTRALE</div><div class="tl-title">Ribilanciamento</div><div class="tl-text">Controlla Verdetti e Matrice Rischio. Se un asset supera il 25% del totale o è in perdita >15%, valuta di alleggerire.</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-phase" style="color:var(--purple)">SEMESTRALE</div><div class="tl-title">Analisi AI completa</div><div class="tl-text">Esegui l'Analisi AI per un report approfondito su ogni posizione: rendimento atteso, rischio e raccomandazioni operative.</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-phase" style="color:var(--green)">ANNUALE</div><div class="tl-title">Revisione strategica</div><div class="tl-text">Rivaluta gli obiettivi. Confronta la performance con l'indice S&P 500. Adatta la composizione al contesto di mercato.</div></div>
+    `;
+  }
 }
 
 // ─── VERDETTI ─────────────────────────────────────────────────────────────────
@@ -1809,7 +1955,23 @@ function _renderSegnaliResult(data, fromCache, cacheAge) {
 
 
 // ─── DROPDOWN ALTRO ───────────────────────────────────────────────────────────
-function toggleAltro(e) {e.stopPropagation();document.getElementById('altroMenu').classList.toggle('open');}
+function toggleAltro(e) {
+  e.stopPropagation();
+  const menu = document.getElementById('altroMenu');
+  const btn  = document.getElementById('tab-btn-altro');
+  if (menu.classList.contains('open')) {
+    menu.classList.remove('open');
+    return;
+  }
+  // Posizione assoluta basata sul bottone — calcola rect
+  const rect = btn.getBoundingClientRect();
+  menu.style.position = 'fixed';
+  menu.style.top  = (rect.bottom + 4) + 'px';
+  menu.style.left = 'auto';
+  menu.style.right = (window.innerWidth - rect.right) + 'px';
+  menu.style.minWidth = '170px';
+  menu.classList.add('open');
+}
 function closeAltro() {document.getElementById('altroMenu').classList.remove('open');}
 document.addEventListener('click',()=>closeAltro());
 
