@@ -431,6 +431,8 @@ svg.donut{transform:rotate(-90deg);}
 /* Asset Panel */
 #assetPanel{display:none}
 #assetPanel.open{display:flex!important}
+tr.asset-row{cursor:pointer;transition:background .15s}
+tr.asset-row:hover{background:rgba(201,168,76,.05)}
 .ap-kpi{background:#1C1C1C;border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:10px 12px}
 .ap-kpi-label{font-size:9px;letter-spacing:.1em;color:#8A8580;text-transform:uppercase;margin-bottom:4px}
 .ap-kpi-value{font-size:16px;font-weight:700;color:#F0EDE6;font-family:'Playfair Display',serif}
@@ -1320,7 +1322,7 @@ function renderTable() {
   if (assets.length===0){tbody.innerHTML='';if(empty)empty.style.display='block';return;}
   if(empty)empty.style.display='none';
   const tot=assets.reduce((s,a)=>s+a.invested,0);
-  tbody.innerHTML=assets.map(a=>{
+  tbody.innerHTML=assets.map((a,i)=>{
     const pct=tot>0?(a.invested/tot*100).toFixed(1):0;
     const rc=a.risk==='low'?'r-low':a.risk==='medium'?'r-med':'r-hi';
     const rl=a.risk==='low'?t('lowRisk'):a.risk==='medium'?t('medRisk'):t('highRisk');
@@ -1339,13 +1341,19 @@ function renderTable() {
     const tp=a.targetPct||15;
     const bc=a.risk==='low'?'var(--green)':a.risk==='medium'?'var(--orange)':'var(--red)';
     const sparkHtml='<canvas id="spark_'+a.id+'" width="80" height="32" style="display:block"></canvas>';
-    return '<tr onclick="openAssetPanel('+assets.indexOf(a)+')" style="cursor:pointer" onmouseover="this.style.background=\'rgba(201,168,76,.04)\'" onmouseout="this.style.background=\'\'"><td>'<div class="ticker" style="color:'+a.color+'">'+a.ticker+'</div><div class="asset-name">'+a.name+'</div></td>'
+    return '<tr data-idx="'+i+'" class="asset-row"><td><div class="ticker" style="color:'+a.color+'">'+a.ticker+'</div><div class="asset-name">'+a.name+'</div></td>'
       +'<td><div style="font-family:DM Mono,monospace;font-size:13px">'+a.invested.toLocaleString('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0})+'</div><div style="font-size:10px;color:var(--muted)">'+pct+'%</div></td>'
       +'<td>'+(a.buyPrice>0?'<div style="font-family:DM Mono,monospace;font-size:12px">'+a.buyPrice.toLocaleString('it-IT',{style:'currency',currency:'EUR'})+'</div><div style="font-size:10px;color:var(--muted)">x'+(a.qty||'---')+'</div>':'<span style="color:var(--muted);font-size:11px">---</span>')+'</td>'
       +'<td>'+live+'</td><td>'+pnlHtml+'</td><td>'+sparkHtml+'</td>'
       +'<td><div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px"><span style="font-family:DM Mono,monospace;font-size:10px;color:'+bc+'">+'+tp+'%</span><div class="mini-bar" style="width:70px"><div class="mini-fill" style="width:'+Math.min(tp*3,100)+'%;background:'+bc+'"></div></div></div></td>'
       +'<td><span class="rbadge '+rc+'">'+rl+'</span></td></tr>';
   }).join('');
+
+  // Event delegation: un solo listener sul tbody
+  tbody.onclick = function(e) {
+    const tr = e.target.closest('tr.asset-row');
+    if (tr) openAssetPanel(parseInt(tr.dataset.idx));
+  };
 }
 
 // ─── DONUT ────────────────────────────────────────────────────────────────────
