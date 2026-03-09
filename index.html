@@ -12,6 +12,8 @@
 <link rel="apple-touch-icon" href="/icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
@@ -47,7 +49,7 @@ window.addEventListener('load', () => {
       if (data&&data.assets) { assets=data.assets; localStorage.setItem('srm_assets',JSON.stringify(assets)); }
       else { const l=localStorage.getItem('srm_assets'); if(l) assets=JSON.parse(l); }
       renderAll(); checkOnboarding(); updateNotifBtn(); applyLang();
-      setTimeout(()=>switchTab('panoramica', document.getElementById('tab-btn-panoramica')), 0);
+      setTimeout(()=>switchTab('portafoglio', document.getElementById('tab-btn-portafoglio')), 0);
       loadMorningBrief();
     } else {
       document.getElementById('loginScreen').style.display='flex';
@@ -106,6 +108,17 @@ header{border-bottom:1px solid var(--border);padding-bottom:32px;margin-bottom:3
 .pchg-down{color:var(--red);font-size:10px;}
 
 
+
+
+/* LEAFLET DARK MODE */
+.leaflet-container{background:#1C1C1C!important;}
+.leaflet-tile{filter:brightness(0.6) saturate(0.7) hue-rotate(180deg) invert(1) contrast(0.9);}
+.leaflet-control-zoom{border:1px solid var(--border)!important;}
+.leaflet-control-zoom a{background:var(--surface2)!important;color:var(--text)!important;border-color:var(--border)!important;}
+.leaflet-control-zoom a:hover{background:var(--surface3)!important;}
+.leaflet-control-attribution{background:rgba(20,20,20,.8)!important;color:var(--muted)!important;font-size:9px!important;}
+.leaflet-popup-content-wrapper{background:var(--surface2)!important;color:var(--text)!important;border:1px solid var(--border)!important;border-radius:8px!important;}
+.leaflet-popup-tip{background:var(--surface2)!important;}
 
 /* GEO MAP */
 .geo-wrap{display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start;}
@@ -191,7 +204,7 @@ input[type=range].wi-range::-webkit-slider-thumb{-webkit-appearance:none;width:1
 @keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
 .price-msg{font-family:DM Mono,monospace;font-size:11px;color:var(--muted);font-style:italic;}
-.tabs{display:flex;gap:6px;margin-bottom:28px;flex-wrap:wrap;position:relative;z-index:10;}
+.tabs{display:flex;gap:10px;margin-bottom:32px;flex-wrap:wrap;position:relative;z-index:10;}
 @media(max-width:640px){
   .tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;scrollbar-width:none;gap:4px;}
   .tabs::-webkit-scrollbar{display:none;}
@@ -206,7 +219,8 @@ input[type=range].wi-range::-webkit-slider-thumb{-webkit-appearance:none;width:1
   header{flex-direction:column;gap:12px;margin-bottom:16px;}
   .two-col{grid-template-columns:1fr!important;}
   .goal-wrap{grid-template-columns:1fr!important;}
-  .geo-wrap{grid-template-columns:1fr!important;}
+  #geoWrap{grid-template-columns:1fr!important;}
+  #leafletMap{height:280px!important;}
   .dna-wrap{flex-direction:column;align-items:center;}
   #dnaCanvas{width:160px!important;height:160px!important;}
   .summary-grid{grid-template-columns:1fr 1fr!important;}
@@ -225,7 +239,7 @@ input[type=range].wi-range::-webkit-slider-thumb{-webkit-appearance:none;width:1
   #tab-panoramica .dna-wrap canvas{margin:0 auto;}
   .tab-dropdown-menu{right:0;left:auto;min-width:140px;}
 }
-.tab{padding:8px 16px;font-size:12px;cursor:pointer;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-family:'DM Mono',monospace;letter-spacing:.04em;transition:all .2s;white-space:nowrap;}
+.tab{padding:9px 18px;font-size:12px;cursor:pointer;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-family:'DM Mono',monospace;letter-spacing:.04em;transition:all .2s;white-space:nowrap;}
 .tab.active{color:var(--dark);background:var(--gold);border-color:var(--gold);font-weight:600;}
 .tab:hover:not(.active){color:var(--text);border-color:var(--muted);}
 .tab-dropdown{position:relative;}
@@ -429,7 +443,6 @@ svg.donut{transform:rotate(-90deg);}
   </div>
     <!-- TABS -->
     <div class="tabs" id="mainTabs">
-      <button class="tab" id="tab-btn-panoramica" onclick="switchTab('panoramica',this)" data-tab="panoramica">Panoramica</button>
       <button class="tab" id="tab-btn-portafoglio" onclick="switchTab('portafoglio',this)" data-tab="portafoglio">Portafoglio</button>
       <button class="tab" id="tab-btn-calcolatore" onclick="switchTab('calcolatore',this)" data-tab="calcolatore">Calcolatore</button>
       <button class="tab" id="tab-btn-rischio" onclick="switchTab('rischio',this)" data-tab="rischio">Matrice Rischio</button>
@@ -442,7 +455,6 @@ svg.donut{transform:rotate(-90deg);}
         <button class="tab" id="tab-btn-altro" onclick="toggleAltro(event)">Altro &#9660;</button>
         <div class="tab-dropdown-menu" id="altroMenu">
           <button onclick="switchTab('mappa',this);closeAltro()">Mappa Geo</button>
-          <button onclick="switchTab('obiettivo',this);closeAltro()">Obiettivo</button>
           <button onclick="switchTab('verdetti',this);closeAltro()">Verdetti</button>
           <button onclick="switchTab('storico',this);closeAltro()">Storico</button>
         </div>
@@ -464,10 +476,10 @@ svg.donut{transform:rotate(-90deg);}
       </div>
 
       <!-- Summary cards row -->
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:32px" id="panorSummary"></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:36px" id="panorSummary"></div>
 
       <!-- DNA Radar + quick stats -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-bottom:36px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:40px">
         <div class="card" id="dnaCard">
           <div class="section-title">DNA del Portafoglio</div>
           <div class="dna-wrap">
@@ -668,62 +680,11 @@ svg.donut{transform:rotate(-90deg);}
     <div class="tab-content" id="tab-mappa">
       <div class="section-title">Esposizione Geografica</div>
       <div style="font-size:12px;color:var(--muted);margin-bottom:20px">Distribuzione del portafoglio per area geografica, pesata per valore investito</div>
-      <div class="geo-wrap" id="geoWrap">
-        <div id="geoMapContainer"></div>
+      <div style="display:grid;grid-template-columns:1fr 300px;gap:24px;align-items:start" id="geoWrap">
+        <div>
+          <div id="leafletMap" style="height:420px;border-radius:10px;overflow:hidden;border:1px solid var(--border)"></div>
+        </div>
         <div class="geo-legend" id="geoLegend"></div>
-      </div>
-      <div class="geo-tooltip" id="geoTooltip"></div>
-    </div>
-    <!-- OBIETTIVO -->
-    <div class="tab-content" id="tab-obiettivo">
-      <div class="section-title">Obiettivo Finanziario</div>
-      <div class="goal-wrap">
-        <div class="card">
-          <div style="margin-bottom:16px">
-            <label style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);display:block;margin-bottom:8px">IMPOSTA IL TUO OBIETTIVO</label>
-            <div class="goal-input-row">
-              <input type="number" id="goalTarget" placeholder="Target €" min="0" step="1000" oninput="saveGoal()">
-              <input type="number" id="goalMonthly" placeholder="Risparmio mensile €" min="0" step="50" oninput="saveGoal()">
-            </div>
-            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:4px">RENDIMENTO ANNUO ATTESO</div>
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
-              <input type="range" class="wi-range" id="goalReturn" min="3" max="20" value="9" step="0.5" oninput="document.getElementById('goalReturnVal').textContent=this.value+'%';saveGoal()" style="flex:1">
-              <span id="goalReturnVal" style="font-family:'DM Mono',monospace;font-size:13px;color:var(--gold);min-width:36px">9%</span>
-            </div>
-          </div>
-          <div id="goalProgress" style="display:none">
-            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
-              <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">PROGRESSO</span>
-              <span id="goalPct" style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--gold)">0%</span>
-            </div>
-            <div class="goal-progress"><div class="goal-bar" id="goalBar" style="width:0%"></div></div>
-            <div class="goal-milestones">
-              <span class="goal-ms">€0</span><span class="goal-ms" id="goalMs25">25%</span>
-              <span class="goal-ms" id="goalMs50">50%</span><span class="goal-ms" id="goalMs75">75%</span>
-              <span class="goal-ms" id="goalMsTarget">TARGET</span>
-            </div>
-            <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap">
-              <div style="flex:1;min-width:100px;text-align:center;background:var(--surface2);border-radius:8px;padding:12px">
-                <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)">INVESTITO</div>
-                <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700" id="goalCurrentVal">---</div>
-              </div>
-              <div style="flex:1;min-width:100px;text-align:center;background:var(--surface2);border-radius:8px;padding:12px">
-                <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)">MANCANTE</div>
-                <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--red)" id="goalRemaining">---</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="card goal-proj" id="goalProjection" style="display:none">
-          <div class="section-title">Proiezione</div>
-          <div class="goal-proj-row"><span style="color:var(--muted)">Scenario conservativo</span><span id="projConserv" style="color:var(--text)">---</span></div>
-          <div class="goal-proj-row"><span style="color:var(--muted)">Scenario base</span><span id="projBase" style="color:var(--gold)">---</span></div>
-          <div class="goal-proj-row"><span style="color:var(--muted)">Scenario ottimistico</span><span id="projOptim" style="color:var(--green)">---</span></div>
-          <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
-            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:8px">CRESCITA ANNO PER ANNO</div>
-            <canvas id="goalChart" height="120"></canvas>
-          </div>
-        </div>
       </div>
     </div>
     <!-- STORICO -->
@@ -2143,32 +2104,6 @@ const GEO_FLAGS = {
   USA:'🇺🇸', Europa:'🇪🇺', Giappone:'🇯🇵', Taiwan:'🇹🇼', EmergingMarkets:'🌏', Altro:'🌐'
 };
 
-// SVG world map paths (simplified key regions)
-const MAP_PATHS = {
-  USA:    "M 90 85 L 200 85 L 210 120 L 195 145 L 155 150 L 130 145 L 90 130 Z",
-  Canada: "M 85 40 L 210 40 L 212 83 L 90 83 Z",
-  Mexico: "M 95 150 L 155 152 L 150 175 L 110 180 Z",
-  Europa: "M 310 65 L 400 60 L 415 95 L 400 120 L 350 125 L 310 110 Z",
-  Russia: "M 380 30 L 600 25 L 605 80 L 390 85 Z",
-  Africa: "M 320 130 L 410 125 L 420 230 L 340 240 L 305 190 Z",
-  MiddleEast:"M 400 110 L 450 105 L 460 145 L 410 150 Z",
-  India:  "M 490 130 L 550 125 L 555 190 L 510 200 Z",
-  China:  "M 555 75 L 650 70 L 660 135 L 570 140 Z",
-  Giappone:"M 660 80 L 690 78 L 695 105 L 665 108 Z",
-  Taiwan: "M 645 125 L 658 122 L 660 135 L 648 137 Z",
-  SEAsia: "M 570 150 L 650 145 L 660 195 L 580 200 Z",
-  Australia:"M 580 200 L 680 195 L 685 255 L 590 260 Z",
-  SouthAmerica:"M 155 190 L 250 185 L 265 300 L 175 310 Z",
-};
-
-// Map regions to GEO_KB keys
-const MAP_REGION_TO_GEO = {
-  USA:'USA', Europa:'Europa', Giappone:'Giappone', Taiwan:'Taiwan',
-  China:'EmergingMarkets', India:'EmergingMarkets', SEAsia:'EmergingMarkets',
-  SouthAmerica:'Altro', Africa:'Altro', Australia:'Altro',
-  MiddleEast:'Altro', Canada:'USA', Russia:'Altro', Mexico:'Altro',
-};
-
 function computeGeoExposure() {
   const result = {};
   const tot = assets.reduce((s,a) => s + a.invested, 0);
@@ -2189,82 +2124,101 @@ function computeGeoExposure() {
 }
 
 function renderGeoMap() {
-  const container = document.getElementById('geoMapContainer');
   const legend = document.getElementById('geoLegend');
-  if (!container || !legend) return;
+  const mapDiv = document.getElementById('leafletMap');
+  if (!mapDiv || !legend) return;
 
   const exp = computeGeoExposure();
   const tot = assets.reduce((s,a) => s + a.invested, 0);
-  const tooltip = document.getElementById('geoTooltip');
 
-  // Build color map per MAP path
-  const pathColors = {};
-  Object.entries(MAP_PATHS).forEach(([region]) => {
-    const geoKey = MAP_REGION_TO_GEO[region] || 'Altro';
-    const pct = exp[geoKey] || 0;
-    const base = GEO_COLORS[geoKey] || '#8A8580';
-    // Intensity based on pct
-    pathColors[region] = { color: base, pct, geoKey };
-  });
-
-  // Build SVG
-  const W = 760, H = 320;
-  const svgPaths = Object.entries(MAP_PATHS).map(([region, d]) => {
-    const {color, pct, geoKey} = pathColors[region];
-    const opacity = pct > 0 ? 0.3 + (pct/100)*0.7 : 0.08;
-    return `<path d="${d}" fill="${color}" fill-opacity="${opacity.toFixed(2)}" stroke="${color}" stroke-width="0.5" stroke-opacity="0.3"
-      data-region="${region}" data-geo="${geoKey}" data-pct="${pct.toFixed(1)}"
-      onmouseenter="showGeoTip(event,'${region}','${geoKey}',${pct.toFixed(1)})"
-      onmouseleave="document.getElementById('geoTooltip').style.display='none'"
-      onmousemove="moveGeoTip(event)"/>`;
-  }).join('');
-
-  // Graticule (lat/lon lines)
-  const graticule = [
-    // Horizontal
-    ...[60,90,120,150,180,210,240,270,300].map(y => `<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>`),
-    // Vertical
-    ...[100,200,300,400,500,600,700].map(x => `<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>`)
-  ].join('');
-
-  container.innerHTML = `
-    <svg viewBox="0 0 ${W} ${H}" class="geo-map-svg" style="background:var(--surface2);border-radius:10px;border:1px solid var(--border)">
-      ${graticule}
-      ${svgPaths}
-      <text x="12" y="18" fill="rgba(255,255,255,0.2)" font-family="DM Mono" font-size="9">ESPOSIZIONE GEOGRAFICA PORTAFOGLIO</text>
-    </svg>`;
-
-  // Legend
+  // Render legend
   legend.innerHTML = Object.entries(exp).filter(([,v])=>v>0.1).map(([region, pct]) => {
     const color = GEO_COLORS[region] || '#8A8580';
     const flag = GEO_FLAGS[region] || '🌐';
     const val = tot * pct / 100;
     const label = region === 'EmergingMarkets' ? 'Emergenti' : region;
-    return `<div class="geo-leg-item" style="border-color:${color}">
-      <div class="geo-leg-left">
-        <span class="geo-leg-flag">${flag}</span>
-        <div>
-          <div class="geo-leg-name">${label}</div>
-          <div class="geo-leg-val">€${val.toLocaleString('it-IT',{maximumFractionDigits:0})}</div>
-        </div>
-      </div>
-      <span class="geo-leg-pct" style="color:${color}">${pct.toFixed(1)}%</span>
-    </div>`;
+    return '<div class="geo-leg-item" style="border-color:'+color+'">'
+      +'<div class="geo-leg-left">'
+      +'<span class="geo-leg-flag">'+flag+'</span>'
+      +'<div><div class="geo-leg-name">'+label+'</div>'
+      +'<div class="geo-leg-val">€'+val.toLocaleString('it-IT',{maximumFractionDigits:0})+'</div></div>'
+      +'</div>'
+      +'<span class="geo-leg-pct" style="color:'+color+'">'+pct.toFixed(1)+'%</span>'
+      +'</div>';
   }).join('') || '<div style="color:var(--muted);font-size:13px">Aggiungi asset per vedere la mappa</div>';
+
+  // Init Leaflet map (only once)
+  if (window._leafletMap) {
+    window._leafletMap.remove();
+    window._leafletMap = null;
+  }
+  if (!window.L) { mapDiv.innerHTML='<div style="padding:40px;text-align:center;color:var(--muted)">Caricamento mappa...</div>'; return; }
+
+  const map = L.map('leafletMap', {
+    center: [25, 10],
+    zoom: 2,
+    minZoom: 1,
+    maxZoom: 6,
+    zoomControl: true,
+    attributionControl: true,
+  });
+  window._leafletMap = map;
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© OpenStreetMap © CARTO',
+    subdomains: 'abcd',
+    maxZoom: 19
+  }).addTo(map);
+
+  // Region bounding boxes [lat1, lon1, lat2, lon2] and center
+  const REGIONS = {
+    USA:             { bounds: [[24, -125], [49, -66]],   center: [37, -96],     label: 'USA' },
+    Europa:          { bounds: [[35, -10],  [71, 40]],    center: [50, 15],      label: 'Europa' },
+    Giappone:        { bounds: [[30, 130],  [45, 145]],   center: [36, 138],     label: 'Giappone' },
+    Taiwan:          { bounds: [[21, 120],  [26, 122]],   center: [23.7, 121],   label: 'Taiwan' },
+    EmergingMarkets: { bounds: [[5, 68],    [55, 135]],   center: [25, 100],     label: 'Emergenti' },
+    Altro:           { bounds: [[-40, -80], [20, 180]],   center: [-10, 60],     label: 'Altro' },
+  };
+
+  Object.entries(exp).forEach(([region, pct]) => {
+    if (pct < 0.5) return;
+    const reg = REGIONS[region];
+    if (!reg) return;
+    const color = GEO_COLORS[region] || '#8A8580';
+    const opacity = 0.15 + (pct/100) * 0.5;
+
+    // Rectangle overlay
+    const rect = L.rectangle(reg.bounds, {
+      color: color,
+      weight: 1.5,
+      fillColor: color,
+      fillOpacity: opacity,
+      opacity: 0.7,
+    }).addTo(map);
+
+    // Popup label
+    const flag = GEO_FLAGS[region] || '🌐';
+    const val = (tot * pct / 100).toLocaleString('it-IT', {maximumFractionDigits:0});
+    rect.bindPopup(
+      '<div style="font-family:DM Mono,monospace;text-align:center">'
+      +'<div style="font-size:20px;margin-bottom:4px">'+flag+'</div>'
+      +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+reg.label+'</div>'
+      +'<div style="font-size:18px;font-weight:700;margin:4px 0">'+pct.toFixed(1)+'%</div>'
+      +'<div style="font-size:11px;color:#8A8580">€'+val+'</div>'
+      +'</div>',
+      { className: 'geo-popup' }
+    );
+
+    // Label marker
+    const label = L.divIcon({
+      html: '<div style="background:'+color+';color:#0D0D0D;padding:3px 8px;border-radius:20px;font-family:DM Mono,monospace;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.4)">'+pct.toFixed(0)+'%</div>',
+      className: '',
+      iconAnchor: [20, 10]
+    });
+    L.marker(reg.center, { icon: label, interactive: false }).addTo(map);
+  });
 }
 
-function showGeoTip(e, region, geoKey, pct) {
-  const t = document.getElementById('geoTooltip');
-  const label = geoKey === 'EmergingMarkets' ? 'Emergenti' : geoKey;
-  t.innerHTML = `<strong>${region}</strong><br>${label}: <span style="color:${GEO_COLORS[geoKey]||'#fff'}">${pct}%</span>`;
-  t.style.display = 'block';
-  moveGeoTip(e);
-}
-function moveGeoTip(e) {
-  const t = document.getElementById('geoTooltip');
-  t.style.left = (e.clientX + 14) + 'px';
-  t.style.top  = (e.clientY - 36) + 'px';
-}
 
 // ─── GOAL TRACKER ─────────────────────────────────────────────────────────────
 let goalChart = null;
