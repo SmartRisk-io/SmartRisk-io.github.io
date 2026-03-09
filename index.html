@@ -1525,8 +1525,10 @@ function setTicker(id, val, chg, fmt) {
     if (fmt==='points') return v.toLocaleString('it-IT',{maximumFractionDigits:0});
     return '$'+v.toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2});
   };
-  const chgStr = (chg>=0?'+':'')+chg.toFixed(2)+'%';
-  const cls = chg>=0?'up':'down';
+  // Only show change if non-zero (avoid misleading 0.00%)
+  const hasChg = chg !== null && chg !== undefined && Math.abs(chg) > 0.001;
+  const chgStr = hasChg ? (chg>=0?'+':'')+chg.toFixed(2)+'%' : '';
+  const cls = (chg||0)>=0?'up':'down';
   ['','b'].forEach(suffix => {
     const valEl = document.getElementById('tk-'+id+suffix);
     const chgEl = document.getElementById('tk-'+id+'-c'+suffix) || document.getElementById('tk-'+id+'b-c');
@@ -1553,7 +1555,12 @@ async function loadMarketTicker() {
     try {
       const r = await fetch(WORKER_URL+'/price?ticker='+encodeURIComponent(sym.yahoo), {signal:AbortSignal.timeout(8000)});
       const d = await r.json();
-      if (d?.price) setTicker(sym.id, d.price, d.change||0, sym.fmt);
+      if (d?.price) {
+        let chg = d.change || 0;
+        if (chg === 0 && d.previousClose && d.previousClose > 0)
+          chg = ((d.price - d.previousClose) / d.previousClose) * 100;
+        setTicker(sym.id, d.price, chg, sym.fmt);
+      }
     } catch(e) { /* silent */ }
     await new Promise(r=>setTimeout(r,200));
   }
