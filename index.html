@@ -637,6 +637,9 @@ svg.donut{transform:rotate(-90deg);}
 </div>
 <div class="sync-ind" id="syncInd"><div class="sync-dot"></div><span>Salvataggio...</span></div>
 <script>
+
+
+
 // ─── STATE ───────────────────────────────────────────────────────────────────
 let assets = [];
 let livePrices = {};
@@ -844,14 +847,14 @@ function renderSummary() {
   document.getElementById('sumInvested').textContent=tot>0?tot.toLocaleString('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0}):'---';
   document.getElementById('sumPositions').textContent=assets.length||'---';
   const hi=assets.filter(a=>a.risk==='high').length, lo=assets.filter(a=>a.risk==='low').length;
-  document.getElementById('sumRisk').textContent=lo+' bassi · '+hi+' alti';
+  document.getElementById('sumRisk').textContent=lo+' '+(currentLang==='it'?'bassi':'low')+' · '+hi+' '+(currentLang==='it'?'alti':'high');
   let pnl=0, hasPnl=false;
   assets.forEach(a=>{ if(a.currentPrice>0&&a.buyPrice>0&&a.qty>0){pnl+=(a.currentPrice-a.buyPrice)*a.qty;hasPnl=true;} });
   const pe=document.getElementById('sumPnl');
   if (hasPnl) {
     pe.textContent=(pnl>=0?'+':'')+Math.abs(pnl).toLocaleString('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0});
     pe.style.color=pnl>=0?'var(--green)':'var(--red)';
-    document.getElementById('sumPnlSub').textContent=pnl>=0?'Guadagno non realizzato':'Perdita non realizzata';
+    document.getElementById('sumPnlSub').textContent=pnl>=0?t('unrealizedGain'):t('unrealizedLoss');
   } else { pe.textContent='---'; pe.style.color='var(--gold)'; }
 }
 
@@ -865,7 +868,7 @@ function renderTable() {
   tbody.innerHTML=assets.map(a=>{
     const pct=tot>0?(a.invested/tot*100).toFixed(1):0;
     const rc=a.risk==='low'?'r-low':a.risk==='medium'?'r-med':'r-hi';
-    const rl=a.risk==='low'?'Basso':a.risk==='medium'?'Medio':'Alto';
+    const rl=a.risk==='low'?t('lowRisk'):a.risk==='medium'?t('medRisk'):t('highRisk');
     let live='<span style="color:var(--muted);font-size:11px">---</span>';
     if (a.currentPrice>0){
       const lp=livePrices[a.id]; const chg=lp?lp.change:null;
@@ -916,9 +919,9 @@ function renderSectors() {
   const tot=assets.reduce((s,a)=>s+a.invested,0);
   if(assets.length===0){el.innerHTML='<div style="color:var(--muted);font-size:13px">Nessun asset.</div>';return;}
   const groups={
-    'Basso rischio':{assets:assets.filter(a=>a.risk==='low'),c:'var(--green)'},
-    'Rischio medio':{assets:assets.filter(a=>a.risk==='medium'),c:'var(--orange)'},
-    'Alto rischio': {assets:assets.filter(a=>a.risk==='high'),c:'var(--red)'}
+    [t('lowRiskLabel')]:{assets:assets.filter(a=>a.risk==='low'),c:'var(--green)'},
+    [t('medRiskLabel')]:{assets:assets.filter(a=>a.risk==='medium'),c:'var(--orange)'},
+    [t('highRiskLabel')]: {assets:assets.filter(a=>a.risk==='high'),c:'var(--red)'}
   };
   let html=Object.entries(groups).filter(([,g])=>g.assets.length>0).map(([l,g])=>{
     const v=g.assets.reduce((s,a)=>s+a.invested,0), p=tot>0?(v/tot*100).toFixed(1):0;
@@ -985,8 +988,8 @@ function renderStrategia() {
   tips.push({i:'🔄',t:'Ribilanciamento',d:'Ogni 3 mesi controlla la tab Verdetti. Se un asset supera il 15% del totale, valuta di alleggerire.'});
   if(assets.length>0) tips.push({i:'📡',t:'Prezzi live',d:'Clicca "Aggiorna prezzi" per quotazioni in tempo reale con conversione automatica USD/EUR.'});
   if(assets.length>0) tips.push({i:'🤖',t:'Analisi AI',d:'Usa la tab Analisi AI per valutazione automatica del rischio e rendimento atteso per ogni asset.'});
-  el.innerHTML='<div class="section-title" data-i18n="personalHints">Suggerimenti personalizzati</div><div class="strategy-grid">'+tips.map(t=>'<div class="strategy-card"><div class="strategy-icon">'+t.i+'</div><div class="strategy-title">'+t.t+'</div><div class="strategy-text">'+t.d+'</div></div>').join('')+'</div>';
-  if(tl)tl.innerHTML='<div class="tl-item"><div class="tl-dot"></div><div class="tl-phase">SETTIMANALE</div><div class="tl-title">Aggiorna i prezzi</div><div class="tl-text">Clicca Aggiorna prezzi per sincronizzare le quotazioni in EUR e vedere il P&L aggiornato.</div></div><div class="tl-item"><div class="tl-dot"></div><div class="tl-phase">MENSILE</div><div class="tl-title">DCA — aggiungi capitale</div><div class="tl-text">Usa il Simulatore DCA per pianificare contributi mensili e massimizzare la crescita.</div></div><div class="tl-item"><div class="tl-dot"></div><div class="tl-phase">TRIMESTRALE</div><div class="tl-title">Ribilanciamento</div><div class="tl-text">Controlla Verdetti e Matrice Rischio. Se un asset supera il 15% del totale, valuta di alleggerire.</div></div><div class="tl-item"><div class="tl-dot"></div><div class="tl-phase">ANNUALE</div><div class="tl-title">Revisione strategica</div><div class="tl-text">Rivaluta gli obiettivi e adatta la composizione del portafoglio al contesto di mercato.</div></div>';
+  el.innerHTML='<div class="section-title" data-i18n="personalHints">'+t('personalHints')+'</div><div class="strategy-grid">'+tips.map(t=>'<div class="strategy-card"><div class="strategy-icon">'+t.i+'</div><div class="strategy-title">'+t.t+'</div><div class="strategy-text">'+t.d+'</div></div>').join('')+'</div>';
+  if(tl)tl.innerHTML='<div class="tl-item"><div class="tl-dot"></div><div class="tl-phase">'+t('weekly')+'</div><div class="tl-title">Aggiorna i prezzi</div><div class="tl-text">Clicca Aggiorna prezzi per sincronizzare le quotazioni in EUR e vedere il P&L aggiornato.</div></div><div class="tl-item"><div class="tl-dot"></div><div class="tl-phase">'+t('monthly')+'</div><div class="tl-title">DCA — aggiungi capitale</div><div class="tl-text">Usa il Simulatore DCA per pianificare contributi mensili e massimizzare la crescita.</div></div><div class="tl-item"><div class="tl-dot"></div><div class="tl-phase">'+t('quarterly')+'</div><div class="tl-title">'+t('rebalancing')+'</div><div class="tl-text">Controlla Verdetti e Matrice Rischio. Se un asset supera il 15% del totale, valuta di alleggerire.</div></div><div class="tl-item"><div class="tl-dot"></div><div class="tl-phase">'+t('annual')+'</div><div class="tl-title">'+t('strategicReview')+'</div><div class="tl-text">Rivaluta gli obiettivi e adatta la composizione del portafoglio al contesto di mercato.</div></div>';
 }
 
 // ─── VERDETTI ────────────────────────────────────────────────────────────────
@@ -1115,7 +1118,7 @@ function renderAIResults(res) {
     +'<span style="padding:3px 9px;border-radius:20px;font-size:11px;font-family:DM Mono,monospace;color:'+(ac[a.action]||'var(--gold)')+';border:1px solid '+(ac[a.action]||'var(--gold)')+';">'+(al[a.action]||a.action)+'</span></div>'
     +'<div style="display:flex;gap:14px;margin-bottom:10px">'
     +'<div><div style="font-family:DM Mono,monospace;font-size:10px;color:var(--muted)">REND. ATTESO</div><div style="font-family:DM Mono,monospace;font-size:13px;color:var(--green)">+'+a.ret+'%/a</div></div>'
-    +'<div><div style="font-family:DM Mono,monospace;font-size:10px;color:var(--muted)">RISCHIO</div><div style="font-family:DM Mono,monospace;font-size:13px;color:'+(a.risk==='low'?'var(--green)':a.risk==='medium'?'var(--orange)':'var(--red)')+'">'+( a.risk==='low'?'Basso':a.risk==='medium'?'Medio':'Alto')+'</div></div>'
+    +'<div><div style="font-family:DM Mono,monospace;font-size:10px;color:var(--muted)">RISCHIO</div><div style="font-family:DM Mono,monospace;font-size:13px;color:'+(a.risk==='low'?'var(--green)':a.risk==='medium'?'var(--orange)':'var(--red)')+'">'+( a.risk==='low'?t('lowRisk'):a.risk==='medium'?t('medRisk'):t('highRisk'))+'</div></div>'
     +'</div>'
     +'<div style="font-size:12px;color:#A0A0A0;line-height:1.6">'+a.analysis+'</div></div>'
   ).join('');
@@ -1758,6 +1761,21 @@ const TRANSLATIONS = {
     totalBudget: 'Budget totale',
     budgetPlaceholder: 'Inserisci il tuo capitale totale',
     availableLiquidity: 'Liquidita disponibile',
+    unrealizedGain: 'Guadagno non realizzato',
+    unrealizedLoss: 'Perdita non realizzata',
+    lowRiskLabel: 'Basso rischio',
+    medRiskLabel: 'Rischio medio',
+    highRiskLabel: 'Alto rischio',
+    unrealizedGain: 'Guadagno non realizzato',
+    unrealizedLoss: 'Perdita non realizzata',
+    lowRiskLabel: 'Basso rischio',
+    medRiskLabel: 'Rischio medio',
+    highRiskLabel: 'Alto rischio',
+    unrealizedGain: 'Guadagno non realizzato',
+    unrealizedLoss: 'Perdita non realizzata',
+    lowRiskLabel: 'Basso rischio',
+    medRiskLabel: 'Rischio medio',
+    highRiskLabel: 'Alto rischio',
     lowRisk: 'Basso',
     medRisk: 'Medio',
     highRisk: 'Alto',
@@ -1811,7 +1829,7 @@ const TRANSLATIONS = {
     annual: 'ANNUALE',
     rebalancing: 'Ribilanciamento',
     strategicReview: 'Revisione strategica',
-    updatePricesHint: 'Aggiorna i prezzi',
+    updatePricesHint: t('updatePricesHint'),
     personalHints: 'Suggerimenti personalizzati',
     score: 'SCORE',
     riskLabel: 'RISCHIO',
@@ -1871,6 +1889,21 @@ const TRANSLATIONS = {
     totalBudget: 'Total budget',
     budgetPlaceholder: 'Enter your total capital',
     availableLiquidity: 'Available liquidity',
+    unrealizedGain: 'Unrealized gain',
+    unrealizedLoss: 'Unrealized loss',
+    lowRiskLabel: 'Low risk',
+    medRiskLabel: 'Medium risk',
+    highRiskLabel: 'High risk',
+    unrealizedGain: 'Unrealized gain',
+    unrealizedLoss: 'Unrealized loss',
+    lowRiskLabel: 'Low risk',
+    medRiskLabel: 'Medium risk',
+    highRiskLabel: 'High risk',
+    unrealizedGain: 'Unrealized gain',
+    unrealizedLoss: 'Unrealized loss',
+    lowRiskLabel: 'Low risk',
+    medRiskLabel: 'Medium risk',
+    highRiskLabel: 'High risk',
     lowRisk: 'Low',
     medRisk: 'Medium',
     highRisk: 'High',
