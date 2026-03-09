@@ -2333,7 +2333,8 @@ async function loadMorningBrief() {
     try {
       const d = JSON.parse(cached);
       if (d.text) {
-        textEl.innerHTML = d.text;
+        const fonteHtml = d.fonte ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:6px;letter-spacing:.05em">📰 ${d.fonte}</div>` : '';
+        textEl.innerHTML = fonteHtml + d.text;
         if (pillsEl) pillsEl.innerHTML = (d.pills||[]).map(p=>`<span class="brief-pill" style="color:${p.color};border-color:${p.color}">${p.label}</span>`).join('');
         el.style.display = 'block';
         return;
@@ -2357,12 +2358,14 @@ async function loadMorningBrief() {
     const data = await res.json();
     if (data.error === 'RATE_LIMIT' || data.error) { el.style.display='none'; return; }
     if (data.text) {
-      textEl.innerHTML = data.text;
+      // Mostra fonte se disponibile
+      const fonteHtml = data.fonte ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:6px;letter-spacing:.05em">📰 ${data.fonte}</div>` : '';
+      textEl.innerHTML = fonteHtml + data.text;
       const pills = data.pills || [];
       if (pillsEl) pillsEl.innerHTML = pills.map(p=>`<span class="brief-pill" style="color:${p.color};border-color:${p.color}">${p.label}</span>`).join('');
       el.style.display = 'block';
-      localStorage.setItem('srm_brief_'+today, JSON.stringify({text:data.text, pills}));
-      logActivity('brief', 'Morning Brief', 'Briefing giornaliero generato');
+      localStorage.setItem('srm_brief_'+today, JSON.stringify({text:data.text, pills, fonte:data.fonte||''}));
+      logActivity('brief', 'Morning Brief', data.titolo_notizia || 'Briefing giornaliero generato');
     } else {
       el.style.display = 'none';
     }
