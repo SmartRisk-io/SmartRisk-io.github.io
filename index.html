@@ -47,6 +47,7 @@ window.addEventListener('load', () => {
       if (data&&data.assets) { assets=data.assets; localStorage.setItem('srm_assets',JSON.stringify(assets)); }
       else { const l=localStorage.getItem('srm_assets'); if(l) assets=JSON.parse(l); }
       renderAll(); checkOnboarding(); updateNotifBtn(); applyLang();
+      loadMorningBrief();
     } else {
       document.getElementById('loginScreen').style.display='flex';
       document.getElementById('appShell').style.display='none';
@@ -102,6 +103,44 @@ header{border-bottom:1px solid var(--border);padding-bottom:32px;margin-bottom:3
 .pval{color:var(--text);}
 .pchg-up{color:var(--green);font-size:10px;}
 .pchg-down{color:var(--red);font-size:10px;}
+
+
+/* DNA RADAR */
+.dna-wrap{display:flex;align-items:center;gap:32px;flex-wrap:wrap;margin-bottom:28px;}
+.dna-chart{flex-shrink:0;}
+.dna-legend{flex:1;min-width:180px;}
+.dna-leg-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.dna-leg-label{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);}
+.dna-leg-val{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;}
+.dna-score-badge{text-align:center;padding:12px;background:rgba(201,168,76,.06);border:1px solid var(--border);border-radius:8px;margin-top:12px;}
+/* MORNING BRIEF */
+#morningBrief{background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(74,144,217,.06));border:1px solid rgba(201,168,76,.25);border-radius:12px;padding:20px 24px;margin-bottom:24px;display:none;position:relative;overflow:hidden;}
+#morningBrief::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--blue),var(--purple));}
+.brief-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.brief-icon{font-size:20px;}
+.brief-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;}
+.brief-date{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-left:auto;}
+.brief-text{font-size:13px;line-height:1.8;color:#C0BDB8;}
+.brief-pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+.brief-pill{padding:3px 10px;border-radius:20px;font-family:'DM Mono',monospace;font-size:10px;border:1px solid;}
+/* WHAT-IF */
+.whatif-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;}
+.whatif-slider-wrap{margin-bottom:16px;}
+.whatif-slider-wrap label{display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:6px;}
+.whatif-slider-wrap label span{color:var(--text);font-weight:500;}
+input[type=range].wi-range{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:2px;outline:none;cursor:pointer;}
+input[type=range].wi-range::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--gold);cursor:pointer;border:2px solid var(--dark);}
+.whatif-result{background:var(--surface2);border-radius:10px;padding:20px;border:1px solid var(--border);}
+.wi-res-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px;}
+.wi-res-row:last-child{border-bottom:none;}
+.wi-ticker{font-family:'DM Mono',monospace;font-size:12px;color:var(--gold);}
+.wi-impact{font-family:'DM Mono',monospace;font-size:13px;font-weight:600;}
+/* ACTIVITY FEED */
+.feed-item{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.feed-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-top:2px;}
+.feed-body{flex:1;}
+.feed-time{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;}
+.feed-desc{font-size:13px;line-height:1.5;}
 
 /* MARKET TICKER */
 .market-ticker{background:var(--surface);border-bottom:1px solid var(--border);overflow:hidden;height:36px;display:flex;align-items:center;position:relative;}
@@ -302,6 +341,18 @@ svg.donut{transform:rotate(-90deg);}
       <button class="btn btn-blue" style="margin-left:auto;padding:5px 12px;font-size:10px" onclick="refreshPrices()" data-i18n="update">Aggiorna</button>
     </div>
 
+
+  <!-- MORNING BRIEF -->
+  <div id="morningBrief">
+    <div class="brief-header">
+      <span class="brief-icon">☀️</span>
+      <span class="brief-title">Morning Brief</span>
+      <span class="brief-date" id="briefDate"></span>
+      <button onclick="document.getElementById('morningBrief').style.display='none'" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;margin-left:8px">×</button>
+    </div>
+    <div class="brief-text" id="briefText">Caricamento...</div>
+    <div class="brief-pills" id="briefPills"></div>
+  </div>
   <!-- MARKET TICKER -->
   <div class="market-ticker" id="marketTicker">
     <span class="ticker-label">LIVE</span>
@@ -343,6 +394,14 @@ svg.donut{transform:rotate(-90deg);}
     </div>
     <!-- PORTAFOGLIO -->
     <div class="tab-content active" id="tab-portafoglio">
+      <!-- DNA SCORE -->
+      <div class="card" style="margin-bottom:28px" id="dnaCard">
+        <div class="section-title">DNA del Portafoglio</div>
+        <div class="dna-wrap">
+          <canvas id="dnaCanvas" width="220" height="220" class="dna-chart"></canvas>
+          <div class="dna-legend" id="dnaLegend"></div>
+        </div>
+      </div>
       <div class="two-col">
         <div class="card">
           <div class="section-title" data-i18n="allocation">Allocazione</div>
@@ -513,6 +572,7 @@ svg.donut{transform:rotate(-90deg);}
         </div>
         <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-align:right" id="newsDate"></div>
       </div>
+    </div>
     </div>
     <!-- STORICO -->
     <div class="tab-content" id="tab-storico">
@@ -894,6 +954,7 @@ function renderAll() {
   renderHeatmap();renderVerdetti();renderStrategia();
   populateCalcSelect();updateBudgetPanel();
   setTimeout(drawAllSparklines,50);
+  setTimeout(drawDNA,80);
 }
 
 function drawAllSparklines() {
@@ -1585,6 +1646,181 @@ async function loadMarketTicker() {
 function startTickerRefresh() {
   loadMarketTicker();
   setInterval(loadMarketTicker, 5*60*1000);
+}
+
+
+// ─── DNA RADAR CHART ──────────────────────────────────────────────────────────
+function computeDNA() {
+  if (assets.length === 0) return null;
+  const tot = assets.reduce((s,a) => s + a.invested, 0);
+  // 1. Diversificazione (0-100): numero asset + spread settori
+  const sectors = new Set(assets.map(a => getProfile(a.ticker).sector));
+  const divScore = Math.min(100, (assets.length / 8 * 50) + (sectors.size / 6 * 50));
+  // 2. Sicurezza (0-100): % low risk
+  const loPct = assets.filter(a=>a.risk==='low').reduce((s,a)=>s+a.invested,0) / tot * 100;
+  const safeScore = Math.min(100, loPct * 1.4);
+  // 3. Rendimento atteso (0-100)
+  const wRet = assets.reduce((s,a) => s + (getProfile(a.ticker).ret * a.invested/tot), 0);
+  const retScore = Math.min(100, wRet * 5);
+  // 4. Liquidità (0-100): etf/azioni vs derivati/illiquidi
+  const liqScore = Math.min(100, assets.filter(a => {
+    const p = getProfile(a.ticker);
+    return p.sector.includes('ETF') || ['Tech','Industriale','Consumer','Healthcare'].includes(p.sector);
+  }).reduce((s,a) => s + a.invested, 0) / tot * 100 * 1.1);
+  // 5. Momentum (0-100): basato su P&L attuale
+  const withPrice = assets.filter(a => a.currentPrice > 0 && a.buyPrice > 0);
+  let momScore = 50; // neutral se no prezzi live
+  if (withPrice.length > 0) {
+    const avgPnlPct = withPrice.reduce((s,a) => s + ((a.currentPrice-a.buyPrice)/a.buyPrice*100), 0) / withPrice.length;
+    momScore = Math.max(5, Math.min(100, 50 + avgPnlPct * 2));
+  }
+  return [
+    { label: 'Diversificazione', value: Math.round(divScore), color: '#4A90D9' },
+    { label: 'Sicurezza',        value: Math.round(safeScore), color: '#4CAF7E' },
+    { label: 'Rendimento',       value: Math.round(retScore),  color: '#C9A84C' },
+    { label: 'Liquidità',        value: Math.round(liqScore),  color: '#9B59B6' },
+    { label: 'Momentum',         value: Math.round(momScore),  color: '#E08A3A' },
+  ];
+}
+
+function drawDNA() {
+  const canvas = document.getElementById('dnaCanvas'); if (!canvas) return;
+  const dims = computeDNA();
+  const ctx = canvas.getContext('2d');
+  const W = 220, H = 220, cx = W/2, cy = H/2, R = 80;
+  ctx.clearRect(0, 0, W, H);
+  const N = 5;
+  const angles = Array.from({length:N}, (_,i) => (i * 2*Math.PI/N) - Math.PI/2);
+
+  // Grid rings
+  [0.25, 0.5, 0.75, 1].forEach(r => {
+    ctx.beginPath();
+    angles.forEach((a,i) => {
+      const x = cx + Math.cos(a)*R*r, y = cy + Math.sin(a)*R*r;
+      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    });
+    ctx.closePath();
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+
+  // Axis lines
+  angles.forEach(a => {
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(a)*R, cy + Math.sin(a)*R);
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+
+  if (!dims) {
+    ctx.fillStyle = 'rgba(138,133,128,0.5)';
+    ctx.font = '12px DM Sans';
+    ctx.textAlign = 'center';
+    ctx.fillText('Aggiungi asset', cx, cy);
+    return;
+  }
+
+  // Filled area
+  ctx.beginPath();
+  dims.forEach((d, i) => {
+    const v = d.value / 100;
+    const x = cx + Math.cos(angles[i]) * R * v;
+    const y = cy + Math.sin(angles[i]) * R * v;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(201,168,76,0.12)';
+  ctx.fill();
+  ctx.strokeStyle = '#C9A84C';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Dots
+  dims.forEach((d, i) => {
+    const v = d.value / 100;
+    const x = cx + Math.cos(angles[i]) * R * v;
+    const y = cy + Math.sin(angles[i]) * R * v;
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI*2);
+    ctx.fillStyle = d.color;
+    ctx.fill();
+  });
+
+  // Labels
+  dims.forEach((d, i) => {
+    const x = cx + Math.cos(angles[i]) * (R + 22);
+    const y = cy + Math.sin(angles[i]) * (R + 22);
+    ctx.fillStyle = '#8A8580';
+    ctx.font = '9px DM Mono, monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(d.label.toUpperCase(), x, y);
+  });
+
+  // Legend
+  const legEl = document.getElementById('dnaLegend'); if (!legEl) return;
+  const overall = Math.round(dims.reduce((s,d)=>s+d.value,0)/dims.length);
+  const lbl = overall>=80?'Eccellente':overall>=65?'Ottimo':overall>=50?'Buono':overall>=35?'Da migliorare':'Critico';
+  const lc = overall>=65?'var(--green)':overall>=45?'var(--gold)':'var(--red)';
+  legEl.innerHTML = dims.map(d => `
+    <div class="dna-leg-item">
+      <span class="dna-leg-label">${d.label}</span>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:60px;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden">
+          <div style="width:${d.value}%;height:100%;background:${d.color};border-radius:2px"></div>
+        </div>
+        <span class="dna-leg-val" style="color:${d.color};min-width:28px;text-align:right">${d.value}</span>
+      </div>
+    </div>`).join('')
+    + `<div class="dna-score-badge"><span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">SCORE GLOBALE</span><br>
+       <span style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:${lc}">${overall}</span>
+       <span style="font-size:12px;color:${lc};margin-left:6px">${lbl}</span></div>`;
+}
+
+// ─── MORNING BRIEF ────────────────────────────────────────────────────────────
+async function loadMorningBrief() {
+  if (assets.length === 0) return;
+  const today = new Date().toISOString().slice(0,10);
+  const cached = localStorage.getItem('srm_brief_' + today);
+  const el = document.getElementById('morningBrief');
+  const textEl = document.getElementById('briefText');
+  const pillsEl = document.getElementById('briefPills');
+  const dateEl = document.getElementById('briefDate');
+  if (!el) return;
+  dateEl.textContent = new Date().toLocaleDateString('it-IT', {weekday:'long', day:'numeric', month:'long'});
+  if (cached) {
+    try {
+      const d = JSON.parse(cached);
+      textEl.innerHTML = d.text;
+      pillsEl.innerHTML = (d.pills||[]).map(p=>`<span class="brief-pill" style="color:${p.color};border-color:${p.color}">${p.label}</span>`).join('');
+      el.style.display = 'block'; return;
+    } catch(_) {}
+  }
+  el.style.display = 'block';
+  textEl.textContent = 'Preparazione del brief di oggi...';
+  try {
+    const tot = assets.reduce((s,a)=>s+a.invested,0);
+    const assetList = assets.map(a=>a.ticker+(a.currentPrice>0&&a.buyPrice>0?' (P&L: '+(((a.currentPrice-a.buyPrice)/a.buyPrice*100).toFixed(1))+'%)':'')).join(', ');
+    const res = await fetch(WORKER_URL, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ type:'brief', portfolio:{ assets:assetList, total:tot }, userId: window._currentUid||'anon' })
+    });
+    const data = await res.json();
+    if (data.error === 'RATE_LIMIT') { el.style.display='none'; return; }
+    if (data.text) {
+      textEl.innerHTML = data.text;
+      const pills = data.pills || [];
+      pillsEl.innerHTML = pills.map(p=>`<span class="brief-pill" style="color:${p.color};border-color:${p.color}">${p.label}</span>`).join('');
+      localStorage.setItem('srm_brief_'+today, JSON.stringify({text:data.text, pills}));
+      logActivity('brief', 'Morning Brief', 'Briefing giornaliero generato');
+    }
+  } catch(e) {
+    textEl.textContent = 'Brief non disponibile oggi.';
+    setTimeout(() => { if(el) el.style.display='none'; }, 3000);
+  }
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
