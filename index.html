@@ -157,8 +157,8 @@ header{border-bottom:1px solid var(--border);padding-bottom:32px;margin-bottom:3
 .geo-map-svg{width:100%;border-radius:8px;overflow:hidden;}
 .geo-map-svg path{transition:fill .2s,opacity .2s;cursor:pointer;}
 .geo-map-svg path:hover{opacity:.85;filter:brightness(1.1);}
-.geo-legend{display:flex;flex-direction:column;gap:8px;}
-.geo-leg-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface2);border-radius:8px;border-left:3px solid;}
+.geo-legend{display:flex;flex-wrap:wrap;gap:10px;}
+.geo-leg-item{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;}
 .geo-leg-left{display:flex;align-items:center;gap:10px;}
 .geo-leg-flag{font-size:18px;}
 .geo-leg-name{font-family:'DM Mono',monospace;font-size:12px;}
@@ -259,7 +259,7 @@ input[type=range].wi-range::-webkit-slider-thumb{-webkit-appearance:none;width:1
   .asset-table{font-size:11px;}
   .asset-table th,.asset-table td{padding:8px 6px;}
   .btn{padding:8px 14px;font-size:11px;}
-  .geo-legend{max-height:300px;overflow-y:auto;}
+  .geo-legend{display:flex;flex-wrap:wrap;gap:10px;}
   #tab-panoramica .dna-wrap canvas{margin:0 auto;}
   }
 .tab-content{display:none;}
@@ -770,22 +770,17 @@ svg.donut{transform:rotate(-90deg);}
     </div>
     <!-- MAPPA GEO -->
     <div class="tab-content" id="tab-mappa">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
         <div>
           <div class="section-title" style="margin:0">Mappa Geografica</div>
           <div style="font-size:12px;color:var(--muted);margin-top:4px">Esposizione del portafoglio per area geografica</div>
         </div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 200px;gap:20px;align-items:start">
-        <div id="geoMapWrap" style="height:calc(100vh - 260px);min-height:520px;border-radius:12px;overflow:hidden;border:1px solid var(--border);background:#0a0a0a;position:relative">
-          <svg id="worldMapSvg" style="width:100%;height:100%;display:block"></svg>
-          <div id="geoTooltipD3" style="position:absolute;display:none;pointer-events:none;z-index:50"></div>
-        </div>
-        <div style="position:sticky;top:90px">
-          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--muted);margin-bottom:12px">ALLOCAZIONE</div>
-          <div class="geo-legend" id="geoLegend"></div>
-        </div>
+      <div id="geoMapWrap" style="width:100%;height:calc(100vh - 280px);min-height:500px;border-radius:12px;overflow:hidden;border:1px solid var(--border);background:#0a0a0a;position:relative">
+        <svg id="worldMapSvg" style="width:100%;height:100%;display:block"></svg>
+        <div id="geoTooltipD3" style="position:absolute;display:none;pointer-events:none;z-index:50"></div>
       </div>
+      <div class="geo-legend" id="geoLegend" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px"></div>
     </div>
     <!-- OBIETTIVO -->
     <div class="tab-content" id="tab-obiettivo">
