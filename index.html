@@ -278,11 +278,11 @@ svg.donut{transform:rotate(-90deg);}
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px">
         <div class="header-meta"><div>&#9899; SMARTRISK.IO</div><div id="headerDate" style="margin-top:3px"></div></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
-          <button class="btn btn-blue" onclick="refreshPrices()">&#128225; Aggiorna prezzi</button>
+          <button class="btn btn-blue" onclick="refreshPrices()">Aggiorna prezzi</button>
           <button onclick="enableNotifications()" id="notifBtn" title="Attiva notifiche" class="btn btn-ghost" style="font-size:14px;padding:8px 12px">&#128277;</button>
           <button onclick="toggleLang()" id="langBtn" class="btn btn-ghost" style="font-size:12px;font-family:'DM Mono',monospace;padding:8px 12px">EN</button>
-          <button class="btn btn-purple" onclick="runAIAnalysis()">&#129302; Analisi AI</button>
-          <button class="btn btn-gold" onclick="openEdit()">&#9998; Modifica</button>
+          <button class="btn btn-purple" onclick="runAIAnalysis()">Analisi AI</button>
+          <button class="btn btn-gold" onclick="openEdit()">Modifica</button>
         </div>
       </div>
     </header>
@@ -295,8 +295,8 @@ svg.donut{transform:rotate(-90deg);}
     </div>
     <!-- PRICE BAR -->
     <div class="price-bar" id="priceBar">
-      <span class="price-msg" id="priceMsg">Clicca &#128225; Aggiorna prezzi per le quotazioni live</span>
-      <button class="btn btn-blue" style="margin-left:auto;padding:5px 12px;font-size:10px" onclick="refreshPrices()">&#128225; Aggiorna</button>
+      <span class="price-msg" id="priceMsg">Clicca Aggiorna prezzi per le quotazioni live</span>
+      <button class="btn btn-blue" style="margin-left:auto;padding:5px 12px;font-size:10px" onclick="refreshPrices()">Aggiorna</button>
     </div>
     <!-- TABS -->
     <div class="tabs">
@@ -339,7 +339,7 @@ svg.donut{transform:rotate(-90deg);}
       <div id="emptyState" style="text-align:center;padding:48px;color:var(--muted);display:none">
         <div style="font-size:48px;margin-bottom:16px">&#128202;</div>
         <div style="font-size:16px;margin-bottom:8px">Nessun asset</div>
-        <div style="font-size:13px">Clicca <strong style="color:var(--gold)">&#9998; Modifica</strong> per aggiungere il primo asset.</div>
+        <div style="font-size:13px">Clicca <strong style="color:var(--gold)">Modifica</strong> per aggiungere il primo asset.</div>
       </div>
       <!-- BUDGET PANEL -->
       <div style="margin-top:32px">
@@ -443,7 +443,7 @@ svg.donut{transform:rotate(-90deg);}
           <div class="section-title" style="margin:0">Analisi AI del portafoglio</div>
           <div style="font-size:12px;color:var(--muted);margin-top:4px">Motore locale basato su dati storici e regole finanziarie</div>
         </div>
-        <button class="btn btn-purple" onclick="runAIAnalysis()">&#129302; Analizza ora</button>
+        <button class="btn btn-purple" onclick="runAIAnalysis()">Analizza ora</button>
       </div>
       <div id="aiLoading" style="display:none;text-align:center;padding:48px">
         <div style="font-size:40px;margin-bottom:12px">&#129302;</div>
@@ -454,7 +454,7 @@ svg.donut{transform:rotate(-90deg);}
         <div style="font-size:40px;margin-bottom:12px">&#129302;</div>
         <div style="font-family:Playfair Display,serif;font-size:20px;font-weight:700;margin-bottom:8px">Analisi AI pronta</div>
         <div style="font-size:13px;color:var(--muted);margin-bottom:20px">Clicca "Analizza ora" o aggiorna i prezzi per generare un report completo.</div>
-        <button onclick="runAIAnalysis()" class="btn btn-purple" style="padding:12px 28px;justify-content:center">&#129302; Analizza portafoglio</button>
+        <button onclick="runAIAnalysis()" class="btn btn-purple" style="padding:12px 28px;justify-content:center">Analizza portafoglio</button>
       </div>
       <div id="aiResults" style="display:none">
         <div class="ai-score-box" id="aiScoreBox"></div>
@@ -471,7 +471,7 @@ svg.donut{transform:rotate(-90deg);}
           <div class="section-title" style="margin:0">Briefing mercati giornaliero</div>
           <div style="font-size:12px;color:var(--muted);margin-top:4px">Analisi AI con contesto geopolitico aggiornato</div>
         </div>
-        <button class="btn btn-blue" onclick="loadMarketNews()">&#127757; Aggiorna briefing</button>
+        <button class="btn btn-blue" onclick="loadMarketNews()">Aggiorna briefing</button>
       </div>
       <div id="newsLoading" style="display:none;text-align:center;padding:48px">
         <div style="font-size:40px;margin-bottom:12px">&#127757;</div>
@@ -482,7 +482,7 @@ svg.donut{transform:rotate(-90deg);}
         <div style="font-size:40px;margin-bottom:12px">&#127757;</div>
         <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px">Briefing mercati</div>
         <div style="font-size:13px;color:var(--muted);margin-bottom:20px">Clicca "Aggiorna briefing" per ricevere l'analisi giornaliera dei mercati con contesto geopolitico.</div>
-        <button onclick="loadMarketNews()" class="btn btn-blue" style="padding:12px 28px;justify-content:center">&#127757; Carica briefing</button>
+        <button onclick="loadMarketNews()" class="btn btn-blue" style="padding:12px 28px;justify-content:center">Carica briefing</button>
       </div>
       <div id="newsContent" style="display:none">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
@@ -530,7 +530,7 @@ svg.donut{transform:rotate(-90deg);}
           <div class="section-title" style="margin:0">Segnali di trading</div>
           <div style="font-size:12px;color:var(--muted);margin-top:4px">Suggerimenti basati su variazioni prezzi e analisi AI</div>
         </div>
-        <button class="btn btn-blue" onclick="loadSegnali()">&#128204; Aggiorna segnali</button>
+        <button class="btn btn-blue" onclick="loadSegnali()">Aggiorna segnali</button>
       </div>
       <div id="segnaliLoading" style="display:none;text-align:center;padding:48px">
         <div style="font-size:40px;margin-bottom:12px">&#128204;</div>
@@ -541,7 +541,7 @@ svg.donut{transform:rotate(-90deg);}
         <div style="font-size:40px;margin-bottom:12px">&#128204;</div>
         <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px">Segnali di trading</div>
         <div style="font-size:13px;color:var(--muted);margin-bottom:20px">Aggiorna prima i prezzi, poi clicca per ricevere segnali personalizzati basati sul tuo portafoglio.</div>
-        <button onclick="loadSegnali()" class="btn btn-blue" style="padding:12px 28px;justify-content:center">&#128204; Genera segnali</button>
+        <button onclick="loadSegnali()" class="btn btn-blue" style="padding:12px 28px;justify-content:center">Genera segnali</button>
       </div>
       <div id="segnaliContent" style="display:none">
         <!-- Alert urgenti -->
@@ -561,7 +561,7 @@ svg.donut{transform:rotate(-90deg);}
           <div class="section-title" style="margin:0">Segnali di mercato</div>
           <div style="font-size:12px;color:var(--muted);margin-top:4px">Analisi AI su azioni e indici globali &mdash; usa 1 credito AI</div>
         </div>
-        <button class="btn btn-gold" onclick="loadSegnali()">&#128308; Genera segnali</button>
+        <button class="btn btn-gold" onclick="loadSegnali()">Genera segnali</button>
       </div>
       <div id="segnaliLoading" style="display:none;text-align:center;padding:48px">
         <div style="font-size:40px;margin-bottom:12px">&#128308;</div>
@@ -572,7 +572,7 @@ svg.donut{transform:rotate(-90deg);}
         <div style="font-size:40px;margin-bottom:12px">&#128308;</div>
         <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px">Segnali di mercato</div>
         <div style="font-size:13px;color:var(--muted);margin-bottom:20px">Clicca "Genera segnali" per ricevere consigli di acquisto e vendita su azioni e indici globali.</div>
-        <button onclick="loadSegnali()" class="btn btn-gold" style="padding:12px 28px;justify-content:center">&#128308; Genera segnali</button>
+        <button onclick="loadSegnali()" class="btn btn-gold" style="padding:12px 28px;justify-content:center">Genera segnali</button>
       </div>
       <div id="segnaliContent" style="display:none">
         <div id="segnaliGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:16px"></div>
@@ -619,7 +619,7 @@ svg.donut{transform:rotate(-90deg);}
   <div class="edit-section-title">Posizioni</div>
   <div id="editAssetsList"></div>
   <button class="add-asset-btn" onclick="addAsset()">+ Aggiungi asset</button>
-  <button class="save-btn" onclick="saveAll()">&#9925; Salva su cloud</button>
+  <button class="save-btn" onclick="saveAll()">Salva su cloud</button>
 </div>
 <!-- ONBOARDING -->
 <div id="onboarding">
