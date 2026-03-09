@@ -105,6 +105,33 @@ header{border-bottom:1px solid var(--border);padding-bottom:32px;margin-bottom:3
 .pchg-down{color:var(--red);font-size:10px;}
 
 
+
+/* GEO MAP */
+.geo-wrap{display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start;}
+.geo-map-svg{width:100%;border-radius:8px;overflow:hidden;}
+.geo-map-svg path{transition:fill .2s,opacity .2s;cursor:pointer;}
+.geo-map-svg path:hover{opacity:.85;filter:brightness(1.1);}
+.geo-legend{display:flex;flex-direction:column;gap:8px;}
+.geo-leg-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface2);border-radius:8px;border-left:3px solid;}
+.geo-leg-left{display:flex;align-items:center;gap:10px;}
+.geo-leg-flag{font-size:18px;}
+.geo-leg-name{font-family:'DM Mono',monospace;font-size:12px;}
+.geo-leg-pct{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;}
+.geo-leg-val{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);}
+.geo-tooltip{position:fixed;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:'DM Mono',monospace;font-size:12px;pointer-events:none;z-index:999;display:none;box-shadow:0 8px 24px rgba(0,0,0,.4);}
+/* GOAL */
+.goal-wrap{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;}
+.goal-progress{position:relative;height:16px;background:var(--surface3);border-radius:8px;overflow:hidden;margin:12px 0;}
+.goal-bar{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--gold),#E8C56A);transition:width .8s cubic-bezier(.4,0,.2,1);}
+.goal-milestones{display:flex;justify-content:space-between;margin-top:4px;}
+.goal-ms{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);}
+.goal-proj{background:var(--surface2);border-radius:10px;padding:16px;border:1px solid var(--border);}
+.goal-proj-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px;}
+.goal-proj-row:last-child{border:none;}
+.goal-input-row{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.goal-input-row input{flex:1;min-width:120px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-family:'DM Mono',monospace;font-size:13px;}
+.goal-input-row input:focus{outline:none;border-color:var(--gold);}
+
 /* DNA RADAR */
 .dna-wrap{display:flex;align-items:center;gap:32px;flex-wrap:wrap;margin-bottom:28px;}
 .dna-chart{flex-shrink:0;}
@@ -342,14 +369,6 @@ svg.donut{transform:rotate(-90deg);}
     </div>
 
 
-  <!-- MORNING BRIEF -->
-  <div id="morningBrief">
-    <div class="brief-header">
-      <span class="brief-icon">☀️</span>
-      <span class="brief-title">Morning Brief</span>
-      <span class="brief-date" id="briefDate"></span>
-      <button onclick="document.getElementById('morningBrief').style.display='none'" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;margin-left:8px">×</button>
-    </div>
     <div class="brief-text" id="briefText">Caricamento...</div>
     <div class="brief-pills" id="briefPills"></div>
   </div>
@@ -387,20 +406,56 @@ svg.donut{transform:rotate(-90deg);}
       <div class="tab-dropdown" id="altroDropdown">
         <button class="tab" onclick="toggleAltro(event)">Altro &#9660;</button>
         <div class="tab-dropdown-menu" id="altroMenu">
+          <button onclick="switchTab('mappa',null);closeAltro()">Mappa Geo</button>
+          <button onclick="switchTab('obiettivo',null);closeAltro()">Obiettivo</button>
           <button onclick="switchTab('verdetti',null);closeAltro()">Verdetti</button>
           <button onclick="switchTab('storico',null);closeAltro()">Storico</button>
         </div>
       </div>
     </div>
+    <!-- PANORAMICA -->
+    <div class="tab-content" id="tab-panoramica">
+      <!-- Morning Brief -->
+      <div id="morningBrief" style="background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(74,144,217,.06));border:1px solid rgba(201,168,76,.25);border-radius:12px;padding:20px 24px;margin-bottom:24px;display:none;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--blue),var(--purple))"></div>
+        <div class="brief-header">
+          <span class="brief-icon">☀️</span>
+          <span class="brief-title">Morning Brief</span>
+          <span class="brief-date" id="briefDate"></span>
+          <button onclick="document.getElementById('morningBrief').style.display='none'" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;margin-left:8px">×</button>
+        </div>
+        <div class="brief-text" id="briefText">Caricamento...</div>
+        <div class="brief-pills" id="briefPills"></div>
+      </div>
+
+      <!-- Summary cards row -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:24px" id="panorSummary"></div>
+
+      <!-- DNA Radar + quick stats -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px">
+        <div class="card" id="dnaCard">
+          <div class="section-title">DNA del Portafoglio</div>
+          <div class="dna-wrap">
+            <canvas id="dnaCanvas" width="200" height="200" class="dna-chart"></canvas>
+            <div class="dna-legend" id="dnaLegend"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-title">Composizione</div>
+          <canvas id="panorDonut" height="180"></canvas>
+          <div id="panorDonutLegend" style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px"></div>
+        </div>
+      </div>
+
+      <!-- Top movers -->
+      <div class="card">
+        <div class="section-title">Asset in evidenza</div>
+        <div id="panorMovers" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px"></div>
+      </div>
+    </div>
+
     <!-- PORTAFOGLIO -->
     <div class="tab-content active" id="tab-portafoglio">
-      <!-- DNA SCORE -->
-      <div class="card" style="margin-bottom:28px" id="dnaCard">
-        <div class="section-title">DNA del Portafoglio</div>
-        <div class="dna-wrap">
-          <canvas id="dnaCanvas" width="220" height="220" class="dna-chart"></canvas>
-          <div class="dna-legend" id="dnaLegend"></div>
-        </div>
       </div>
       <div class="two-col">
         <div class="card">
@@ -573,6 +628,68 @@ svg.donut{transform:rotate(-90deg);}
         <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-align:right" id="newsDate"></div>
       </div>
     </div>
+    </div>
+    <!-- MAPPA GEO -->
+    <div class="tab-content" id="tab-mappa">
+      <div class="section-title">Esposizione Geografica</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:20px">Distribuzione del portafoglio per area geografica, pesata per valore investito</div>
+      <div class="geo-wrap" id="geoWrap">
+        <div id="geoMapContainer"></div>
+        <div class="geo-legend" id="geoLegend"></div>
+      </div>
+      <div class="geo-tooltip" id="geoTooltip"></div>
+    </div>
+    <!-- OBIETTIVO -->
+    <div class="tab-content" id="tab-obiettivo">
+      <div class="section-title">Obiettivo Finanziario</div>
+      <div class="goal-wrap">
+        <div class="card">
+          <div style="margin-bottom:16px">
+            <label style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);display:block;margin-bottom:8px">IMPOSTA IL TUO OBIETTIVO</label>
+            <div class="goal-input-row">
+              <input type="number" id="goalTarget" placeholder="Target €" min="0" step="1000" oninput="saveGoal()">
+              <input type="number" id="goalMonthly" placeholder="Risparmio mensile €" min="0" step="50" oninput="saveGoal()">
+            </div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:4px">RENDIMENTO ANNUO ATTESO</div>
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+              <input type="range" class="wi-range" id="goalReturn" min="3" max="20" value="9" step="0.5" oninput="document.getElementById('goalReturnVal').textContent=this.value+'%';saveGoal()" style="flex:1">
+              <span id="goalReturnVal" style="font-family:'DM Mono',monospace;font-size:13px;color:var(--gold);min-width:36px">9%</span>
+            </div>
+          </div>
+          <div id="goalProgress" style="display:none">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+              <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">PROGRESSO</span>
+              <span id="goalPct" style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--gold)">0%</span>
+            </div>
+            <div class="goal-progress"><div class="goal-bar" id="goalBar" style="width:0%"></div></div>
+            <div class="goal-milestones">
+              <span class="goal-ms">€0</span><span class="goal-ms" id="goalMs25">25%</span>
+              <span class="goal-ms" id="goalMs50">50%</span><span class="goal-ms" id="goalMs75">75%</span>
+              <span class="goal-ms" id="goalMsTarget">TARGET</span>
+            </div>
+            <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap">
+              <div style="flex:1;min-width:100px;text-align:center;background:var(--surface2);border-radius:8px;padding:12px">
+                <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)">INVESTITO</div>
+                <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700" id="goalCurrentVal">---</div>
+              </div>
+              <div style="flex:1;min-width:100px;text-align:center;background:var(--surface2);border-radius:8px;padding:12px">
+                <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)">MANCANTE</div>
+                <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--red)" id="goalRemaining">---</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card goal-proj" id="goalProjection" style="display:none">
+          <div class="section-title">Proiezione</div>
+          <div class="goal-proj-row"><span style="color:var(--muted)">Scenario conservativo</span><span id="projConserv" style="color:var(--text)">---</span></div>
+          <div class="goal-proj-row"><span style="color:var(--muted)">Scenario base</span><span id="projBase" style="color:var(--gold)">---</span></div>
+          <div class="goal-proj-row"><span style="color:var(--muted)">Scenario ottimistico</span><span id="projOptim" style="color:var(--green)">---</span></div>
+          <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:8px">CRESCITA ANNO PER ANNO</div>
+            <canvas id="goalChart" height="120"></canvas>
+          </div>
+        </div>
+      </div>
     </div>
     <!-- STORICO -->
     <div class="tab-content" id="tab-storico">
@@ -851,6 +968,50 @@ const ASSET_KB = {
   'GLD':{risk:'medium',ret:5,vol:2,sector:'Oro',desc:'ETF Oro fisico'},
 };
 
+
+// Geographic exposure mapping (ticker -> {region: %, ...})
+const GEO_KB = {
+  'VUAA':   {USA:100},
+  'VUAA.DE':{USA:100},
+  'VOO':    {USA:100},
+  'VTI':    {USA:100},
+  'QQQ':    {USA:100},
+  'VWCE':   {USA:60,Europa:15,Giappone:7,EmergingMarkets:10,Altro:8},
+  'VWCE.DE':{USA:60,Europa:15,Giappone:7,EmergingMarkets:10,Altro:8},
+  'VWCE.MI':{USA:60,Europa:15,Giappone:7,EmergingMarkets:10,Altro:8},
+  'IWDA':   {USA:68,Europa:15,Giappone:8,Altro:9},
+  'VHYG':   {USA:45,Europa:40,Altro:15},
+  'VHYG.MI':{USA:45,Europa:40,Altro:15},
+  'AGG':    {USA:100},
+  'AAPL':   {USA:100},
+  'MSFT':   {USA:100},
+  'GOOGL':  {USA:100},
+  'AMZN':   {USA:100},
+  'META':   {USA:100},
+  'NVDA':   {USA:100},
+  'TSM':    {Taiwan:100},
+  'ASML':   {Europa:100},
+  'ASML.AS':{Europa:100},
+  'INTC':   {USA:100},
+  'TSLA':   {USA:100},
+  'PLTR':   {USA:100},
+  'CAT':    {USA:100},
+  'JNJ':    {USA:100},
+  'PG':     {USA:100},
+  'KO':     {USA:100},
+  'GLD':    {USA:100},
+};
+
+function getGeo(ticker) {
+  const tk = ticker.toUpperCase();
+  if (GEO_KB[tk]) return GEO_KB[tk];
+  const base = tk.split('.')[0];
+  for (const k of Object.keys(GEO_KB)) { if (k.split('.')[0]===base) return GEO_KB[k]; }
+  // Fallback by exchange suffix
+  if (tk.endsWith('.DE')||tk.endsWith('.MI')||tk.endsWith('.AS')||tk.endsWith('.PA')||tk.endsWith('.L')) return {Europa:100};
+  return {USA:100};
+}
+
 function getProfile(ticker) {
   const tk = ticker.toUpperCase();
   if (ASSET_KB[tk]) return ASSET_KB[tk];
@@ -955,6 +1116,7 @@ function renderAll() {
   populateCalcSelect();updateBudgetPanel();
   setTimeout(drawAllSparklines,50);
   setTimeout(drawDNA,80);
+  renderPanorSummary();renderPanorMovers();
 }
 
 function drawAllSparklines() {
@@ -1251,7 +1413,7 @@ async function runAIAnalysis() {
       return;
     }
     if(data.error)throw new Error(data.error);
-    if(data._remaining!==undefined)showToast('Analisi rimaste oggi: '+data._remaining);
+    if(data._remaining!==undefined && data._remaining >= 0) showToast('Analisi AI rimaste oggi: '+data._remaining);
     document.getElementById('aiLoading').style.display='none';
     renderAIResults(data);
     data.assets.forEach(ai=>{const a=assets.find(x=>x.ticker.toUpperCase()===ai.ticker.toUpperCase());if(a){a.risk=ai.risk;a.expectedReturn=ai.expectedReturn;}});
@@ -1308,6 +1470,9 @@ function switchTab(id, el) {
     });
   }
   if(id==='rischio')renderRiskMatrix();
+  if(id==='panoramica')renderPanoramica();
+  if(id==='mappa'){renderGeoMap();}
+  if(id==='obiettivo'){loadGoal();}
   if(id==='news'&&document.getElementById('newsContent').style.display==='none'&&document.getElementById('newsLoading').style.display==='none')loadMarketNews();
   if(id==='storico')renderStorico();
 }
@@ -1375,7 +1540,7 @@ async function loadMarketNews() {
       return;
     }
     if(data.error)throw new Error(data.error);
-    if(data._remaining!==undefined)showToast('Analisi rimaste oggi: '+data._remaining);
+    if(data._remaining!==undefined && data._remaining >= 0) showToast('Analisi AI rimaste oggi: '+data._remaining);
     document.getElementById('newsLoading').style.display='none';
     document.getElementById('newsContent').style.display='block';
     document.getElementById('newsMacro').innerHTML='<div class="section-title">'+t('macro')+'</div><div style="font-size:13px;line-height:1.8;color:#C0BDB8">'+data.macro+'</div>';
@@ -1436,17 +1601,35 @@ async function loadSegnali() {
       const actionColors={compra:'var(--green)',vendi:'var(--red)',mantieni:'var(--gold)',riduci:'#F59E0B',aumenta:'var(--blue)'};
       grid.innerHTML=data.segnali.map(s=>{
         const cc=actionColors[s.azione]||'var(--gold)';
-        const pnlColor=parseFloat(s.pnlPct)>=0?'var(--green)':'var(--red)';
-        return '<div class="card" style="border-top:3px solid '+cc+'"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px"><div><div style="font-family:Playfair Display,serif;font-size:18px;font-weight:700;color:var(--gold)">'+s.ticker+'</div><div style="font-size:11px;color:var(--muted)">'+(s.name||'')+'</div></div><div style="background:'+cc+';color:'+(s.azione==='vendi'||s.azione==='riduci'?'#fff':'var(--dark)')+';padding:4px 12px;border-radius:20px;font-family:DM Mono,monospace;font-size:11px;font-weight:700;text-transform:uppercase">'+s.azione+'</div></div>'
-          +(s.pnlPct!==null?'<div style="font-family:DM Mono,monospace;font-size:13px;color:'+pnlColor+';margin-bottom:8px">'+(parseFloat(s.pnlPct)>=0?'+':'')+s.pnlPct+'% da acquisto</div>':'')
-          +'<div style="font-size:13px;color:#C0BDB8;line-height:1.6;margin-bottom:10px">'+s.motivazione+'</div>'
-          +(s.targetPrice?'<div style="font-family:DM Mono,monospace;font-size:11px;color:var(--muted)">Target: €'+s.targetPrice+' · Stop: €'+(s.stopLoss||'---')+'</div>':'')
-          +'<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-family:DM Mono,monospace;font-size:10px;color:var(--muted)">CONFIDENZA: <span style="color:'+cc+'">'+(s.confidenza||'---')+'</span></div></div>';
+        const textOnColor = (s.azione==='vendi'||s.azione==='riduci')?'#fff':'#0D0C0A';
+        const pnlVal = parseFloat(s.pnlPct);
+        const pnlColor = pnlVal>=0?'var(--green)':'var(--red)';
+        const pnlStr = s.pnlPct!==null ? (pnlVal>=0?'+':'')+s.pnlPct+'%' : null;
+        const conf = (s.confidenza||'').toLowerCase();
+        const confColor = conf.includes('alta')?'var(--green)':conf.includes('bassa')?'var(--red)':'var(--gold)';
+        return `<div style="background:var(--surface2);border-radius:12px;border:1px solid var(--border);border-top:3px solid ${cc};padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap">
+            <div style="min-width:0">
+              <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.ticker}</div>
+              <div style="font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px">${s.name||''}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
+              <div style="background:${cc};color:${textOnColor};padding:4px 12px;border-radius:20px;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;text-transform:uppercase;white-space:nowrap">${s.azione}</div>
+              ${pnlStr?`<div style="font-family:'DM Mono',monospace;font-size:11px;color:${pnlColor}">${pnlStr} acq.</div>`:''}
+            </div>
+          </div>
+          <div style="font-size:12px;color:#C0BDB8;line-height:1.65;flex:1">${s.motivazione}</div>
+          ${s.targetPrice?`<div style="display:flex;gap:8px;flex-wrap:wrap">
+            <span style="font-family:'DM Mono',monospace;font-size:10px;padding:3px 8px;background:rgba(76,175,126,.1);border-radius:4px;color:var(--green)">T €${s.targetPrice}</span>
+            ${s.stopLoss?`<span style="font-family:'DM Mono',monospace;font-size:10px;padding:3px 8px;background:rgba(224,90,90,.1);border-radius:4px;color:var(--red)">SL €${s.stopLoss}</span>`:''}
+          </div>`:''}
+          <div style="padding-top:8px;border-top:1px solid rgba(255,255,255,.05);font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em">CONFIDENZA: <span style="color:${confColor}">${s.confidenza||'---'}</span></div>
+        </div>`;
       }).join('');
     }
     if(data.strategia){document.getElementById('segnaliStrategia').innerHTML='<div class="section-title">'+t('recommendedStrategy')+'</div><div style="font-size:13px;color:#C0BDB8;line-height:1.8">'+data.strategia+'</div>';}
     document.getElementById('segnaliDate').textContent='Aggiornato: '+new Date().toLocaleString('it-IT');
-    if(data._remaining!==undefined)showToast('Analisi rimaste oggi: '+data._remaining);
+    if(data._remaining!==undefined && data._remaining >= 0) showToast('Analisi AI rimaste oggi: '+data._remaining);
   } catch(e) {
     document.getElementById('segnaliLoading').style.display='none';
     document.getElementById('segnaliEmpty').style.display='block';
@@ -1783,6 +1966,7 @@ function drawDNA() {
 // ─── MORNING BRIEF ────────────────────────────────────────────────────────────
 async function loadMorningBrief() {
   if (assets.length === 0) return;
+  // Make sure morningBrief is in panoramica tab
   const today = new Date().toISOString().slice(0,10);
   const cached = localStorage.getItem('srm_brief_' + today);
   const el = document.getElementById('morningBrief');
@@ -1821,6 +2005,336 @@ async function loadMorningBrief() {
     textEl.textContent = 'Brief non disponibile oggi.';
     setTimeout(() => { if(el) el.style.display='none'; }, 3000);
   }
+}
+
+
+
+// ─── PANORAMICA ───────────────────────────────────────────────────────────────
+let panorDonutChart = null;
+
+function renderPanoramica() {
+  if (document.getElementById('tab-panoramica')?.style.display === 'none') return;
+  renderPanorSummary();
+  renderPanorDonut();
+  renderPanorMovers();
+  setTimeout(drawDNA, 60);
+}
+
+function renderPanorSummary() {
+  const el = document.getElementById('panorSummary'); if(!el) return;
+  const tot = assets.reduce((s,a) => s+a.invested, 0);
+  const withPrice = assets.filter(a=>a.currentPrice>0&&a.buyPrice>0);
+  const totalVal = assets.reduce((s,a) => s+(a.currentPrice>0?a.currentPrice/a.buyPrice*a.invested:a.invested),0);
+  const totalPnl = totalVal - tot;
+  const totalPnlPct = tot>0 ? totalPnl/tot*100 : 0;
+  const winners = withPrice.filter(a=>a.currentPrice>=a.buyPrice).length;
+  const riskLow = assets.filter(a=>a.risk==='low').reduce((s,a)=>s+a.invested,0);
+  const riskPct = tot>0?riskLow/tot*100:0;
+
+  const cards = [
+    { label:'Investito', value:'€'+Math.round(tot).toLocaleString('it-IT'), color:'var(--gold)' },
+    { label:'Valore attuale', value:'€'+Math.round(totalVal).toLocaleString('it-IT'), color: totalVal>=tot?'var(--green)':'var(--red)' },
+    { label:'P&L totale', value:(totalPnl>=0?'+':'')+totalPnl.toFixed(0)+' ('+totalPnlPct.toFixed(1)+'%)', color:totalPnl>=0?'var(--green)':'var(--red)' },
+    { label:'Asset', value:assets.length+' posizioni', color:'var(--blue)' },
+    { label:'Winner', value:withPrice.length>0?winners+'/'+withPrice.length:'---', color:'var(--green)' },
+    { label:'Peso difensivo', value:riskPct.toFixed(0)+'%', color:'var(--gold)' },
+  ];
+  el.innerHTML = cards.map(c=>`
+    <div style="background:var(--surface2);border-radius:10px;padding:14px 16px;border:1px solid var(--border);border-left:3px solid ${c.color}">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">${c.label}</div>
+      <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:${c.color};line-height:1.2">${c.value}</div>
+    </div>`).join('');
+}
+
+function renderPanorDonut() {
+  const canvas = document.getElementById('panorDonut'); if(!canvas) return;
+  const legend = document.getElementById('panorDonutLegend');
+  if(assets.length===0){canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);if(legend)legend.innerHTML='';return;}
+  const tot = assets.reduce((s,a)=>s+a.invested,0);
+  const data = assets.map(a=>({label:a.ticker,value:a.invested,color:a.color}));
+  const ctx = canvas.getContext('2d');
+  if(panorDonutChart){panorDonutChart.destroy();panorDonutChart=null;}
+  panorDonutChart = new Chart(ctx,{
+    type:'doughnut',
+    data:{labels:data.map(d=>d.label),datasets:[{data:data.map(d=>d.value),backgroundColor:data.map(d=>d.color),borderWidth:2,borderColor:'var(--surface)'}]},
+    options:{responsive:true,maintainAspectRatio:true,cutout:'70%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'€'+Math.round(c.raw).toLocaleString('it-IT')+' ('+((c.raw/tot)*100).toFixed(1)+'%)'}}}}
+  });
+  if(legend) legend.innerHTML = data.map(d=>`<span style="display:inline-flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)"><span style="width:8px;height:8px;border-radius:50%;background:${d.color};flex-shrink:0"></span>${d.label}</span>`).join('');
+}
+
+function renderPanorMovers() {
+  const el = document.getElementById('panorMovers'); if(!el) return;
+  const withPrice = assets.filter(a=>a.currentPrice>0&&a.buyPrice>0);
+  if(withPrice.length===0){el.innerHTML='<div style="color:var(--muted);font-size:13px;grid-column:1/-1">Aggiorna i prezzi per vedere i movimenti</div>';return;}
+  const sorted = [...withPrice].sort((a,b)=>{
+    const pa=(a.currentPrice-a.buyPrice)/a.buyPrice, pb=(b.currentPrice-b.buyPrice)/b.buyPrice;
+    return pb-pa;
+  });
+  // Top 3 best + worst 2
+  const shown = sorted.length<=5 ? sorted : [...sorted.slice(0,3),...sorted.slice(-2)];
+  el.innerHTML = shown.map(a=>{
+    const pnlPct=((a.currentPrice-a.buyPrice)/a.buyPrice*100);
+    const pnlEur=(a.currentPrice/a.buyPrice*a.invested)-a.invested;
+    const color=pnlPct>=0?'var(--green)':'var(--red)';
+    return `<div style="background:var(--surface2);border-radius:10px;padding:14px;border:1px solid var(--border);border-left:3px solid ${a.color}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--gold)">${a.ticker}</span>
+        <span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:${color}">${pnlPct>=0?'+':''}${pnlPct.toFixed(1)}%</span>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:${color}">${pnlEur>=0?'+':''}€${Math.abs(pnlEur).toFixed(0)}</div>
+      <div style="font-size:10px;color:var(--muted);margin-top:3px">€${a.currentPrice?.toFixed(2)||'---'} / acq. €${a.buyPrice?.toFixed(2)||'---'}</div>
+    </div>`;
+  }).join('');
+}
+
+// ─── GEO MAP ──────────────────────────────────────────────────────────────────
+const GEO_COLORS = {
+  USA:             '#4A90D9',
+  Europa:          '#4CAF7E',
+  Giappone:        '#E08A3A',
+  Taiwan:          '#E05A5A',
+  EmergingMarkets: '#9B59B6',
+  Altro:           '#8A8580',
+};
+
+const GEO_FLAGS = {
+  USA:'🇺🇸', Europa:'🇪🇺', Giappone:'🇯🇵', Taiwan:'🇹🇼', EmergingMarkets:'🌏', Altro:'🌐'
+};
+
+// SVG world map paths (simplified key regions)
+const MAP_PATHS = {
+  USA:    "M 90 85 L 200 85 L 210 120 L 195 145 L 155 150 L 130 145 L 90 130 Z",
+  Canada: "M 85 40 L 210 40 L 212 83 L 90 83 Z",
+  Mexico: "M 95 150 L 155 152 L 150 175 L 110 180 Z",
+  Europa: "M 310 65 L 400 60 L 415 95 L 400 120 L 350 125 L 310 110 Z",
+  Russia: "M 380 30 L 600 25 L 605 80 L 390 85 Z",
+  Africa: "M 320 130 L 410 125 L 420 230 L 340 240 L 305 190 Z",
+  MiddleEast:"M 400 110 L 450 105 L 460 145 L 410 150 Z",
+  India:  "M 490 130 L 550 125 L 555 190 L 510 200 Z",
+  China:  "M 555 75 L 650 70 L 660 135 L 570 140 Z",
+  Giappone:"M 660 80 L 690 78 L 695 105 L 665 108 Z",
+  Taiwan: "M 645 125 L 658 122 L 660 135 L 648 137 Z",
+  SEAsia: "M 570 150 L 650 145 L 660 195 L 580 200 Z",
+  Australia:"M 580 200 L 680 195 L 685 255 L 590 260 Z",
+  SouthAmerica:"M 155 190 L 250 185 L 265 300 L 175 310 Z",
+};
+
+// Map regions to GEO_KB keys
+const MAP_REGION_TO_GEO = {
+  USA:'USA', Europa:'Europa', Giappone:'Giappone', Taiwan:'Taiwan',
+  China:'EmergingMarkets', India:'EmergingMarkets', SEAsia:'EmergingMarkets',
+  SouthAmerica:'Altro', Africa:'Altro', Australia:'Altro',
+  MiddleEast:'Altro', Canada:'USA', Russia:'Altro', Mexico:'Altro',
+};
+
+function computeGeoExposure() {
+  const result = {};
+  const tot = assets.reduce((s,a) => s + a.invested, 0);
+  if (tot === 0) return result;
+  assets.forEach(a => {
+    const geo = getGeo(a.ticker);
+    const weight = a.invested / tot;
+    Object.entries(geo).forEach(([region, pct]) => {
+      result[region] = (result[region] || 0) + (pct / 100) * weight * 100;
+    });
+  });
+  // Round and sort
+  return Object.fromEntries(
+    Object.entries(result)
+      .map(([k,v]) => [k, Math.round(v * 10) / 10])
+      .sort((a,b) => b[1]-a[1])
+  );
+}
+
+function renderGeoMap() {
+  const container = document.getElementById('geoMapContainer');
+  const legend = document.getElementById('geoLegend');
+  if (!container || !legend) return;
+
+  const exp = computeGeoExposure();
+  const tot = assets.reduce((s,a) => s + a.invested, 0);
+  const tooltip = document.getElementById('geoTooltip');
+
+  // Build color map per MAP path
+  const pathColors = {};
+  Object.entries(MAP_PATHS).forEach(([region]) => {
+    const geoKey = MAP_REGION_TO_GEO[region] || 'Altro';
+    const pct = exp[geoKey] || 0;
+    const base = GEO_COLORS[geoKey] || '#8A8580';
+    // Intensity based on pct
+    pathColors[region] = { color: base, pct, geoKey };
+  });
+
+  // Build SVG
+  const W = 760, H = 320;
+  const svgPaths = Object.entries(MAP_PATHS).map(([region, d]) => {
+    const {color, pct, geoKey} = pathColors[region];
+    const opacity = pct > 0 ? 0.3 + (pct/100)*0.7 : 0.08;
+    return `<path d="${d}" fill="${color}" fill-opacity="${opacity.toFixed(2)}" stroke="${color}" stroke-width="0.5" stroke-opacity="0.3"
+      data-region="${region}" data-geo="${geoKey}" data-pct="${pct.toFixed(1)}"
+      onmouseenter="showGeoTip(event,'${region}','${geoKey}',${pct.toFixed(1)})"
+      onmouseleave="document.getElementById('geoTooltip').style.display='none'"
+      onmousemove="moveGeoTip(event)"/>`;
+  }).join('');
+
+  // Graticule (lat/lon lines)
+  const graticule = [
+    // Horizontal
+    ...[60,90,120,150,180,210,240,270,300].map(y => `<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>`),
+    // Vertical
+    ...[100,200,300,400,500,600,700].map(x => `<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>`)
+  ].join('');
+
+  container.innerHTML = `
+    <svg viewBox="0 0 ${W} ${H}" class="geo-map-svg" style="background:var(--surface2);border-radius:10px;border:1px solid var(--border)">
+      ${graticule}
+      ${svgPaths}
+      <text x="12" y="18" fill="rgba(255,255,255,0.2)" font-family="DM Mono" font-size="9">ESPOSIZIONE GEOGRAFICA PORTAFOGLIO</text>
+    </svg>`;
+
+  // Legend
+  legend.innerHTML = Object.entries(exp).filter(([,v])=>v>0.1).map(([region, pct]) => {
+    const color = GEO_COLORS[region] || '#8A8580';
+    const flag = GEO_FLAGS[region] || '🌐';
+    const val = tot * pct / 100;
+    const label = region === 'EmergingMarkets' ? 'Emergenti' : region;
+    return `<div class="geo-leg-item" style="border-color:${color}">
+      <div class="geo-leg-left">
+        <span class="geo-leg-flag">${flag}</span>
+        <div>
+          <div class="geo-leg-name">${label}</div>
+          <div class="geo-leg-val">€${val.toLocaleString('it-IT',{maximumFractionDigits:0})}</div>
+        </div>
+      </div>
+      <span class="geo-leg-pct" style="color:${color}">${pct.toFixed(1)}%</span>
+    </div>`;
+  }).join('') || '<div style="color:var(--muted);font-size:13px">Aggiungi asset per vedere la mappa</div>';
+}
+
+function showGeoTip(e, region, geoKey, pct) {
+  const t = document.getElementById('geoTooltip');
+  const label = geoKey === 'EmergingMarkets' ? 'Emergenti' : geoKey;
+  t.innerHTML = `<strong>${region}</strong><br>${label}: <span style="color:${GEO_COLORS[geoKey]||'#fff'}">${pct}%</span>`;
+  t.style.display = 'block';
+  moveGeoTip(e);
+}
+function moveGeoTip(e) {
+  const t = document.getElementById('geoTooltip');
+  t.style.left = (e.clientX + 14) + 'px';
+  t.style.top  = (e.clientY - 36) + 'px';
+}
+
+// ─── GOAL TRACKER ─────────────────────────────────────────────────────────────
+let goalChart = null;
+
+function saveGoal() {
+  const target  = parseFloat(document.getElementById('goalTarget')?.value) || 0;
+  const monthly = parseFloat(document.getElementById('goalMonthly')?.value) || 0;
+  const ret     = parseFloat(document.getElementById('goalReturn')?.value) || 9;
+  localStorage.setItem('srm_goal', JSON.stringify({target, monthly, ret}));
+  renderGoal();
+}
+
+function loadGoal() {
+  try {
+    const g = JSON.parse(localStorage.getItem('srm_goal') || '{}');
+    if (document.getElementById('goalTarget'))  document.getElementById('goalTarget').value  = g.target  || '';
+    if (document.getElementById('goalMonthly')) document.getElementById('goalMonthly').value = g.monthly || '';
+    if (document.getElementById('goalReturn'))  {
+      document.getElementById('goalReturn').value = g.ret || 9;
+      document.getElementById('goalReturnVal').textContent = (g.ret||9) + '%';
+    }
+    renderGoal();
+  } catch(e) {}
+}
+
+function renderGoal() {
+  const target  = parseFloat(document.getElementById('goalTarget')?.value) || 0;
+  const monthly = parseFloat(document.getElementById('goalMonthly')?.value) || 0;
+  const annRet  = parseFloat(document.getElementById('goalReturn')?.value) || 9;
+
+  const progEl  = document.getElementById('goalProgress');
+  const projEl  = document.getElementById('goalProjection');
+  if (!progEl || !projEl) return;
+
+  const current = assets.reduce((s,a) => s + a.invested, 0);
+  const fmt = v => '€' + Math.round(v).toLocaleString('it-IT');
+
+  document.getElementById('goalCurrentVal').textContent = fmt(current);
+
+  if (target <= 0) { progEl.style.display='none'; projEl.style.display='none'; return; }
+  progEl.style.display = 'block'; projEl.style.display = 'block';
+
+  const pct = Math.min(100, current / target * 100);
+  const remaining = Math.max(0, target - current);
+  document.getElementById('goalPct').textContent = pct.toFixed(1) + '%';
+  document.getElementById('goalBar').style.width = pct + '%';
+  document.getElementById('goalRemaining').textContent = fmt(remaining);
+  document.getElementById('goalMs25').textContent = fmt(target*0.25);
+  document.getElementById('goalMs50').textContent = fmt(target*0.5);
+  document.getElementById('goalMs75').textContent = fmt(target*0.75);
+  document.getElementById('goalMsTarget').textContent = fmt(target);
+
+  // Projection: how many years to reach target
+  function yearsToGoal(annual) {
+    const r = annual / 100 / 12;
+    let val = current;
+    for (let m = 1; m <= 600; m++) {
+      val = val * (1 + r) + monthly;
+      if (val >= target) return m / 12;
+    }
+    return null;
+  }
+
+  function fmtYears(y) {
+    if (y === null) return 'Mai';
+    const yr = Math.floor(y), mo = Math.round((y - yr) * 12);
+    return yr > 0 ? yr + ' ann' + (yr===1?'o':'i') + (mo>0?' '+mo+'m':'') : mo + ' mesi';
+  }
+
+  const conserv = yearsToGoal(annRet - 3);
+  const base    = yearsToGoal(annRet);
+  const optim   = yearsToGoal(annRet + 3);
+
+  document.getElementById('projConserv').textContent = fmtYears(conserv) + ' (' + (annRet-3).toFixed(1) + '%)';
+  document.getElementById('projBase').textContent    = fmtYears(base)    + ' (' + annRet.toFixed(1) + '%)';
+  document.getElementById('projOptim').textContent   = fmtYears(optim)   + ' (' + (annRet+3).toFixed(1) + '%)';
+
+  // Mini growth chart
+  const years = Math.min(Math.ceil((base||30)) + 2, 30);
+  const labels = Array.from({length:years+1}, (_,i) => new Date().getFullYear() + i);
+  const r = annRet / 100 / 12;
+  const series = [current];
+  let val = current;
+  for (let y = 1; y <= years; y++) {
+    for (let m = 0; m < 12; m++) { val = val * (1+r) + monthly; }
+    series.push(Math.round(val));
+  }
+  const targetLine = Array(years+1).fill(target);
+
+  const ctx = document.getElementById('goalChart')?.getContext('2d');
+  if (!ctx) return;
+  if (goalChart) { goalChart.destroy(); goalChart = null; }
+  goalChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label:'Portafoglio', data:series, borderColor:'#C9A84C', backgroundColor:'rgba(201,168,76,.1)', fill:true, tension:.4, pointRadius:0, borderWidth:2 },
+        { label:'Target', data:targetLine, borderColor:'rgba(76,175,126,.5)', borderDash:[4,4], pointRadius:0, borderWidth:1.5, fill:false }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{
+        callbacks:{ label: ctx => '€'+Math.round(ctx.raw).toLocaleString('it-IT') }
+      }},
+      scales:{
+        x:{ ticks:{color:'#8A8580',font:{size:9},maxTicksLimit:6}, grid:{color:'rgba(255,255,255,.04)'} },
+        y:{ ticks:{color:'#8A8580',font:{size:9}, callback:v=>'€'+(v/1000).toFixed(0)+'k'}, grid:{color:'rgba(255,255,255,.04)'} }
+      }
+    }
+  });
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
