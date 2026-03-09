@@ -538,6 +538,7 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
       <button class="tab" id="tab-btn-ai" onclick="switchTab('ai',this)" data-tab="ai">Analisi AI</button>
       <button class="tab" id="tab-btn-news" onclick="switchTab('news',this)" data-tab="news">Mercati</button>
       <button class="tab" id="tab-btn-segnali" onclick="switchTab('segnali',this)" data-tab="segnali">Segnali CFD</button>
+      <button class="tab" id="tab-btn-screener" onclick="switchTab('screener',this)" data-tab="screener">🔍 Screener</button>
       <div class="tab-dropdown" id="altroDropdown">
         <button class="tab" id="tab-btn-altro" onclick="toggleAltro(event)">Altro &#9660;</button>
         <div class="tab-dropdown-menu" id="altroMenu">
@@ -3624,62 +3625,61 @@ function renderScreenerList() {
   if (!list) return;
   var total = Object.keys(_screenerPrices).length;
   var status = document.getElementById('scrStatus');
-  if (status) status.textContent = total+' prezzi · '+_screenerFiltered.length+' asset';
+  if (status) status.textContent = total + ' prezzi · ' + _screenerFiltered.length + ' asset';
 
-  if (_screenerFiltered.length===0) {
+  if (_screenerFiltered.length === 0) {
     list.innerHTML = '<div style="text-align:center;padding:80px 20px;color:#5a5550;font-family:DM Mono,monospace;font-size:12px">Nessun risultato</div>';
     return;
   }
 
+  var catColors = {
+    "azioni-usa":"#4A90D9","azioni-europa":"#4CAF7E","etf":"#9B59B6",
+    "crypto":"#F7931A","forex":"#E08A3A","materie-prime":"#C9A84C",
+    "obbligazioni":"#5B8DB8","indici":"#E05A5A"
+  };
+
   var html = _screenerFiltered.map(function(a, i) {
-    var p = _screenerPrices[a.t]||{};
+    var p = _screenerPrices[a.t] || {};
     var hasPrice = p.price != null;
     var logoHtml = getAssetLogo(a);
     var priceStr = hasPrice ? formatScrPrice(p.price, a.cat) : '';
-    var catColors = {
-      "azioni-usa":"#4A90D9","azioni-europa":"#4CAF7E","etf":"#9B59B6",
-      "crypto":"#F7931A","forex":"#E08A3A","materie-prime":"#C9A84C",
-      "obbligazioni":"#5B8DB8","indici":"#E05A5A"
-    };
-    var catColor = catColors[a.cat]||'#8A8580';
-    var rowBg = i%2===0 ? 'rgba(255,255,255,.013)' : 'rgba(0,0,0,0)';
+    var catColor = catColors[a.cat] || '#8A8580';
+    var rowBg = i % 2 === 0 ? 'rgba(255,255,255,.013)' : 'transparent';
 
-    return '<div class="scr-row" style="'
-      +'display:grid;grid-template-columns:44px 1fr 110px 90px 90px 90px 90px 90px;'
-      +'align-items:center;padding:7px 16px;border-bottom:1px solid rgba(255,255,255,.04);'
-      +'transition:background .12s;background:'+rowBg+'"'
-      +' onmouseenter="this.style.background='rgba(201,168,76,.06)'"'
-      +' onmouseleave="this.style.background=''+rowBg+''">'
+    // Usa data-rowbg per il mouseleave invece di interpolazione con apici
+    return '<div class="scr-row" data-rowbg="' + rowBg + '" style="'
+      + 'display:grid;grid-template-columns:' + GRID + ';'
+      + 'align-items:center;padding:8px 16px;border-bottom:1px solid rgba(255,255,255,.04);'
+      + 'transition:background .12s;background:' + rowBg + '"'
+      + ' onmouseenter="this.style.background=\'rgba(201,168,76,.06)\'"'
+      + ' onmouseleave="this.style.background=this.dataset.rowbg">'
 
       // Logo (44px)
-      +'<div style="display:flex;align-items:center;justify-content:center">'+logoHtml+'</div>'
+      + '<div style="display:flex;align-items:center;justify-content:center">' + logoHtml + '</div>'
 
       // Nome + ticker + badge (1fr)
-      +'<div style="display:flex;flex-direction:column;gap:2px;min-width:0;padding-right:8px">'
-        +'<div style="display:flex;align-items:center;gap:5px;flex-wrap:nowrap">'
-          +'<span style="font-family:DM Mono,monospace;font-size:12px;font-weight:700;color:#F0EDE6;letter-spacing:.04em;white-space:nowrap">'+a.t+'</span>'
-          +'<span style="font-size:9px;padding:1px 5px;border-radius:3px;background:'+catColor+'1a;color:'+catColor+';letter-spacing:.05em;text-transform:uppercase;font-family:DM Mono,monospace;white-space:nowrap;flex-shrink:0">'+a.sec+'</span>'
-        +'</div>'
-        +'<div style="font-size:11px;color:#6a6a65;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+a.n+'</div>'
-      +'</div>'
+      + '<div style="display:flex;flex-direction:column;gap:2px;min-width:0;padding-right:8px">'
+        + '<div style="display:flex;align-items:center;gap:5px;flex-wrap:nowrap">'
+          + '<span style="font-family:DM Mono,monospace;font-size:12px;font-weight:700;color:#F0EDE6;letter-spacing:.04em;white-space:nowrap">' + a.t + '</span>'
+          + '<span style="font-size:9px;padding:1px 5px;border-radius:3px;background:' + catColor + '1a;color:' + catColor + ';letter-spacing:.05em;text-transform:uppercase;font-family:DM Mono,monospace;white-space:nowrap;flex-shrink:0">' + a.sec + '</span>'
+        + '</div>'
+        + '<div style="font-size:11px;color:#6a6a65;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + a.n + '</div>'
+      + '</div>'
 
       // Prezzo (110px)
-      +'<div style="text-align:right;font-family:DM Mono,monospace;font-size:12px;color:#F0EDE6;font-weight:500;padding-right:4px">'
-        +(hasPrice ? priceStr : '<span style="color:#2a2a2a">—</span>')
-      +'</div>'
+      + '<div style="text-align:right;font-family:DM Mono,monospace;font-size:12px;color:#F0EDE6;font-weight:500;padding-right:4px">'
+        + (hasPrice ? priceStr : '<span style="color:#2a2a2a">—</span>')
+      + '</div>'
 
-      // 1D (90px)
-      +'<div style="text-align:center">'+fmtChgBadge(p.d1)+'</div>'
-      // 1W (90px)
-      +'<div style="text-align:center">'+fmtChgBadge(p.d5)+'</div>'
-      // 1M (90px)
-      +'<div style="text-align:center">'+fmtChgBadge(p.d30)+'</div>'
-      // 3M (90px)
-      +'<div style="text-align:center">'+fmtChgBadge(p.d90)+'</div>'
-      // 1Y (90px)
-      +'<div style="text-align:center">'+fmtChgBadge(p.d365)+'</div>'
-    +'</div>';
+      // % colonne (90px x5)
+      + '<div style="text-align:center">' + fmtChgBadge(p.d1) + '</div>'
+      + '<div style="text-align:center">' + fmtChgBadge(p.d5) + '</div>'
+      + '<div style="text-align:center">' + fmtChgBadge(p.d30) + '</div>'
+      + '<div style="text-align:center">' + fmtChgBadge(p.d90) + '</div>'
+      + '<div style="text-align:center">' + fmtChgBadge(p.d365) + '</div>'
+    + '</div>';
   }).join('');
+
   list.innerHTML = html;
 }
 
