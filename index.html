@@ -274,9 +274,6 @@ svg.donut{transform:rotate(-90deg);}
         <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
           <button class="btn btn-blue" onclick="refreshPrices()">&#128225; Aggiorna prezzi</button>
           <button class="btn btn-purple" onclick="runAIAnalysis()">&#129302; Analisi AI</button>
-          <button class="btn btn-green" onclick="exportJSON()">&#128228; Esporta</button>
-          <button class="btn btn-blue" onclick="document.getElementById('importFile').click()">&#128229; Importa</button>
-          <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
           <button class="btn btn-gold" onclick="openEdit()">&#9998; Modifica</button>
         </div>
       </div>
@@ -305,6 +302,7 @@ svg.donut{transform:rotate(-90deg);}
       <button class="tab" onclick="switchTab('ai',this)">&#129302; Analisi AI</button>
       <button class="tab" onclick="switchTab('news',this)">&#127757; Mercati</button>
       <button class="tab" onclick="switchTab('storico',this)">&#128196; Storico</button>
+      <button class="tab" onclick="switchTab('segnali',this)">&#128204; Segnali</button>
     </div>
     <!-- PORTAFOGLIO -->
     <div class="tab-content active" id="tab-portafoglio">
@@ -361,17 +359,6 @@ svg.donut{transform:rotate(-90deg);}
     </div>
     <!-- PERFORMANCE -->
     <div class="tab-content" id="tab-performance">
-      <div class="card" style="margin-bottom:24px">
-        <div class="section-title">Crescita simulata</div>
-        <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Basata su rendimenti storici medi. Non garantisce rendimenti futuri.</p>
-        <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
-          <button class="btn btn-gold" style="padding:5px 12px;font-size:11px" onclick="updatePerfChart(1,this)">1A</button>
-          <button class="btn btn-gold" style="padding:5px 12px;font-size:11px;opacity:.5" onclick="updatePerfChart(3,this)">3A</button>
-          <button class="btn btn-gold" style="padding:5px 12px;font-size:11px;opacity:.5" onclick="updatePerfChart(5,this)">5A</button>
-          <button class="btn btn-gold" style="padding:5px 12px;font-size:11px;opacity:.5" onclick="updatePerfChart(10,this)">10A</button>
-        </div>
-        <canvas id="perfChart" height="260"></canvas>
-      </div>
       <div class="two-col">
         <div class="card"><div class="section-title">Rendimento atteso per asset</div><canvas id="barChart" height="220"></canvas></div>
         <div class="card"><div class="section-title">Scenari (1 anno)</div><div id="scenarioList" style="margin-top:12px"></div></div>
@@ -523,6 +510,62 @@ svg.donut{transform:rotate(-90deg);}
         <thead><tr><th>Asset</th><th>Investito</th><th>Prezzo acquisto</th><th>Prezzo chiusura</th><th>P&L</th><th>Data chiusura</th><th></th></tr></thead>
         <tbody id="storicoBody"></tbody>
       </table>
+    </div>
+    <!-- SEGNALI -->
+    <div class="tab-content" id="tab-segnali">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+        <div>
+          <div class="section-title" style="margin:0">Segnali di trading</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">Suggerimenti basati su variazioni prezzi e analisi AI</div>
+        </div>
+        <button class="btn btn-blue" onclick="loadSegnali()">&#128204; Aggiorna segnali</button>
+      </div>
+      <div id="segnaliLoading" style="display:none;text-align:center;padding:48px">
+        <div style="font-size:40px;margin-bottom:12px">&#128204;</div>
+        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:6px">Analisi in corso...</div>
+        <div style="font-size:12px;color:var(--muted)">Elaboro variazioni prezzi e contesto di mercato</div>
+      </div>
+      <div id="segnaliEmpty" style="text-align:center;padding:48px">
+        <div style="font-size:40px;margin-bottom:12px">&#128204;</div>
+        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px">Segnali di trading</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:20px">Aggiorna prima i prezzi, poi clicca per ricevere segnali personalizzati basati sul tuo portafoglio.</div>
+        <button onclick="loadSegnali()" class="btn btn-blue" style="padding:12px 28px;justify-content:center">&#128204; Genera segnali</button>
+      </div>
+      <div id="segnaliContent" style="display:none">
+        <!-- Alert urgenti -->
+        <div id="segnaliAlerts" style="margin-bottom:20px"></div>
+        <!-- Griglia segnali per asset -->
+        <div class="section-title" style="margin-bottom:12px">Segnali per asset</div>
+        <div id="segnaliGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:24px"></div>
+        <!-- Riepilogo strategia -->
+        <div class="card" id="segnaliStrategia"></div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-align:right;margin-top:12px" id="segnaliDate"></div>
+      </div>
+    </div>
+    <!-- SEGNALI -->
+    <div class="tab-content" id="tab-segnali">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+        <div>
+          <div class="section-title" style="margin:0">Segnali di mercato</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">Analisi AI su azioni e indici globali &mdash; usa 1 credito AI</div>
+        </div>
+        <button class="btn btn-gold" onclick="loadSegnali()">&#128308; Genera segnali</button>
+      </div>
+      <div id="segnaliLoading" style="display:none;text-align:center;padding:48px">
+        <div style="font-size:40px;margin-bottom:12px">&#128308;</div>
+        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:6px">Analisi in corso...</div>
+        <div style="font-size:12px;color:var(--muted)">Claude sta analizzando i mercati</div>
+      </div>
+      <div id="segnaliEmpty" style="text-align:center;padding:48px">
+        <div style="font-size:40px;margin-bottom:12px">&#128308;</div>
+        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px">Segnali di mercato</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:20px">Clicca "Genera segnali" per ricevere consigli di acquisto e vendita su azioni e indici globali.</div>
+        <button onclick="loadSegnali()" class="btn btn-gold" style="padding:12px 28px;justify-content:center">&#128308; Genera segnali</button>
+      </div>
+      <div id="segnaliContent" style="display:none">
+        <div id="segnaliGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:16px"></div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-align:right" id="segnaliDate"></div>
+      </div>
     </div>
     <div class="disclaimer">&#9888; Solo a scopo informativo. Non costituisce consulenza finanziaria. I mercati comportano rischi di perdita del capitale.</div>
   </div>
@@ -729,7 +772,6 @@ async function refreshPrices() {
     document.getElementById('sumUpdate').textContent=new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
     saveData(); await saveToCloud(); renderAll();
     showToast(fetched+' prezzi aggiornati in EUR!');
-    setTimeout(()=>runAIAnalysis(),600);
   } else {
     msg.textContent='Nessun prezzo. Verifica ticker (es. VWCE.DE, NVDA, CAT)';
   }
@@ -1079,6 +1121,8 @@ function switchTab(id,el){
   if(id==='rischio')renderRiskMatrix();
   if(id==='news'&&document.getElementById('newsContent').style.display==='none'&&document.getElementById('newsLoading').style.display==='none')loadMarketNews();
   if(id==='storico')renderStorico();
+  if(id==='segnali'&&document.getElementById('segnaliContent').style.display==='none'&&document.getElementById('segnaliLoading').style.display==='none'){}
+  if(id==='segnali'&&document.getElementById('segnaliContent').style.display==='none'&&document.getElementById('segnaliLoading').style.display==='none')loadSegnali();
 }
 
 // ─── EDIT PANEL ──────────────────────────────────────────────────────────────
@@ -1123,10 +1167,6 @@ async function saveAll(){
 }
 function v(id){return document.getElementById(id)?.value;}
 function f(id){return parseFloat(document.getElementById(id)?.value);}
-
-// ─── EXPORT / IMPORT ──────────────────────────────────────────────────────────
-function exportJSON(){const blob=new Blob([JSON.stringify({v:5,date:new Date().toISOString(),assets},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='smartrisk_'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(url);showToast('Esportato!');}
-function importJSON(e){const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(!d.assets)throw new Error('File non valido');assets=d.assets;saveData();saveToCloud();renderAll();showToast('Importato!');}catch(err){alert('Errore: '+err.message);}};r.readAsText(file);e.target.value='';}
 
 // ─── ONBOARDING ───────────────────────────────────────────────────────────────
 function checkOnboarding(){if(!localStorage.getItem('srm_ob')&&assets.length===0){document.getElementById('onboarding').style.display='flex';}}
@@ -1419,6 +1459,171 @@ function signInWithApple() {
   provider.addScope('email');
   provider.addScope('name');
   signInWithPopup(auth, provider).catch(e => showAuthError('Errore login Apple: ' + e.message));
+}
+
+// ─── SEGNALI ─────────────────────────────────────────────────────────────────
+async function loadSegnali() {
+  if (assets.length === 0) { showToast('Aggiungi prima degli asset!'); return; }
+
+  document.getElementById('segnaliEmpty').style.display = 'none';
+  document.getElementById('segnaliContent').style.display = 'none';
+  document.getElementById('segnaliLoading').style.display = 'block';
+
+  // Build portfolio context with price changes
+  const tot = assets.reduce((s,a) => s + a.invested, 0);
+  const portfolioCtx = assets.map(a => ({
+    ticker: a.ticker,
+    name: a.name,
+    invested: a.invested,
+    pct: tot > 0 ? (a.invested/tot*100).toFixed(1) : 0,
+    buyPrice: a.buyPrice || null,
+    currentPrice: a.currentPrice || null,
+    pnlPct: (a.currentPrice > 0 && a.buyPrice > 0) ? ((a.currentPrice - a.buyPrice) / a.buyPrice * 100).toFixed(2) : null,
+    change1d: livePrices[a.id]?.change?.toFixed(2) || null,
+    risk: a.risk
+  }));
+
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        type: 'segnali',
+        portfolio: { totalInvested: tot, assets: portfolioCtx },
+        userId: window._currentUid || 'anon'
+      })
+    });
+    const data = await res.json();
+
+    if (data.error === 'RATE_LIMIT') {
+      document.getElementById('segnaliLoading').style.display = 'none';
+      document.getElementById('segnaliEmpty').style.display = 'block';
+      document.getElementById('segnaliEmpty').innerHTML = '<div style="font-size:40px;margin-bottom:12px">⏳</div><div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px;color:var(--gold)">Limite giornaliero raggiunto</div><div style="font-size:13px;color:var(--muted)">Hai usato le 3 analisi gratuite di oggi. Si azzera a mezzanotte.</div>';
+      return;
+    }
+    if (data.error) throw new Error(data.error);
+
+    document.getElementById('segnaliLoading').style.display = 'none';
+    document.getElementById('segnaliContent').style.display = 'block';
+
+    // Render alerts
+    const alertsEl = document.getElementById('segnaliAlerts');
+    if (data.alerts && data.alerts.length > 0) {
+      alertsEl.innerHTML = data.alerts.map(a => {
+        const colors = { danger: 'var(--red)', warning: '#F59E0B', success: 'var(--green)', info: 'var(--blue)' };
+        const c = colors[a.type] || 'var(--gold)';
+        return `<div style="border:1px solid ${c};border-radius:10px;padding:14px 18px;margin-bottom:10px;display:flex;gap:14px;align-items:flex-start">
+          <div style="font-size:22px;flex-shrink:0">${a.icon}</div>
+          <div><div style="font-family:'DM Mono',monospace;font-size:11px;color:${c};letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">${a.urgenza}</div>
+          <div style="font-size:14px;font-weight:600;margin-bottom:4px">${a.title}</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.6">${a.text}</div></div>
+        </div>`;
+      }).join('');
+    } else {
+      alertsEl.innerHTML = '';
+    }
+
+    // Render asset signals grid
+    const grid = document.getElementById('segnaliGrid');
+    if (data.segnali && data.segnali.length > 0) {
+      const actionColors = { compra: 'var(--green)', vendi: 'var(--red)', mantieni: 'var(--gold)', riduci: '#F59E0B', aumenta: 'var(--blue)' };
+      grid.innerHTML = data.segnali.map(s => {
+        const c = actionColors[s.azione] || 'var(--gold)';
+        const pnlColor = parseFloat(s.pnlPct) >= 0 ? 'var(--green)' : 'var(--red)';
+        return `<div class="card" style="border-top:3px solid ${c}">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+            <div><div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--gold)">${s.ticker}</div>
+            <div style="font-size:11px;color:var(--muted)">${s.name||''}</div></div>
+            <div style="background:${c};color:${s.azione==='vendi'||s.azione==='riduci'?'#fff':'var(--dark)'};padding:4px 12px;border-radius:20px;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;text-transform:uppercase">${s.azione}</div>
+          </div>
+          ${s.pnlPct !== null ? `<div style="font-family:'DM Mono',monospace;font-size:13px;color:${pnlColor};margin-bottom:8px">${parseFloat(s.pnlPct)>=0?'+':''}${s.pnlPct}% da acquisto</div>` : ''}
+          <div style="font-size:13px;color:#C0BDB8;line-height:1.6;margin-bottom:10px">${s.motivazione}</div>
+          ${s.targetPrice ? `<div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">Target: €${s.targetPrice} · Stop: €${s.stopLoss||'---'}</div>` : ''}
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.05em">
+            CONFIDENZA: <span style="color:${c}">${s.confidenza||'---'}</span>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    // Render strategy summary
+    if (data.strategia) {
+      document.getElementById('segnaliStrategia').innerHTML = `
+        <div class="section-title">Strategia consigliata</div>
+        <div style="font-size:13px;color:#C0BDB8;line-height:1.8">${data.strategia}</div>`;
+    }
+
+    document.getElementById('segnaliDate').textContent = 'Aggiornato: ' + new Date().toLocaleString('it-IT');
+    if (data._remaining !== undefined) showToast('Analisi rimaste oggi: ' + data._remaining);
+
+  } catch(e) {
+    document.getElementById('segnaliLoading').style.display = 'none';
+    document.getElementById('segnaliEmpty').style.display = 'block';
+    document.getElementById('segnaliEmpty').innerHTML = `<div style="font-size:40px;margin-bottom:12px">⚠️</div><div style="font-size:16px;margin-bottom:8px">Errore</div><div style="font-size:13px;color:var(--muted);margin-bottom:20px">${e.message}</div><button onclick="loadSegnali()" class="btn btn-blue" style="padding:12px 28px;justify-content:center">Riprova</button>`;
+  }
+}
+
+// ─── SEGNALI ─────────────────────────────────────────────────────────────────
+const SEGNALI_WATCHLIST = [{"ticker": "VUAA.DE", "name": "S&P 500 (VUAA)", "icon": "\ud83d\udcc8"}, {"ticker": "QQQ", "name": "NASDAQ 100", "icon": "\ud83d\udcbb"}, {"ticker": "GLD", "name": "Oro", "icon": "\ud83e\udd47"}, {"ticker": "USO", "name": "Petrolio", "icon": "\ud83d\udee2\ufe0f"}, {"ticker": "NVDA", "name": "NVIDIA", "icon": "\ud83e\udd16"}, {"ticker": "AAPL", "name": "Apple", "icon": "\ud83c\udf4e"}, {"ticker": "MSFT", "name": "Microsoft", "icon": "\ud83e\ude9f"}, {"ticker": "TSLA", "name": "Tesla", "icon": "\u26a1"}, {"ticker": "ASML.AS", "name": "ASML", "icon": "\ud83d\udd2c"}, {"ticker": "BTC-USD", "name": "Bitcoin", "icon": "\u20bf"}];
+
+async function loadSegnali() {
+  document.getElementById('segnaliEmpty').style.display = 'none';
+  document.getElementById('segnaliContent').style.display = 'none';
+  document.getElementById('segnaliLoading').style.display = 'block';
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        type: 'segnali',
+        assets: SEGNALI_WATCHLIST,
+        userId: window._currentUid || 'anon'
+      })
+    });
+    const data = await res.json();
+    if (data.error === 'RATE_LIMIT') {
+      document.getElementById('segnaliLoading').style.display = 'none';
+      document.getElementById('segnaliEmpty').style.display = 'block';
+      document.getElementById('segnaliEmpty').innerHTML = '<div style="font-size:40px;margin-bottom:12px">⏳</div><div style="font-family:\'Playfair Display\',serif;font-size:20px;font-weight:700;margin-bottom:8px;color:var(--gold)">Limite giornaliero raggiunto</div><div style="font-size:13px;color:var(--muted)">Hai usato le 3 analisi gratuite di oggi. Il limite si azzera a mezzanotte.</div>';
+      return;
+    }
+    if (data.error) throw new Error(data.error);
+    document.getElementById('segnaliLoading').style.display = 'none';
+    document.getElementById('segnaliContent').style.display = 'block';
+    const grid = document.getElementById('segnaliGrid');
+    grid.innerHTML = '';
+    (data.segnali || []).forEach(s => {
+      const asset = SEGNALI_WATCHLIST.find(a => a.ticker === s.ticker) || {};
+      const icon = asset.icon || '📊';
+      const colMap = { 'acquista': 'var(--green)', 'vendi': 'var(--red)', 'mantieni': 'var(--gold)', 'osserva': '#7B9FE0' };
+      const color = colMap[s.segnale?.toLowerCase()] || 'var(--muted)';
+      const bgMap = { 'acquista': 'rgba(52,199,89,0.08)', 'vendi': 'rgba(255,69,58,0.08)', 'mantieni': 'rgba(201,168,76,0.08)', 'osserva': 'rgba(123,159,224,0.08)' };
+      const bg = bgMap[s.segnale?.toLowerCase()] || 'transparent';
+      grid.innerHTML += `<div class="card" style="border-left:3px solid ${color};background:${bg}">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:22px">${icon}</span>
+            <div>
+              <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:var(--gold)">${s.ticker}</div>
+              <div style="font-size:11px;color:var(--muted)">${s.nome || asset.name || ''}</div>
+            </div>
+          </div>
+          <div style="padding:4px 12px;border-radius:20px;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:${color};border:1px solid ${color};text-transform:uppercase">${s.segnale || '---'}</div>
+        </div>
+        <div style="font-size:13px;color:#C0BDB8;line-height:1.6;margin-bottom:10px">${s.analisi || ''}</div>
+        <div style="display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">
+          <span>Target: <span style="color:var(--text)">${s.target || '---'}</span></span>
+          <span>Rischio: <span style="color:var(--text)">${s.rischio || '---'}</span></span>
+        </div>
+      </div>`;
+    });
+    document.getElementById('segnaliDate').textContent = 'Aggiornato: ' + new Date().toLocaleString('it-IT');
+    if (data._remaining !== undefined) showToast('Analisi rimaste oggi: ' + data._remaining);
+  } catch(e) {
+    document.getElementById('segnaliLoading').style.display = 'none';
+    document.getElementById('segnaliEmpty').style.display = 'block';
+    document.getElementById('segnaliEmpty').innerHTML = '<div style="font-size:40px;margin-bottom:12px">⚠️</div><div style="font-size:16px;margin-bottom:8px">Errore</div><div style="font-size:13px;color:var(--muted);margin-bottom:20px">' + e.message + '</div><button onclick="loadSegnali()" class="btn btn-gold" style="padding:12px 28px;justify-content:center">Riprova</button>';
+  }
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
