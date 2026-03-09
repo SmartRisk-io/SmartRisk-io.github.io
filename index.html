@@ -502,9 +502,9 @@ svg.donut{transform:rotate(-90deg);}
       <div class="tab-dropdown" id="altroDropdown">
         <button class="tab" id="tab-btn-altro" onclick="toggleAltro(event)">Altro &#9660;</button>
         <div class="tab-dropdown-menu" id="altroMenu">
-          <button onclick="switchTab('mappa',this);closeAltro()">🗺 Mappa Geo</button>
-          <button onclick="switchTab('verdetti',this);closeAltro()">⚖️ Verdetti</button>
-          <button onclick="switchTab('storico',this);closeAltro()">📋 Storico</button>
+          <button onclick="event.stopPropagation();switchTab('mappa');closeAltro()">🗺 Mappa Geo</button>
+          <button onclick="event.stopPropagation();switchTab('verdetti');closeAltro()">⚖️ Verdetti</button>
+          <button onclick="event.stopPropagation();switchTab('storico');closeAltro()">📋 Storico</button>
         </div>
       </div>
     </div>
@@ -1572,19 +1572,24 @@ function switchTab(id, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   const tab = document.getElementById('tab-'+id);
   if (tab) tab.style.display='flex';
-  // Activate correct tab button
-  const btn = document.getElementById('tab-btn-'+id) || el;
-  if (btn && btn.classList.contains('tab')) btn.classList.add('active');
-  // If it's a dropdown item, highlight Altro button
-  const altroCandidates = ['mappa','obiettivo','verdetti','storico'];
+  // Attiva il bottone corretto nella tab bar
+  const btn = document.getElementById('tab-btn-'+id);
+  if (btn) btn.classList.add('active');
+  // Se è una voce del dropdown Altro, evidenzia il bottone Altro
+  const altroCandidates = ['mappa','verdetti','storico'];
   if (altroCandidates.includes(id)) {
     const altroBtn = document.getElementById('tab-btn-altro');
     if (altroBtn) altroBtn.classList.add('active');
   }
-  if(id==='rischio')renderRiskMatrix();
-  if(id==='panoramica')renderPanoramica();
-  if(id==='mappa'){renderGeoMap();}
-  if(id==='obiettivo'){loadGoal();}
+  // Render specifico per ogni tab
+  if (id==='rischio')   renderRiskMatrix();
+  if (id==='panoramica') renderPanoramica();
+  if (id==='mappa')     renderGeoMap();
+  if (id==='obiettivo') loadGoal();
+  if (id==='storico')   renderStorico();
+  if (id==='verdetti')  renderVerdetti();
+  if (id==='strategia') renderStrategia();
+  if (id==='heatmap')   renderHeatmap();
 }
 
 // ─── EDIT PANEL ───────────────────────────────────────────────────────────────
