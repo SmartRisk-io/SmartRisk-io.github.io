@@ -1984,14 +1984,15 @@ function toggleAltro(e) {
 }
 function closeAltro() {
   const menu = document.getElementById('altroMenu');
-  if (menu) menu.style.display = 'none';
-  const altroBtn = document.getElementById('tab-btn-altro');
+  if (menu) { menu.classList.remove('open'); menu.style.removeProperty('top'); menu.style.removeProperty('right'); }
 }
 document.addEventListener('click', (e) => {
   const menu = document.getElementById('altroMenu');
-  const btn = document.getElementById('tab-btn-altro');
+  const btn  = document.getElementById('tab-btn-altro');
   if (menu && btn && !btn.contains(e.target) && !menu.contains(e.target)) {
-    menu.style.display = 'none';
+    menu.classList.remove('open');
+    menu.style.removeProperty('top');
+    menu.style.removeProperty('right');
   }
 });
 
@@ -2339,9 +2340,8 @@ async function loadMorningBrief() {
       }
     } catch(_) {}
   }
-  // Mostra loading solo se il fetch parte
-  el.style.display = 'block';
-  textEl.innerHTML = '<span style="color:var(--muted);font-size:12px">⏳ Generazione brief in corso...</span>';
+  // NON mostrare il brief finché non abbiamo una risposta valida
+  textEl.innerHTML = '';
   try {
     const tot = assets.reduce((s,a)=>s+a.invested,0);
     const assetList = assets.map(a=>a.ticker+(a.currentPrice>0&&a.buyPrice>0?' (P&L: '+(((a.currentPrice-a.buyPrice)/a.buyPrice*100).toFixed(1))+'%)':'')).join(', ');
@@ -2360,10 +2360,11 @@ async function loadMorningBrief() {
       textEl.innerHTML = data.text;
       const pills = data.pills || [];
       if (pillsEl) pillsEl.innerHTML = pills.map(p=>`<span class="brief-pill" style="color:${p.color};border-color:${p.color}">${p.label}</span>`).join('');
+      el.style.display = 'block';
       localStorage.setItem('srm_brief_'+today, JSON.stringify({text:data.text, pills}));
       logActivity('brief', 'Morning Brief', 'Briefing giornaliero generato');
     } else {
-      el.style.display='none';
+      el.style.display = 'none';
     }
   } catch(e) {
     // Timeout o errore — nascondi silenziosamente
