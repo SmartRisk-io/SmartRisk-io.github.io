@@ -187,7 +187,7 @@ header{border-bottom:1px solid var(--border);padding-bottom:32px;margin-bottom:3
 .dna-leg-val{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;}
 .dna-score-badge{text-align:center;padding:12px;background:rgba(201,168,76,.06);border:1px solid var(--border);border-radius:8px;margin-top:12px;}
 /* MORNING BRIEF */
-#morningBrief{background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(74,144,217,.06));border:1px solid rgba(201,168,76,.25);border-radius:12px;padding:20px 24px;margin-bottom:24px;display:none;position:relative;overflow:hidden;;display:none!important}#morningBrief.brief-visible{display:block!important}
+
 #morningBrief::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--blue),var(--purple));}
 .brief-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
 .brief-icon{font-size:20px;}
@@ -576,18 +576,7 @@ svg.donut{transform:rotate(-90deg);}
 
     <!-- PORTAFOGLIO -->
     <div class="tab-content active" id="tab-portafoglio">
-      <div id="morningBrief" style="background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(74,144,217,.06));border:1px solid rgba(201,168,76,.25);border-radius:12px;padding:20px 24px;margin-bottom:24px;position:relative;overflow:hidden;">
-        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--blue),var(--purple))"></div>
-        <div class="brief-header">
-          <span class="brief-icon">☀️</span>
-          <span class="brief-title">Morning Brief</span>
-          <span class="brief-date" id="briefDate"></span>
-          <button onclick="(()=>{const t=new Date().toISOString().slice(0,10);localStorage.removeItem('srm_brief_'+t);loadMorningBrief();document.getElementById('morningBrief').classList.add('brief-visible');})()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;margin-left:8px;padding:2px 6px;border:1px solid rgba(201,168,76,.3);border-radius:4px" title="Aggiorna brief">↻</button>
-          <button onclick="document.getElementById('morningBrief').classList.remove('brief-visible')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;margin-left:4px">×</button>
-        </div>
-        <div class="brief-text" id="briefText"></div>
-        <div class="brief-pills" id="briefPills"></div>
-      </div>
+      <div id="briefAnchor"></div>
       <div id="portfolioHeader" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:20px"></div>
 
       <div class="section-title" data-i18n="detailedPositions">Posizioni dettagliate</div>
@@ -2393,76 +2382,79 @@ function generateLocalBrief() {
 }
 
 async function loadMorningBrief() {
-  const el      = document.getElementById('morningBrief');
-  const textEl  = document.getElementById('briefText');
-  const pillsEl = document.getElementById('briefPills');
-  const dateEl  = document.getElementById('briefDate');
-  if (!el || !textEl) return;
+  if (!assets || assets.length === 0) return;
 
-  if (dateEl) dateEl.textContent = new Date().toLocaleDateString('it-IT', {weekday:'long', day:'numeric', month:'long'});
+  function showBrief(text, pills, fonte) {
+    // Rimuovi brief precedente
+    const old = document.getElementById('morningBrief');
+    if (old) old.remove();
 
-  // Se non ci sono asset, usa il fallback locale (che gestisce tot===0)
-  // o nascondi
-  if (assets.length === 0) {
-    el.classList.remove('brief-visible');
-    return;
+    const anchor = document.getElementById('briefAnchor');
+    if (!anchor) return;
+
+    const dateStr = new Date().toLocaleDateString('it-IT', {weekday:'long', day:'numeric', month:'long'});
+    const fonteHtml = fonte ? `<div style="font-family:monospace;font-size:10px;color:#8A8580;margin-bottom:6px">📰 ${fonte}</div>` : '';
+    const pillsHtml = (pills||[]).map(p =>
+      `<span style="display:inline-block;padding:3px 10px;border-radius:20px;border:1px solid ${p.color};color:${p.color};font-size:11px;margin:2px">${p.label}</span>`
+    ).join('');
+
+    const html = `<div id="morningBrief" style="background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(74,144,217,.06));border:1px solid rgba(201,168,76,.25);border-radius:12px;padding:20px 24px;margin-bottom:20px;position:relative">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#C9A84C,#4A90D9,#9B59B6);border-radius:12px 12px 0 0"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="font-size:18px">☀️</span>
+        <span style="font-weight:700;color:#F0EDE6;font-size:14px">Morning Brief</span>
+        <span style="font-size:11px;color:#8A8580;margin-left:auto">${dateStr}</span>
+        <button onclick="(()=>{localStorage.removeItem('srm_brief_'+new Date().toISOString().slice(0,10));document.getElementById('morningBrief')?.remove();loadMorningBrief();})()" style="background:none;border:1px solid rgba(201,168,76,.4);border-radius:4px;color:#8A8580;cursor:pointer;font-size:12px;padding:2px 7px" title="Aggiorna">↻</button>
+        <button onclick="document.getElementById('morningBrief')?.remove()" style="background:none;border:none;color:#8A8580;cursor:pointer;font-size:20px;line-height:1;padding:0 2px">×</button>
+      </div>
+      <div style="font-size:13px;line-height:1.6;color:#F0EDE6">${fonteHtml}${text}</div>
+      ${pillsHtml ? `<div style="margin-top:10px">${pillsHtml}</div>` : ''}
+    </div>`;
+
+    anchor.insertAdjacentHTML('afterend', html);
   }
 
-  const today  = new Date().toISOString().slice(0, 10);
+  const today = new Date().toISOString().slice(0,10);
   const cacheKey = 'srm_brief_' + today;
 
-  // ── Cache di oggi ─────────────────────────────────────────────────────
+  // Cache valida?
   try {
     const raw = localStorage.getItem(cacheKey);
     if (raw) {
       const d = JSON.parse(raw);
       if (d && d.text && d.text.length > 20) {
-        const fonteHtml = d.fonte ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:6px;letter-spacing:.05em">📰 ${d.fonte}</div>` : '';
-        textEl.innerHTML = fonteHtml + d.text;
-        if (pillsEl) pillsEl.innerHTML = (d.pills||[]).map(p=>`<span class="brief-pill" style="color:${p.color};border-color:${p.color}">${p.label}</span>`).join('');
-        el.classList.add('brief-visible');
+        showBrief(d.text, d.pills||[], d.fonte||'');
         return;
-      } else {
-        // Cache invalida — rimuovila
-        localStorage.removeItem(cacheKey);
       }
+      localStorage.removeItem(cacheKey);
     }
   } catch(_) { try { localStorage.removeItem(cacheKey); } catch(_){} }
 
-  // ── Mostra subito il fallback locale mentre fetcha il worker ──────────
+  // Mostra subito fallback locale
   const local = generateLocalBrief();
   if (local && local.text) {
-    textEl.innerHTML = `<span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;display:block;margin-bottom:6px">📊 ANALISI PORTAFOGLIO</span>` + local.text;
-    if (pillsEl) pillsEl.innerHTML = local.pills.map(p=>`<span class="brief-pill" style="color:${p.color};border-color:${p.color}">${p.label}</span>`).join('');
-    el.classList.add('brief-visible');
+    showBrief(local.text, local.pills, '');
   }
 
-  // ── Fetch worker in background — sovrascrive il locale se risponde ────
+  // Fetch worker in background
   try {
-    const tot = assets.reduce((s,a) => s + a.invested, 0);
-    const assetList = assets.map(a => a.ticker + (a.currentPrice>0&&a.buyPrice>0 ? ' (PnL:'+(((a.currentPrice-a.buyPrice)/a.buyPrice*100).toFixed(1))+'%)' : '')).join(', ');
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 12000);
+    const tot = assets.reduce((s,a) => s + (a.invested||0), 0);
+    const assetList = assets.map(a => a.ticker).join(', ');
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 12000);
     const res = await fetch(WORKER_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type:'brief', portfolio:{ assets:assetList, total:tot }, userId: window._currentUid||'anon' }),
-      signal: controller.signal
+      signal: ctrl.signal
     });
-    clearTimeout(timeout);
+    clearTimeout(t);
     const data = await res.json();
     if (data && data.text && data.text.length > 20) {
-      const fonteHtml = data.fonte ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:6px;letter-spacing:.05em">📰 ${data.fonte}</div>` : '';
-      textEl.innerHTML = fonteHtml + data.text;
-      const pills = data.pills || [];
-      if (pillsEl) pillsEl.innerHTML = pills.map(p=>`<span class="brief-pill" style="color:${p.color};border-color:${p.color}">${p.label}</span>`).join('');
-      el.classList.add('brief-visible');
-      localStorage.setItem(cacheKey, JSON.stringify({ text:data.text, pills, fonte:data.fonte||'' }));
-      if (typeof logActivity === 'function') logActivity('brief', 'Morning Brief', data.titolo_notizia || 'Briefing generato');
+      showBrief(data.text, data.pills||[], data.fonte||'');
+      localStorage.setItem(cacheKey, JSON.stringify({ text:data.text, pills:data.pills||[], fonte:data.fonte||'' }));
     }
-  } catch(_) {
-    // Worker non risponde — il fallback locale è già visibile, va bene così
-  }
+  } catch(_) {}
 }
 
 
