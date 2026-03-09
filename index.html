@@ -776,12 +776,12 @@ svg.donut{transform:rotate(-90deg);}
           <div style="font-size:12px;color:var(--muted);margin-top:4px">Esposizione del portafoglio per area geografica</div>
         </div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 220px;gap:20px;align-items:start">
-        <div id="geoMapWrap" style="height:420px;border-radius:12px;overflow:hidden;border:1px solid var(--border);background:#0a0a0a;position:relative">
+      <div style="display:grid;grid-template-columns:1fr 200px;gap:20px;align-items:start">
+        <div id="geoMapWrap" style="height:calc(100vh - 260px);min-height:520px;border-radius:12px;overflow:hidden;border:1px solid var(--border);background:#0a0a0a;position:relative">
           <svg id="worldMapSvg" style="width:100%;height:100%;display:block"></svg>
           <div id="geoTooltipD3" style="position:absolute;display:none;pointer-events:none;z-index:50"></div>
         </div>
-        <div>
+        <div style="position:sticky;top:90px">
           <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--muted);margin-bottom:12px">ALLOCAZIONE</div>
           <div class="geo-legend" id="geoLegend"></div>
         </div>
@@ -1756,7 +1756,7 @@ function switchTab(id, el) {
   // Render specifico per ogni tab
   if (id==='rischio')   renderRiskMatrix();
   if (id==='panoramica') renderPanoramica();
-  if (id==='mappa')     renderGeoMap();
+  if (id==='mappa')     setTimeout(renderGeoMap, 50);
   if (id==='obiettivo') loadGoal();
   if (id==='storico')   renderStorico();
   if (id==='verdetti')  renderVerdetti();
@@ -2526,7 +2526,7 @@ function renderGeoMap() {
   ['DEU','FRA','GBR','ITA','ESP','NLD','BEL','AUT','CHE','SWE','NOR','DNK','FIN','PRT','POL','CZE','HUN','ROU','GRC','IRL','LUX','HRV','SVK','SVN','EST','LVA','LTU','BGR','SRB','UKR'].forEach(c=>COUNTRY_REGION[c]='Europa');
   COUNTRY_REGION['JPN']='Giappone'; COUNTRY_REGION['TWN']='Taiwan';
   ['CHN','IND','BRA','KOR','ZAF','IDN','THA','MYS','PHL','VNM','PAK','BGD','EGY','NGA','ETH','SAU','IRN'].forEach(c=>COUNTRY_REGION[c]='EmergingMarkets');
-  const W=wrap.clientWidth||680,H=wrap.clientHeight||420;
+  const W=wrap.clientWidth||900,H=wrap.clientHeight||520;
   const svg=d3.select('#worldMapSvg').attr('width',W).attr('height',H).attr('viewBox',`0 0 ${W} ${H}`);
   svg.selectAll('*').remove();
   const proj=d3.geoNaturalEarth1().scale(W/6.5).translate([W/2,H/2]);
