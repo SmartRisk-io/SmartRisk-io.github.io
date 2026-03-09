@@ -525,21 +525,7 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
   <div class="market-ticker" id="marketTicker">
     <span class="ticker-label">LIVE</span>
     <div class="ticker-track" id="tickerTrack">
-      <div class="ticker-item"><span class="ti-icon">📊</span><span class="ti-name">S&P 500</span><span class="ti-val" id="tk-sp500">---</span><span class="ti-chg" id="tk-sp500-c">---</span></div>
-      <div class="ticker-item"><span class="ti-icon">💻</span><span class="ti-name">NASDAQ</span><span class="ti-val" id="tk-nasdaq">---</span><span class="ti-chg" id="tk-nasdaq-c">---</span></div>
-      <div class="ticker-item"><span class="ti-icon">🇩🇪</span><span class="ti-name">DAX</span><span class="ti-val" id="tk-dax">---</span><span class="ti-chg" id="tk-dax-c">---</span></div>
-      <div class="ticker-item"><span class="ti-icon">🥇</span><span class="ti-name">ORO</span><span class="ti-val" id="tk-gold">---</span><span class="ti-chg" id="tk-gold-c">---</span></div>
-      <div class="ticker-item"><span class="ti-icon">🛢️</span><span class="ti-name">PETROLIO</span><span class="ti-val" id="tk-oil">---</span><span class="ti-chg" id="tk-oil-c">---</span></div>
-      <div class="ticker-item"><span class="ti-icon">💱</span><span class="ti-name">EUR/USD</span><span class="ti-val" id="tk-eurusd">---</span><span class="ti-chg" id="tk-eurusd-c">---</span></div>
-      <div class="ticker-item"><span class="ti-icon">🌡️</span><span class="ti-name">FEAR &amp; GREED</span><span class="ti-val" id="tk-fg">---</span><span class="ti-chg" id="tk-fg-label">---</span></div>
-      <!-- Duplicate for seamless loop -->
-      <div class="ticker-item"><span class="ti-icon">📊</span><span class="ti-name">S&P 500</span><span class="ti-val" id="tk-sp500b">---</span><span class="ti-chg" id="tk-sp500b-c">---</span></div>
-      <div class="ticker-item"><span class="ti-icon">💻</span><span class="ti-name">NASDAQ</span><span class="ti-val" id="tk-nasdaqb">---</span><span class="ti-chg" id="tk-nasdaq-cb">---</span></div>
-      <div class="ticker-item"><span class="ti-icon">🇩🇪</span><span class="ti-name">DAX</span><span class="ti-val" id="tk-daxb">---</span><span class="ti-chg" id="tk-dax-cb">---</span></div>
-      <div class="ticker-item"><span class="ti-icon">🥇</span><span class="ti-name">ORO</span><span class="ti-val" id="tk-goldb">---</span><span class="ti-chg" id="tk-gold-cb">---</span></div>
-      <div class="ticker-item"><span class="ti-icon">🛢️</span><span class="ti-name">PETROLIO</span><span class="ti-val" id="tk-oilb">---</span><span class="ti-chg" id="tk-oil-cb">---</span></div>
-      <div class="ticker-item"><span class="ti-icon">💱</span><span class="ti-name">EUR/USD</span><span class="ti-val" id="tk-eurusdb">---</span><span class="ti-chg" id="tk-eurusd-cb">---</span></div>
-      <div class="ticker-item"><span class="ti-icon">🌡️</span><span class="ti-name">FEAR &amp; GREED</span><span class="ti-val" id="tk-fgb">---</span><span class="ti-chg" id="tk-fg-labelb">---</span></div>
+    
     </div>
   </div>
     <!-- TABS -->
@@ -2121,18 +2107,123 @@ function confirmClosePosition(){
 
 // ─── MARKET TICKER ────────────────────────────────────────────────────────────
 const TICKER_SYMBOLS = [
-  {id:'sp500',    yahoo:'^GSPC',    label:'S&P 500',   fmt:'points'},
-  {id:'nasdaq',   yahoo:'^IXIC',    label:'NASDAQ',    fmt:'points'},
-  {id:'dax',      yahoo:'^GDAXI',   label:'DAX',       fmt:'points'},
-  {id:'gold',     yahoo:'GC=F',     label:'ORO',       fmt:'usd'},
-  {id:'oil',      yahoo:'CL=F',     label:'PETROLIO',  fmt:'usd'},
-  {id:'eurusd',   yahoo:'EURUSD=X', label:'EUR/USD',   fmt:'fx'},
+  // ── Indici USA ──────────────────────────────────────────────────
+  {id:'sp500',    yahoo:'^GSPC',     label:'S&P 500',       fmt:'points', icon:'📊'},
+  {id:'nasdaq',   yahoo:'^IXIC',     label:'NASDAQ',        fmt:'points', icon:'💻'},
+  {id:'dji',      yahoo:'^DJI',      label:'DOW JONES',     fmt:'points', icon:'🏦'},
+  {id:'russell',  yahoo:'^RUT',      label:'RUSSELL 2000',  fmt:'points', icon:'📈'},
+  {id:'sp400',    yahoo:'^MID',      label:'S&P 400 MID',   fmt:'points', icon:'📊'},
+  {id:'vix',      yahoo:'^VIX',      label:'VIX',           fmt:'points', icon:'⚡'},
+  {id:'sp500eq',  yahoo:'RSP',       label:'S&P EQ WEIGHT', fmt:'usd',    icon:'⚖️'},
+  // ── Indici Europa ───────────────────────────────────────────────
+  {id:'ftse',     yahoo:'^FTSE',     label:'FTSE 100',      fmt:'points', icon:'🇬🇧'},
+  {id:'dax',      yahoo:'^GDAXI',    label:'DAX',           fmt:'points', icon:'🇩🇪'},
+  {id:'cac',      yahoo:'^FCHI',     label:'CAC 40',        fmt:'points', icon:'🇫🇷'},
+  {id:'mib',      yahoo:'FTSEMIB.MI',label:'FTSE MIB',      fmt:'points', icon:'🇮🇹'},
+  {id:'stoxx',    yahoo:'^STOXX50E', label:'EURO STOXX 50', fmt:'points', icon:'🇪🇺'},
+  {id:'stoxx600', yahoo:'^STOXX',    label:'STOXX 600',     fmt:'points', icon:'🇪🇺'},
+  {id:'ibex',     yahoo:'^IBEX',     label:'IBEX 35',       fmt:'points', icon:'🇪🇸'},
+  {id:'aex',      yahoo:'^AEX',      label:'AEX',           fmt:'points', icon:'🇳🇱'},
+  {id:'smi',      yahoo:'^SSMI',     label:'SMI',           fmt:'points', icon:'🇨🇭'},
+  {id:'omx',      yahoo:'^OMXS30',   label:'OMX 30',        fmt:'points', icon:'🇸🇪'},
+  // ── Indici Asia/Pacifico ────────────────────────────────────────
+  {id:'nikkei',   yahoo:'^N225',     label:'NIKKEI 225',    fmt:'points', icon:'🇯🇵'},
+  {id:'topix',    yahoo:'^TOPX',     label:'TOPIX',         fmt:'points', icon:'🇯🇵'},
+  {id:'hsi',      yahoo:'^HSI',      label:'HANG SENG',     fmt:'points', icon:'🇭🇰'},
+  {id:'csi300',   yahoo:'000300.SS', label:'CSI 300',       fmt:'points', icon:'🇨🇳'},
+  {id:'asx',      yahoo:'^AXJO',     label:'ASX 200',       fmt:'points', icon:'🇦🇺'},
+  {id:'kospi',    yahoo:'^KS11',     label:'KOSPI',         fmt:'points', icon:'🇰🇷'},
+  {id:'sensex',   yahoo:'^BSESN',    label:'SENSEX',        fmt:'points', icon:'🇮🇳'},
+  {id:'tsx',      yahoo:'^GSPTSE',   label:'TSX',           fmt:'points', icon:'🇨🇦'},
+  // ── ETF Azionari ────────────────────────────────────────────────
+  {id:'spy',      yahoo:'SPY',       label:'SPY',           fmt:'usd',    icon:'🏛'},
+  {id:'qqq',      yahoo:'QQQ',       label:'QQQ',           fmt:'usd',    icon:'💡'},
+  {id:'vti',      yahoo:'VTI',       label:'VTI',           fmt:'usd',    icon:'🌍'},
+  {id:'voo',      yahoo:'VOO',       label:'VOO',           fmt:'usd',    icon:'🗽'},
+  {id:'vuaa',     yahoo:'VUAA.L',    label:'VUAA',          fmt:'usd',    icon:'🌐'},
+  {id:'iwda',     yahoo:'IWDA.AS',   label:'IWDA',          fmt:'usd',    icon:'🌏'},
+  {id:'cspx',     yahoo:'CSPX.L',    label:'CSPX',          fmt:'usd',    icon:'📋'},
+  {id:'vwra',     yahoo:'VWRA.L',    label:'VWRA',          fmt:'usd',    icon:'🌎'},
+  {id:'eimi',     yahoo:'EIMI.L',    label:'EIMI EM',       fmt:'usd',    icon:'🌏'},
+  {id:'arkk',     yahoo:'ARKK',      label:'ARKK',          fmt:'usd',    icon:'🚀'},
+  // ── ETF Settoriali ──────────────────────────────────────────────
+  {id:'xlk',      yahoo:'XLK',       label:'XLK TECH',      fmt:'usd',    icon:'🔬'},
+  {id:'xle',      yahoo:'XLE',       label:'XLE ENERGY',    fmt:'usd',    icon:'⚡'},
+  {id:'xlf',      yahoo:'XLF',       label:'XLF FINANCE',   fmt:'usd',    icon:'💰'},
+  {id:'xlv',      yahoo:'XLV',       label:'XLV HEALTH',    fmt:'usd',    icon:'🏥'},
+  {id:'xly',      yahoo:'XLY',       label:'XLY CONSUMER',  fmt:'usd',    icon:'🛒'},
+  {id:'xli',      yahoo:'XLI',       label:'XLI INDUSTRI',  fmt:'usd',    icon:'🏭'},
+  {id:'smh',      yahoo:'SMH',       label:'SMH SEMI',      fmt:'usd',    icon:'💾'},
+  {id:'gld',      yahoo:'GLD',       label:'GLD ETF',       fmt:'usd',    icon:'🥇'},
+  {id:'tip',      yahoo:'TIP',       label:'TIP INFLAZ',    fmt:'usd',    icon:'📊'},
+  // ── Azioni USA ──────────────────────────────────────────────────
+  {id:'aapl',     yahoo:'AAPL',      label:'AAPL',          fmt:'usd',    icon:'🍎'},
+  {id:'msft',     yahoo:'MSFT',      label:'MSFT',          fmt:'usd',    icon:'🪟'},
+  {id:'nvda',     yahoo:'NVDA',      label:'NVDA',          fmt:'usd',    icon:'🟩'},
+  {id:'googl',    yahoo:'GOOGL',     label:'GOOGL',         fmt:'usd',    icon:'🔍'},
+  {id:'amzn',     yahoo:'AMZN',      label:'AMZN',          fmt:'usd',    icon:'📦'},
+  {id:'meta',     yahoo:'META',      label:'META',          fmt:'usd',    icon:'👓'},
+  {id:'tsla',     yahoo:'TSLA',      label:'TSLA',          fmt:'usd',    icon:'🚗'},
+  {id:'berkb',    yahoo:'BRK-B',     label:'BRK-B',         fmt:'usd',    icon:'🏦'},
+  {id:'jpm',      yahoo:'JPM',       label:'JPM',           fmt:'usd',    icon:'💳'},
+  {id:'v',        yahoo:'V',         label:'VISA',          fmt:'usd',    icon:'💳'},
+  {id:'xom',      yahoo:'XOM',       label:'EXXON',         fmt:'usd',    icon:'🛢'},
+  {id:'unh',      yahoo:'UNH',       label:'UNITEDHLTH',    fmt:'usd',    icon:'🏥'},
+  {id:'wmt',      yahoo:'WMT',       label:'WALMART',       fmt:'usd',    icon:'🛒'},
+  {id:'ma',       yahoo:'MA',        label:'MASTERCARD',    fmt:'usd',    icon:'💳'},
+  {id:'hd',       yahoo:'HD',        label:'HOME DEPOT',    fmt:'usd',    icon:'🏠'},
+  {id:'pg',       yahoo:'PG',        label:'PROCTER',       fmt:'usd',    icon:'🧴'},
+  {id:'ko',       yahoo:'KO',        label:'COCA-COLA',     fmt:'usd',    icon:'🥤'},
+  {id:'jnj',      yahoo:'JNJ',       label:'J&J',           fmt:'usd',    icon:'💊'},
+  {id:'crm',      yahoo:'CRM',       label:'SALESFORCE',    fmt:'usd',    icon:'☁️'},
+  // ── Azioni Europa ───────────────────────────────────────────────
+  {id:'asml',     yahoo:'ASML',      label:'ASML',          fmt:'usd',    icon:'🔭'},
+  {id:'lvmh',     yahoo:'MC.PA',     label:'LVMH',          fmt:'eur',    icon:'👜'},
+  {id:'nestle',   yahoo:'NESN.SW',   label:'NESTLÉ',        fmt:'eur',    icon:'☕'},
+  {id:'novartis', yahoo:'NVS',       label:'NOVARTIS',      fmt:'usd',    icon:'💊'},
+  {id:'totalenrg',yahoo:'TTE.PA',    label:'TOTALENERGIES', fmt:'eur',    icon:'⚡'},
+  {id:'siemens',  yahoo:'SIE.DE',    label:'SIEMENS',       fmt:'eur',    icon:'⚙️'},
+  {id:'sap',      yahoo:'SAP',       label:'SAP',           fmt:'usd',    icon:'💻'},
+  {id:'ferrari',  yahoo:'RACE',      label:'FERRARI',       fmt:'usd',    icon:'🏎'},
+  {id:'enel',     yahoo:'ENEL.MI',   label:'ENEL',          fmt:'eur',    icon:'⚡'},
+  {id:'eni',      yahoo:'ENI.MI',    label:'ENI',           fmt:'eur',    icon:'🛢'},
+  // ── Forex ────────────────────────────────────────────────────────
+  {id:'eurusd',   yahoo:'EURUSD=X',  label:'EUR/USD',       fmt:'fx',     icon:'💱'},
+  {id:'gbpusd',   yahoo:'GBPUSD=X',  label:'GBP/USD',       fmt:'fx',     icon:'💱'},
+  {id:'usdjpy',   yahoo:'USDJPY=X',  label:'USD/JPY',       fmt:'fx',     icon:'💱'},
+  {id:'usdchf',   yahoo:'USDCHF=X',  label:'USD/CHF',       fmt:'fx',     icon:'💱'},
+  {id:'usdcny',   yahoo:'USDCNY=X',  label:'USD/CNY',       fmt:'fx',     icon:'💱'},
+  {id:'audusd',   yahoo:'AUDUSD=X',  label:'AUD/USD',       fmt:'fx',     icon:'💱'},
+  {id:'usdcad',   yahoo:'USDCAD=X',  label:'USD/CAD',       fmt:'fx',     icon:'💱'},
+  {id:'eurgbp',   yahoo:'EURGBP=X',  label:'EUR/GBP',       fmt:'fx',     icon:'💱'},
+  // ── Crypto ───────────────────────────────────────────────────────
+  {id:'btcusd',   yahoo:'BTC-USD',   label:'BTC',           fmt:'usd',    icon:'₿'},
+  {id:'ethusd',   yahoo:'ETH-USD',   label:'ETH',           fmt:'usd',    icon:'⟠'},
+  {id:'solusd',   yahoo:'SOL-USD',   label:'SOL',           fmt:'usd',    icon:'☀️'},
+  {id:'xrpusd',   yahoo:'XRP-USD',   label:'XRP',           fmt:'usd',    icon:'💧'},
+  // ── Materie prime ────────────────────────────────────────────────
+  {id:'gold',     yahoo:'GC=F',      label:'ORO',           fmt:'usd',    icon:'🥇'},
+  {id:'silver',   yahoo:'SI=F',      label:'ARGENTO',       fmt:'usd',    icon:'🥈'},
+  {id:'platinum', yahoo:'PL=F',      label:'PLATINO',       fmt:'usd',    icon:'⬜'},
+  {id:'oil',      yahoo:'CL=F',      label:'WTI',           fmt:'usd',    icon:'🛢'},
+  {id:'brent',    yahoo:'BZ=F',      label:'BRENT',         fmt:'usd',    icon:'🛢'},
+  {id:'natgas',   yahoo:'NG=F',      label:'GAS NAT.',      fmt:'usd',    icon:'🔥'},
+  {id:'copper',   yahoo:'HG=F',      label:'RAME',          fmt:'usd',    icon:'🔶'},
+  {id:'wheat',    yahoo:'ZW=F',      label:'GRANO',         fmt:'usd',    icon:'🌾'},
+  // ── Obbligazioni ─────────────────────────────────────────────────
+  {id:'tnx',      yahoo:'^TNX',      label:'US 10Y',        fmt:'pct',    icon:'🏛'},
+  {id:'tyx',      yahoo:'^TYX',      label:'US 30Y',        fmt:'pct',    icon:'🏛'},
+  {id:'fvx',      yahoo:'^FVX',      label:'US 5Y',         fmt:'pct',    icon:'🏛'},
+  {id:'eur10y',   yahoo:'DE10Y=X',   label:'BUND 10Y',      fmt:'pct',    icon:'🇩🇪'},
+  {id:'btp10y',   yahoo:'IT10Y=X',   label:'BTP 10Y',       fmt:'pct',    icon:'🇮🇹'},
 ];
 
 function setTicker(id, val, chg, fmt) {
   const fmtVal = v => {
-    if (fmt==='fx') return v.toFixed(4);
+    if (fmt==='fx')     return v.toFixed(4);
+    if (fmt==='pct')    return v.toFixed(2)+'%';
     if (fmt==='points') return v.toLocaleString('it-IT',{maximumFractionDigits:0});
+    if (fmt==='eur')    return '€'+v.toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2});
     return '$'+v.toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2});
   };
   // Only show change if non-zero (avoid misleading 0.00%)
@@ -2192,7 +2283,41 @@ async function loadMarketTicker() {
 }
 
 // Auto-refresh ticker every 5 minutes
+
+// ─── INIT TICKER DOM ──────────────────────────────────────────────────────────
+function initTickerDOM() {
+  var track = document.getElementById('tickerTrack');
+  if (!track) return;
+  // Genera tutti gli item + duplicato per loop seamless
+  var html = '';
+  // Prima copia
+  TICKER_SYMBOLS.forEach(function(sym) {
+    var icon = sym.icon || '📊';
+    html += '<div class="ticker-item">'
+      + '<span class="ti-icon">' + icon + '</span>'
+      + '<span class="ti-name">' + sym.label + '</span>'
+      + '<span class="ti-val" id="tk-' + sym.id + '">---</span>'
+      + '<span class="ti-chg" id="tk-' + sym.id + '-c">---</span>'
+      + '</div>';
+  });
+  // Seconda copia per loop seamless
+  TICKER_SYMBOLS.forEach(function(sym) {
+    var icon = sym.icon || '📊';
+    html += '<div class="ticker-item">'
+      + '<span class="ti-icon">' + icon + '</span>'
+      + '<span class="ti-name">' + sym.label + '</span>'
+      + '<span class="ti-val" id="tk-' + sym.id + 'b">---</span>'
+      + '<span class="ti-chg" id="tk-' + sym.id + 'b-c">---</span>'
+      + '</div>';
+  });
+  track.innerHTML = html;
+  // Adatta velocità animazione alla lunghezza
+  var speed = TICKER_SYMBOLS.length * 4; // 4s per simbolo
+  track.style.animationDuration = speed + 's';
+}
+
 function startTickerRefresh() {
+  initTickerDOM();
   loadMarketTicker();
   setInterval(loadMarketTicker, 5*60*1000);
 }
