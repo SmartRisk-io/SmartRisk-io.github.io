@@ -427,6 +427,22 @@ svg.donut{transform:rotate(-90deg);}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:768px){.summary-grid,.two-col,.strategy-grid,.calc-grid,.res-grid,.matrix-grid{grid-template-columns:1fr}.edit-fields{grid-template-columns:1fr}.ef textarea{grid-column:span 1}}
+
+/* Asset Panel */
+#assetPanel{display:none}
+#assetPanel.open{display:flex!important}
+.ap-kpi{background:#1C1C1C;border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:10px 12px}
+.ap-kpi-label{font-size:9px;letter-spacing:.1em;color:#8A8580;text-transform:uppercase;margin-bottom:4px}
+.ap-kpi-value{font-size:16px;font-weight:700;color:#F0EDE6;font-family:'Playfair Display',serif}
+.ap-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.ap-row:last-child{border-bottom:none}
+.ap-row-label{font-size:11px;color:#8A8580}
+.ap-row-value{font-size:12px;color:#F0EDE6;font-family:'DM Mono',monospace}
+.ap-level{display:flex;align-items:center;gap:8px;padding:5px 0}
+.ap-level-line{flex:1;height:1px}
+.chart-btn{background:none;border:1px solid rgba(255,255,255,.1);border-radius:4px;color:#8A8580;cursor:pointer;font-size:10px;padding:2px 8px;font-family:'DM Mono',monospace}
+.chart-btn.active{border-color:rgba(201,168,76,.5);color:#C9A84C;background:rgba(201,168,76,.08)}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
@@ -1323,7 +1339,7 @@ function renderTable() {
     const tp=a.targetPct||15;
     const bc=a.risk==='low'?'var(--green)':a.risk==='medium'?'var(--orange)':'var(--red)';
     const sparkHtml='<canvas id="spark_'+a.id+'" width="80" height="32" style="display:block"></canvas>';
-    return '<tr><td><div class="ticker" style="color:'+a.color+'">'+a.ticker+'</div><div class="asset-name">'+a.name+'</div></td>'
+    return '<tr onclick="openAssetPanel('+assets.indexOf(a)+')" style="cursor:pointer" onmouseover="this.style.background=\'rgba(201,168,76,.04)\'" onmouseout="this.style.background=\'\'"><td>'<div class="ticker" style="color:'+a.color+'">'+a.ticker+'</div><div class="asset-name">'+a.name+'</div></td>'
       +'<td><div style="font-family:DM Mono,monospace;font-size:13px">'+a.invested.toLocaleString('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0})+'</div><div style="font-size:10px;color:var(--muted)">'+pct+'%</div></td>'
       +'<td>'+(a.buyPrice>0?'<div style="font-family:DM Mono,monospace;font-size:12px">'+a.buyPrice.toLocaleString('it-IT',{style:'currency',currency:'EUR'})+'</div><div style="font-size:10px;color:var(--muted)">x'+(a.qty||'---')+'</div>':'<span style="color:var(--muted);font-size:11px">---</span>')+'</td>'
       +'<td>'+live+'</td><td>'+pnlHtml+'</td><td>'+sparkHtml+'</td>'
@@ -2053,7 +2069,7 @@ function renderStorico(){
     const idx=closedPositions.length-1-i;
     const pc=p.pnl>=0?'var(--green)':'var(--red)';
     const pp=p.invested>0?((p.pnl/p.invested)*100).toFixed(2):'0.00';
-    return '<tr><td><strong style="color:var(--gold)">'+p.ticker+'</strong><div style="font-size:11px;color:var(--muted)">'+(p.name||'')+'</div></td><td>€'+(p.invested||0).toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td>€'+(p.buyPrice||0).toFixed(2)+'</td><td>€'+(p.closePrice||0).toFixed(2)+'</td><td style="color:'+pc+';font-family:\'DM Mono\',monospace;font-weight:700">'+fmtPnl(p.pnl)+'<div style="font-size:11px">'+pp+'%</div></td><td style="font-size:12px;color:var(--muted)">'+(p.closeDate||'---')+'</td><td><button onclick="deleteStorico('+idx+')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px">🗑</button></td></tr>';
+    return '<tr onclick="openAssetPanel('+assets.indexOf(a)+')" style="cursor:pointer" onmouseover="this.style.background=\'rgba(201,168,76,.04)\'" onmouseout="this.style.background=\'\'"><td>'<strong style="color:var(--gold)">'+p.ticker+'</strong><div style="font-size:11px;color:var(--muted)">'+(p.name||'')+'</div></td><td>€'+(p.invested||0).toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td>€'+(p.buyPrice||0).toFixed(2)+'</td><td>€'+(p.closePrice||0).toFixed(2)+'</td><td style="color:'+pc+';font-family:\'DM Mono\',monospace;font-weight:700">'+fmtPnl(p.pnl)+'<div style="font-size:11px">'+pp+'%</div></td><td style="font-size:12px;color:var(--muted)">'+(p.closeDate||'---')+'</td><td><button onclick="deleteStorico('+idx+')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px">🗑</button></td></tr>';
   }).join('');
 }
 function deleteStorico(idx){if(!confirm('Eliminare?'))return;closedPositions.splice(idx,1);saveStorico();renderStorico();}
@@ -2731,6 +2747,224 @@ if ('serviceWorker' in navigator) {
       .catch(err => console.log('SW error:', err));
   });
 }
+
+
+// ═══ ASSET PANEL (Bloomberg style) ════════════════════════════════════════
+let _apChart = null;
+let _apCurrentIdx = null;
+
+function openAssetPanel(idx) {
+  const a = assets[idx];
+  if (!a) return;
+  _apCurrentIdx = idx;
+
+  const panel = document.getElementById('assetPanel');
+  const overlay = document.getElementById('assetPanelOverlay');
+
+  // Header
+  document.getElementById('apTicker').textContent = a.ticker;
+  document.getElementById('apName').textContent = a.name || '';
+  document.getElementById('apColor').style.background = a.color || '#C9A84C';
+
+  const lp = livePrices[a.id];
+  const price = a.currentPrice || 0;
+  const change = lp?.change ?? null;
+
+  document.getElementById('apLivePrice').textContent = price > 0
+    ? price.toLocaleString('it-IT', {style:'currency', currency:'EUR', minimumFractionDigits:2})
+    : '---';
+
+  const chgEl = document.getElementById('apChange');
+  if (change !== null) {
+    chgEl.textContent = (change >= 0 ? '+' : '') + change.toFixed(2) + '%';
+    chgEl.style.background = change >= 0 ? 'rgba(76,175,126,.15)' : 'rgba(224,90,90,.15)';
+    chgEl.style.color = change >= 0 ? '#4CAF7E' : '#E05A5A';
+  } else {
+    chgEl.textContent = '';
+  }
+
+  // KPI
+  const invested = a.invested || 0;
+  const tot = assets.reduce((s,x) => s + x.invested, 0);
+  const weight = tot > 0 ? (invested/tot*100).toFixed(1) : '0';
+  let pnl = null, pnlPct = null;
+  if (a.currentPrice > 0 && a.buyPrice > 0 && a.qty > 0) {
+    pnl = (a.currentPrice - a.buyPrice) * a.qty;
+    pnlPct = ((a.currentPrice - a.buyPrice) / a.buyPrice * 100);
+  }
+  const pnlColor = pnl === null ? '#8A8580' : pnl >= 0 ? '#4CAF7E' : '#E05A5A';
+
+  document.getElementById('apKpis').innerHTML = [
+    { label: 'Investito', value: invested.toLocaleString('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0}), color: '#C9A84C' },
+    { label: 'P&L', value: pnl !== null ? (pnl>=0?'+':'')+pnl.toLocaleString('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0}) : '---', color: pnlColor },
+    { label: 'Peso', value: weight + '%', color: '#4A90D9' },
+  ].map(k => `<div class="ap-kpi"><div class="ap-kpi-label">${k.label}</div><div class="ap-kpi-value" style="color:${k.color}">${k.value}</div></div>`).join('');
+
+  // Posizione
+  const distTarget = a.targetPct && a.currentPrice > 0 && a.buyPrice > 0
+    ? ((a.buyPrice * (1 + a.targetPct/100) - a.currentPrice) / a.currentPrice * 100).toFixed(1)
+    : null;
+  const riskColor = a.risk==='low' ? '#4CAF7E' : a.risk==='medium' ? '#E08A3A' : '#E05A5A';
+
+  document.getElementById('apPosition').innerHTML = [
+    { label: 'Prezzo acquisto', value: a.buyPrice > 0 ? a.buyPrice.toLocaleString('it-IT',{style:'currency',currency:'EUR'}) : '---' },
+    { label: 'Quantità', value: a.qty || '---' },
+    { label: 'P&L %', value: pnlPct !== null ? (pnlPct>=0?'+':'')+pnlPct.toFixed(2)+'%' : '---', color: pnlColor },
+    { label: 'Target +%', value: (a.targetPct||15) + '%', color: '#C9A84C' },
+    { label: 'Dist. target', value: distTarget !== null ? distTarget + '% mancante' : '---', color: '#8A8580' },
+    { label: 'Rischio', value: a.risk || '---', color: riskColor },
+  ].map(r => `<div class="ap-row"><span class="ap-row-label">${r.label}</span><span class="ap-row-value" style="${r.color?'color:'+r.color:''}">${r.value}</span></div>`).join('');
+
+  // Livelli tecnici stimati
+  const bp = a.buyPrice || 0;
+  const cp = a.currentPrice || bp;
+  const tp = bp > 0 ? bp * (1 + (a.targetPct||15)/100) : 0;
+  const sl = bp > 0 ? bp * 0.92 : 0; // stop loss -8% di default
+  const levels = [
+    { label: 'Stop Loss (-8%)', price: sl, color: '#E05A5A', pct: sl>0&&cp>0?((sl-cp)/cp*100).toFixed(1):null },
+    { label: 'Prezzo attuale', price: cp, color: '#F0EDE6', pct: 0 },
+    { label: 'Acquisto', price: bp, color: '#8A8580', pct: bp>0&&cp>0?((bp-cp)/cp*100).toFixed(1):null },
+    { label: 'Target (+'+( a.targetPct||15)+'%)', price: tp, color: '#4CAF7E', pct: tp>0&&cp>0?((tp-cp)/cp*100).toFixed(1):null },
+  ].filter(l => l.price > 0).sort((a,b) => b.price - a.price);
+
+  document.getElementById('apLevels').innerHTML = levels.map(l =>
+    `<div class="ap-level">
+      <span style="font-size:10px;color:#8A8580;width:140px;white-space:nowrap">${l.label}</span>
+      <div class="ap-level-line" style="background:${l.color};opacity:.3"></div>
+      <span style="font-size:11px;font-family:'DM Mono',monospace;color:${l.color}">${l.price.toLocaleString('it-IT',{style:'currency',currency:'EUR',minimumFractionDigits:2})}</span>
+      ${l.pct !== null ? `<span style="font-size:10px;color:${parseFloat(l.pct)>=0?'#4CAF7E':'#E05A5A'};margin-left:6px">${parseFloat(l.pct)>=0?'+':''}${l.pct}%</span>` : ''}
+    </div>`
+  ).join('');
+
+  // Chart P&L simulato (sparkline history se disponibile)
+  _renderApChart(a, 'W');
+
+  // Chart buttons
+  document.getElementById('apChartBtns').innerHTML = ['W','M','3M'].map(p =>
+    `<button class="chart-btn${p==='W'?' active':''}" onclick="document.querySelectorAll('.chart-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');_renderApChart(assets[${idx}],'${p}')">${p}</button>`
+  ).join('');
+
+  // Bottoni azione
+  document.getElementById('apEditBtn').onclick = () => { closeAssetPanel(); editAsset(idx); };
+  document.getElementById('apDeleteBtn').onclick = () => { if(confirm('Rimuovere '+a.ticker+'?')){assets.splice(idx,1);saveAssets();renderAll();closeAssetPanel();} };
+  document.getElementById('apAiBtn').onclick = () => runApAi(idx);
+  document.getElementById('apAiResult').style.display = 'none';
+
+  // Mostra pannello
+  panel.classList.add('open');
+  overlay.style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeAssetPanel() {
+  document.getElementById('assetPanel').classList.remove('open');
+  document.getElementById('assetPanelOverlay').style.display = 'none';
+  document.body.style.overflow = '';
+  if (_apChart) { _apChart.destroy(); _apChart = null; }
+}
+
+function _renderApChart(a, period) {
+  const canvas = document.getElementById('apChart');
+  if (!canvas) return;
+  if (_apChart) { _apChart.destroy(); _apChart = null; }
+
+  const bp = a.buyPrice || 0;
+  const cp = a.currentPrice || bp;
+  if (bp === 0 || cp === 0) { canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height); return; }
+
+  // Genera dati simulati realistici basati su buy price → current price
+  const pts = period === 'W' ? 7 : period === 'M' ? 30 : 90;
+  const labels = [];
+  const data = [];
+  const now = Date.now();
+  const dayMs = 86400000;
+
+  for (let i = pts; i >= 0; i--) {
+    const d = new Date(now - i * dayMs);
+    labels.push(d.toLocaleDateString('it-IT', {day:'numeric', month:'short'}));
+    // Interpolazione lineare con rumore gaussiano
+    const t = (pts - i) / pts;
+    const trend = bp + (cp - bp) * t;
+    const noise = (Math.random() - 0.5) * (cp - bp) * 0.3;
+    data.push(parseFloat((trend + noise).toFixed(2)));
+  }
+  data[data.length-1] = cp; // forza il punto finale al prezzo attuale
+
+  const isUp = cp >= bp;
+  const lineColor = isUp ? '#4CAF7E' : '#E05A5A';
+  const fillColor = isUp ? 'rgba(76,175,126,.1)' : 'rgba(224,90,90,.1)';
+
+  _apChart = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        borderColor: lineColor,
+        backgroundColor: fillColor,
+        borderWidth: 1.5,
+        pointRadius: 0,
+        fill: true,
+        tension: 0.3,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: {
+        callbacks: { label: ctx => ctx.parsed.y.toLocaleString('it-IT',{style:'currency',currency:'EUR',minimumFractionDigits:2}) }
+      }},
+      scales: {
+        x: { grid:{color:'rgba(255,255,255,.04)'}, ticks:{color:'#8A8580',font:{size:9}, maxTicksLimit:5} },
+        y: { grid:{color:'rgba(255,255,255,.04)'}, ticks:{color:'#8A8580',font:{size:9}, callback: v => '€'+v.toFixed(0)} }
+      }
+    }
+  });
+}
+
+async function runApAi(idx) {
+  const a = assets[idx];
+  const btn = document.getElementById('apAiBtn');
+  const result = document.getElementById('apAiResult');
+  btn.textContent = '⏳ Analisi...';
+  btn.disabled = true;
+  result.style.display = 'block';
+  result.innerHTML = '<span style="color:#8A8580">Analisi AI in corso...</span>';
+  try {
+    const ctrl = new AbortController();
+    setTimeout(() => ctrl.abort(), 15000);
+    const res = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        type: 'portfolio',
+        portfolio: { assets: [{ ticker:a.ticker, name:a.name, invested:a.invested, buyPrice:a.buyPrice, currentPrice:a.currentPrice, risk:a.risk }] },
+        userId: window._currentUid||'anon'
+      }),
+      signal: ctrl.signal
+    });
+    const data = await res.json();
+    const asset = data.assets?.[0];
+    if (asset) {
+      const sentColor = asset.sentiment==='bullish'?'#4CAF7E':asset.sentiment==='bearish'?'#E05A5A':'#E08A3A';
+      result.innerHTML = `
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="font-size:10px;letter-spacing:.1em;color:#8A8580;text-transform:uppercase">AI Score</span>
+          <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:rgba(74,144,217,.15);color:#4A90D9;font-family:'DM Mono',monospace">${asset.action?.toUpperCase()||'---'}</span>
+          <span style="font-size:11px;color:${sentColor};margin-left:auto">${asset.sentiment||''}</span>
+        </div>
+        <div style="font-size:12px;line-height:1.6;color:#F0EDE6">${asset.analysis||'Nessuna analisi disponibile'}</div>
+      `;
+    } else {
+      result.innerHTML = '<span style="color:#8A8580">Nessun dato ricevuto dal modello.</span>';
+    }
+  } catch(e) {
+    result.innerHTML = '<span style="color:#E05A5A">Timeout o errore — riprova tra poco.</span>';
+  }
+  btn.textContent = '🤖 Analisi AI';
+  btn.disabled = false;
+}
+
 </script>
 
 <!-- ALTRO MENU (body-level per evitare overflow clipping) -->
@@ -2739,5 +2973,66 @@ if ('serviceWorker' in navigator) {
   <button onclick="switchTab('verdetti');closeAltro()" style="display:flex;align-items:center;gap:10px;width:100%;padding:13px 18px;background:none;border:none;border-bottom:1px solid var(--border);color:var(--text);text-align:left;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;transition:background .15s" onmouseover="this.style.background='rgba(201,168,76,.1)';this.style.color='var(--gold)'" onmouseout="this.style.background='none';this.style.color='var(--text)'">⚖️ Verdetti</button>
   <button onclick="switchTab('storico');closeAltro()" style="display:flex;align-items:center;gap:10px;width:100%;padding:13px 18px;background:none;border:none;color:var(--text);text-align:left;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;transition:background .15s" onmouseover="this.style.background='rgba(201,168,76,.1)';this.style.color='var(--gold)'" onmouseout="this.style.background='none';this.style.color='var(--text)'">📋 Storico</button>
 </div>
+
+<!-- ═══ ASSET DETAIL PANEL (Bloomberg style) ═══════════════════════════ -->
+<div id="assetPanel" style="display:none;position:fixed;top:0;right:0;width:420px;height:100vh;background:#0D0D0D;border-left:1px solid rgba(201,168,76,.25);z-index:10000;overflow-y:auto;font-family:'DM Mono',monospace;flex-direction:column">
+  <!-- Header -->
+  <div id="apHeader" style="background:#141414;border-bottom:1px solid rgba(201,168,76,.2);padding:16px 20px;position:sticky;top:0;z-index:1">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div id="apColor" style="width:4px;height:36px;border-radius:2px;background:#C9A84C;flex-shrink:0"></div>
+      <div>
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span id="apTicker" style="font-size:22px;font-weight:700;color:#F0EDE6;font-family:'Playfair Display',serif"></span>
+          <span id="apLivePrice" style="font-size:18px;font-family:'DM Mono',monospace;color:#C9A84C"></span>
+          <span id="apChange" style="font-size:12px;padding:2px 7px;border-radius:4px"></span>
+        </div>
+        <div id="apName" style="font-size:11px;color:#8A8580;margin-top:2px;letter-spacing:.05em"></div>
+      </div>
+      <button onclick="closeAssetPanel()" style="margin-left:auto;background:none;border:none;color:#8A8580;cursor:pointer;font-size:22px;line-height:1;padding:4px">×</button>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div style="padding:20px;display:flex;flex-direction:column;gap:16px">
+
+    <!-- KPI row -->
+    <div id="apKpis" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"></div>
+
+    <!-- Chart placeholder -->
+    <div style="background:#141414;border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <span style="font-size:10px;letter-spacing:.1em;color:#8A8580;text-transform:uppercase">Andamento P&L</span>
+        <div style="display:flex;gap:4px" id="apChartBtns"></div>
+      </div>
+      <canvas id="apChart" height="100" style="width:100%"></canvas>
+    </div>
+
+    <!-- Posizione -->
+    <div style="background:#141414;border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:14px">
+      <div style="font-size:10px;letter-spacing:.1em;color:#8A8580;text-transform:uppercase;margin-bottom:12px">📊 Posizione</div>
+      <div id="apPosition" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"></div>
+    </div>
+
+    <!-- Livelli tecnici -->
+    <div style="background:#141414;border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:14px">
+      <div style="font-size:10px;letter-spacing:.1em;color:#8A8580;text-transform:uppercase;margin-bottom:12px">📐 Livelli Tecnici</div>
+      <div id="apLevels" style="display:flex;flex-direction:column;gap:6px"></div>
+    </div>
+
+    <!-- Azioni rapide -->
+    <div style="display:flex;gap:8px">
+      <button id="apEditBtn" style="flex:1;padding:10px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:8px;color:#C9A84C;cursor:pointer;font-size:12px;font-family:inherit">✏️ Modifica</button>
+      <button id="apAiBtn" style="flex:1;padding:10px;background:rgba(74,144,217,.1);border:1px solid rgba(74,144,217,.3);border-radius:8px;color:#4A90D9;cursor:pointer;font-size:12px;font-family:inherit">🤖 Analisi AI</button>
+      <button id="apDeleteBtn" style="padding:10px 14px;background:rgba(224,90,90,.08);border:1px solid rgba(224,90,90,.2);border-radius:8px;color:#E05A5A;cursor:pointer;font-size:14px;font-family:inherit">🗑</button>
+    </div>
+
+    <!-- AI Analysis result -->
+    <div id="apAiResult" style="display:none;background:#141414;border:1px solid rgba(74,144,217,.2);border-radius:8px;padding:14px;font-size:12px;line-height:1.6;color:#F0EDE6"></div>
+
+  </div>
+</div>
+<!-- Overlay -->
+<div id="assetPanelOverlay" onclick="closeAssetPanel()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9999;backdrop-filter:blur(2px)"></div>
+
 </body>
 </html>
