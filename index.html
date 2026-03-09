@@ -1690,7 +1690,7 @@ async function runAIAnalysis() {
     if(data.error==='RATE_LIMIT'){
       document.getElementById('aiLoading').style.display='none';
       document.getElementById('aiEmpty').style.display='block';
-      document.getElementById('aiEmpty').innerHTML='<div style="font-size:40px;margin-bottom:12px">⏳</div><div style="font-family:\'Playfair Display\',serif;font-size:20px;font-weight:700;margin-bottom:8px;color:var(--gold)">'+t('dailyLimitReached')+'</div><div style="font-size:13px;color:var(--muted)">Hai usato le 3 analisi gratuite di oggi. Si azzera a mezzanotte.</div>';
+      document.getElementById('aiEmpty').innerHTML='<div style="font-size:40px;margin-bottom:12px">⏳</div><div style="font-family:Playfair Display,serif;font-size:20px;font-weight:700;margin-bottom:8px;color:var(--gold)">'+t('dailyLimitReached')+'</div><div style="font-size:13px;color:var(--muted)">Hai usato le 3 analisi gratuite di oggi. Si azzera a mezzanotte.</div>';
       return;
     }
     if(data.error)throw new Error(data.error);
@@ -1819,7 +1819,7 @@ async function loadMarketNews() {
     if(data.error==='RATE_LIMIT'){
       document.getElementById('newsLoading').style.display='none';
       document.getElementById('newsEmpty').style.display='block';
-      document.getElementById('newsEmpty').innerHTML='<div style="font-size:40px;margin-bottom:12px">⏳</div><div style="font-family:\'Playfair Display\',serif;font-size:20px;font-weight:700;margin-bottom:8px;color:var(--gold)">'+t('dailyLimitReached')+'</div><div style="font-size:13px;color:var(--muted)">Hai usato le 3 analisi gratuite di oggi.</div>';
+      document.getElementById('newsEmpty').innerHTML='<div style="font-size:40px;margin-bottom:12px">⏳</div><div style="font-family:Playfair Display,serif;font-size:20px;font-weight:700;margin-bottom:8px;color:var(--gold)">'+t('dailyLimitReached')+'</div><div style="font-size:13px;color:var(--muted)">Hai usato le 3 analisi gratuite di oggi.</div>';
       return;
     }
     if(data.error)throw new Error(data.error);
@@ -1930,7 +1930,7 @@ async function loadSegnali() {
     if(data.error==='RATE_LIMIT'){
       document.getElementById('segnaliLoading').style.display='none';
       document.getElementById('segnaliEmpty').style.display='block';
-      document.getElementById('segnaliEmpty').innerHTML='<div style="font-size:40px;margin-bottom:12px">⏳</div><div style="font-family:\'Playfair Display\',serif;font-size:20px;font-weight:700;margin-bottom:8px;color:var(--gold)">Limite giornaliero raggiunto</div><div style="font-size:13px;color:var(--muted)">Si azzera a mezzanotte. Hai ancora 10 analisi domani.</div>';
+      document.getElementById('segnaliEmpty').innerHTML='<div style="font-size:40px;margin-bottom:12px">⏳</div><div style="font-family:Playfair Display,serif;font-size:20px;font-weight:700;margin-bottom:8px;color:var(--gold)">Limite giornaliero raggiunto</div><div style="font-size:13px;color:var(--muted)">Si azzera a mezzanotte. Hai ancora 10 analisi domani.</div>';
       return;
     }
     if(data.error) throw new Error(data.error);
@@ -2077,7 +2077,7 @@ function renderStorico(){
     const idx=closedPositions.length-1-i;
     const pc=p.pnl>=0?'var(--green)':'var(--red)';
     const pp=p.invested>0?((p.pnl/p.invested)*100).toFixed(2):'0.00';
-    return '<tr onclick="openAssetPanel('+assets.indexOf(a)+')" style="cursor:pointer" onmouseover="this.style.background=\'rgba(201,168,76,.04)\'" onmouseout="this.style.background=\'\'"><td>'<strong style="color:var(--gold)">'+p.ticker+'</strong><div style="font-size:11px;color:var(--muted)">'+(p.name||'')+'</div></td><td>€'+(p.invested||0).toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td>€'+(p.buyPrice||0).toFixed(2)+'</td><td>€'+(p.closePrice||0).toFixed(2)+'</td><td style="color:'+pc+';font-family:\'DM Mono\',monospace;font-weight:700">'+fmtPnl(p.pnl)+'<div style="font-size:11px">'+pp+'%</div></td><td style="font-size:12px;color:var(--muted)">'+(p.closeDate||'---')+'</td><td><button onclick="deleteStorico('+idx+')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px">🗑</button></td></tr>';
+    return '<tr><td><strong style="color:var(--gold)">'+p.ticker+'</strong><div style="font-size:11px;color:var(--muted)">'+(p.name||'')+'</div></td><td>€'+(p.invested||0).toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td>€'+(p.buyPrice||0).toFixed(2)+'</td><td>€'+(p.closePrice||0).toFixed(2)+'</td><td style="color:'+pc+';font-family:DM Mono,monospace;font-weight:700">'+fmtPnl(p.pnl)+'<div style="font-size:11px">'+pp+'%</div></td><td style="font-size:12px;color:var(--muted)">'+(p.closeDate||'---')+'</td><td><button onclick="deleteStorico('+idx+')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px">🗑</button></td></tr>';
   }).join('');
 }
 function deleteStorico(idx){if(!confirm('Eliminare?'))return;closedPositions.splice(idx,1);saveStorico();renderStorico();}
@@ -2855,8 +2855,15 @@ function openAssetPanel(idx) {
   // Chart
   _renderApChart(a, 'W');
   document.getElementById('apChartBtns').innerHTML = ['W','M','3M'].map(function(p){
-    return '<button class="chart-btn'+(p==='W'?' active':'')+'" onclick="document.querySelectorAll(\'.chart-btn\').forEach(function(b){b.classList.remove(\'active\')});this.classList.add(\'active\');_renderApChart(assets['+idx+'],\''+p+'\')">' + p + '</button>';
+    return '<button class="chart-btn'+(p==='W'?' active':'')+' ap-period-btn" data-period="'+p+'">' + p + '</button>';
   }).join('');
+  document.getElementById('apChartBtns').onclick = function(e) {
+    var btn = e.target.closest('.ap-period-btn');
+    if (!btn) return;
+    document.querySelectorAll('.ap-period-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    _renderApChart(assets[_apCurrentIdx], btn.dataset.period);
+  };
 
   // Azioni
   document.getElementById('apEditBtn').onclick = function(){ closeAssetPanel(); editAsset(idx); };
