@@ -650,12 +650,25 @@ async function getEurUsd() {
   try {
     // EURUSD=X = how many USD per 1 EUR (e.g. 1.09)
     // To convert USD price to EUR: divide by this rate
-    const proxy='https://api.allorigins.win/get?url='+encodeURIComponent('https://query1.finance.yahoo.com/v8/finance/chart/EURUSD=X?interval=1d&range=1d');
-    const res=await fetch(proxy); const raw=await res.json();
-    const d=JSON.parse(raw.contents);
-    const rate=d?.chart?.result?.[0]?.meta?.regularMarketPrice||1.09;
-    // Sanity check: EURUSD should be between 1.0 and 1.3
-    // If it comes back as ~0.92 it means we got USDEUR instead, so invert it
+    const proxies = [
+      'https://api.allorigins.win/get?url=',
+      'https://api.codetabs.com/v1/proxy?quest=',
+      'https://corsproxy.io/?'
+    ];
+    let rate = null;
+    for (const proxyBase of proxies) {
+      try {
+        const url = 'https://query1.finance.yahoo.com/v8/finance/chart/EURUSD=X?interval=1d&range=1d';
+        const proxyUrl = proxyBase + encodeURIComponent(url);
+        const res = await fetch(proxyUrl, {signal: AbortSignal.timeout(5000)});
+        const raw = await res.json();
+        const contents = raw.contents || raw;
+        const d = typeof contents === 'string' ? JSON.parse(contents) : contents;
+        const r = d?.chart?.result?.[0]?.meta?.regularMarketPrice;
+        if (r && r > 0) { rate = r; break; }
+      } catch(e) { continue; }
+    }
+    if (!rate) rate = 1.09;
     _eurUsdRate = (rate < 1.0) ? (1/rate) : rate;
     console.log('EUR/USD rate:', _eurUsdRate);
   } catch(e){ _eurUsdRate=1.09; }
@@ -682,10 +695,23 @@ async function refreshPrices() {
     let meta = null;
     for (const tryTick of tryTickers) {
       try {
-        const proxy2='https://api.allorigins.win/get?url='+encodeURIComponent('https://query1.finance.yahoo.com/v8/finance/chart/'+tryTick+'?interval=1d&range=1d');
-        const res2=await fetch(proxy2); const raw2=await res2.json();
-        const d2=JSON.parse(raw2.contents); const m2=d2?.chart?.result?.[0]?.meta;
-        if (m2&&m2.regularMarketPrice){ meta=m2; break; }
+        const yahooUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/'+tryTick+'?interval=1d&range=1d';
+        const stockProxies = [
+          'https://api.allorigins.win/get?url=',
+          'https://api.codetabs.com/v1/proxy?quest=',
+          'https://corsproxy.io/?'
+        ];
+        for (const sp of stockProxies) {
+          try {
+            const r2 = await fetch(sp + encodeURIComponent(yahooUrl), {signal: AbortSignal.timeout(6000)});
+            const raw2 = await r2.json();
+            const contents2 = raw2.contents || raw2;
+            const d2 = typeof contents2 === 'string' ? JSON.parse(contents2) : contents2;
+            const m2 = d2?.chart?.result?.[0]?.meta;
+            if (m2 && m2.regularMarketPrice) { meta = m2; break; }
+          } catch(e2) { continue; }
+        }
+        if (meta) break;
       } catch(e2){ continue; }
     }
     if (meta&&meta.regularMarketPrice) {
@@ -1353,6 +1379,54 @@ function confirmClosePosition() {
   closeCloseModal();
   renderStorico();
   showToast('Posizione chiusa! P&L: ' + (pnl >= 0 ? '+' : '') + '€' + Math.abs(pnl).toFixed(2));
+}
+
+// ─── AUTH HELPERS ────────────────────────────────────────────────────────────
+let _authMode = 'login';
+
+function switchAuthTab(mode) {
+  _authMode = mode;
+  const isLogin = mode === 'login';
+  document.getElementById('tabLoginBtn').style.background = isLogin ? 'var(--gold)' : 'transparent';
+  document.getElementById('tabLoginBtn').style.color = isLogin ? 'var(--dark)' : 'var(--muted)';
+  document.getElementById('tabRegisterBtn').style.background = isLogin ? 'transparent' : 'var(--gold)';
+  document.getElementById('tabRegisterBtn').style.color = isLogin ? 'var(--muted)' : 'var(--dark)';
+  document.getElementById('authSubmitBtn').textContent = isLogin ? 'Accedi' : 'Crea account';
+  document.getElementById('authError').style.display = 'none';
+}
+
+function showAuthError(msg) {
+  const el = document.getElementById('authError');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function submitEmailAuth() {
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  if (!email || !password) { showAuthError('Inserisci email e password'); return; }
+  if (password.length < 6) { showAuthError('La password deve essere di almeno 6 caratteri'); return; }
+  document.getElementById('authError').style.display = 'none';
+  if (_authMode === 'login') {
+    signInWithEmailAndPassword(auth, email, password)
+      .catch(e => {
+        const msgs = { 'auth/user-not-found': 'Account non trovato', 'auth/wrong-password': 'Password errata', 'auth/invalid-email': 'Email non valida', 'auth/invalid-credential': 'Email o password errati' };
+        showAuthError(msgs[e.code] || 'Errore di accesso');
+      });
+  } else {
+    createUserWithEmailAndPassword(auth, email, password)
+      .catch(e => {
+        const msgs = { 'auth/email-already-in-use': 'Email gia in uso', 'auth/invalid-email': 'Email non valida', 'auth/weak-password': 'Password troppo debole' };
+        showAuthError(msgs[e.code] || 'Errore di registrazione');
+      });
+  }
+}
+
+function signInWithApple() {
+  const provider = new OAuthProvider('apple.com');
+  provider.addScope('email');
+  provider.addScope('name');
+  signInWithPopup(auth, provider).catch(e => showAuthError('Errore login Apple: ' + e.message));
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
