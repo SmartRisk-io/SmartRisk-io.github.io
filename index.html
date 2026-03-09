@@ -2757,32 +2757,35 @@ if ('serviceWorker' in navigator) {
 }
 
 
-// ═══ ASSET PANEL (Bloomberg style) ════════════════════════════════════════
-let _apChart = null;
-let _apCurrentIdx = null;
+
+
+// === ASSET PANEL ============================================================
+var _apChart = null;
+var _apCurrentIdx = null;
 
 function openAssetPanel(idx) {
-  const a = assets[idx];
+  var a = assets[idx];
   if (!a) return;
   _apCurrentIdx = idx;
 
-  const panel = document.getElementById('assetPanel');
-  const overlay = document.getElementById('assetPanelOverlay');
+  var panel = document.getElementById('assetPanel');
+  var overlay = document.getElementById('assetPanelOverlay');
+  if (!panel) return;
 
   // Header
   document.getElementById('apTicker').textContent = a.ticker;
   document.getElementById('apName').textContent = a.name || '';
   document.getElementById('apColor').style.background = a.color || '#C9A84C';
 
-  const lp = livePrices[a.id];
-  const price = a.currentPrice || 0;
-  const change = lp?.change ?? null;
+  var price = a.currentPrice || 0;
+  var lp = livePrices[a.id];
+  var change = lp ? lp.change : null;
 
   document.getElementById('apLivePrice').textContent = price > 0
     ? price.toLocaleString('it-IT', {style:'currency', currency:'EUR', minimumFractionDigits:2})
     : '---';
 
-  const chgEl = document.getElementById('apChange');
+  var chgEl = document.getElementById('apChange');
   if (change !== null) {
     chgEl.textContent = (change >= 0 ? '+' : '') + change.toFixed(2) + '%';
     chgEl.style.background = change >= 0 ? 'rgba(76,175,126,.15)' : 'rgba(224,90,90,.15)';
@@ -2792,187 +2795,154 @@ function openAssetPanel(idx) {
   }
 
   // KPI
-  const invested = a.invested || 0;
-  const tot = assets.reduce((s,x) => s + x.invested, 0);
-  const weight = tot > 0 ? (invested/tot*100).toFixed(1) : '0';
-  let pnl = null, pnlPct = null;
+  var invested = a.invested || 0;
+  var tot = assets.reduce(function(s,x){ return s + x.invested; }, 0);
+  var weight = tot > 0 ? (invested/tot*100).toFixed(1) : '0';
+  var pnl = null, pnlPct = null;
   if (a.currentPrice > 0 && a.buyPrice > 0 && a.qty > 0) {
     pnl = (a.currentPrice - a.buyPrice) * a.qty;
-    pnlPct = ((a.currentPrice - a.buyPrice) / a.buyPrice * 100);
+    pnlPct = (a.currentPrice - a.buyPrice) / a.buyPrice * 100;
   }
-  const pnlColor = pnl === null ? '#8A8580' : pnl >= 0 ? '#4CAF7E' : '#E05A5A';
+  var pnlColor = pnl === null ? '#8A8580' : (pnl >= 0 ? '#4CAF7E' : '#E05A5A');
 
-  document.getElementById('apKpis').innerHTML = [
-    { label: 'Investito', value: invested.toLocaleString('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0}), color: '#C9A84C' },
-    { label: 'P&L', value: pnl !== null ? (pnl>=0?'+':'')+pnl.toLocaleString('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0}) : '---', color: pnlColor },
-    { label: 'Peso', value: weight + '%', color: '#4A90D9' },
-  ].map(k => `<div class="ap-kpi"><div class="ap-kpi-label">${k.label}</div><div class="ap-kpi-value" style="color:${k.color}">${k.value}</div></div>`).join('');
+  var kpis = [
+    { label:'Investito', value: invested.toLocaleString('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0}), color:'#C9A84C' },
+    { label:'P&L', value: pnl !== null ? (pnl>=0?'+':'')+pnl.toLocaleString('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0}) : '---', color:pnlColor },
+    { label:'Peso', value: weight+'%', color:'#4A90D9' }
+  ];
+  document.getElementById('apKpis').innerHTML = kpis.map(function(k){
+    return '<div class="ap-kpi"><div class="ap-kpi-label">'+k.label+'</div><div class="ap-kpi-value" style="color:'+k.color+'">'+k.value+'</div></div>';
+  }).join('');
 
   // Posizione
-  const distTarget = a.targetPct && a.currentPrice > 0 && a.buyPrice > 0
-    ? ((a.buyPrice * (1 + a.targetPct/100) - a.currentPrice) / a.currentPrice * 100).toFixed(1)
-    : null;
-  const riskColor = a.risk==='low' ? '#4CAF7E' : a.risk==='medium' ? '#E08A3A' : '#E05A5A';
+  var distTarget = null;
+  if (a.targetPct && a.currentPrice > 0 && a.buyPrice > 0) {
+    distTarget = ((a.buyPrice * (1 + a.targetPct/100) - a.currentPrice) / a.currentPrice * 100).toFixed(1);
+  }
+  var riskColor = a.risk==='low' ? '#4CAF7E' : (a.risk==='medium' ? '#E08A3A' : '#E05A5A');
+  var rows = [
+    { label:'Prezzo acquisto', value: a.buyPrice > 0 ? a.buyPrice.toLocaleString('it-IT',{style:'currency',currency:'EUR'}) : '---', color:'' },
+    { label:'Quantita', value: a.qty || '---', color:'' },
+    { label:'P&L %', value: pnlPct !== null ? (pnlPct>=0?'+':'')+pnlPct.toFixed(2)+'%' : '---', color:pnlColor },
+    { label:'Target +%', value: (a.targetPct||15)+'%', color:'#C9A84C' },
+    { label:'Dist. target', value: distTarget !== null ? distTarget+'% mancante' : '---', color:'#8A8580' },
+    { label:'Rischio', value: a.risk || '---', color:riskColor }
+  ];
+  document.getElementById('apPosition').innerHTML = rows.map(function(r){
+    return '<div class="ap-row"><span class="ap-row-label">'+r.label+'</span><span class="ap-row-value"'+(r.color?' style="color:'+r.color+'"':'')+'>'+r.value+'</span></div>';
+  }).join('');
 
-  document.getElementById('apPosition').innerHTML = [
-    { label: 'Prezzo acquisto', value: a.buyPrice > 0 ? a.buyPrice.toLocaleString('it-IT',{style:'currency',currency:'EUR'}) : '---' },
-    { label: 'Quantità', value: a.qty || '---' },
-    { label: 'P&L %', value: pnlPct !== null ? (pnlPct>=0?'+':'')+pnlPct.toFixed(2)+'%' : '---', color: pnlColor },
-    { label: 'Target +%', value: (a.targetPct||15) + '%', color: '#C9A84C' },
-    { label: 'Dist. target', value: distTarget !== null ? distTarget + '% mancante' : '---', color: '#8A8580' },
-    { label: 'Rischio', value: a.risk || '---', color: riskColor },
-  ].map(r => `<div class="ap-row"><span class="ap-row-label">${r.label}</span><span class="ap-row-value" style="${r.color?'color:'+r.color:''}">${r.value}</span></div>`).join('');
+  // Livelli tecnici
+  var bp = a.buyPrice || 0;
+  var cp = a.currentPrice || bp;
+  var tp2 = bp > 0 ? bp * (1 + (a.targetPct||15)/100) : 0;
+  var sl = bp > 0 ? bp * 0.92 : 0;
+  var levels = [
+    { label:'Stop Loss (-8%)', price:sl, color:'#E05A5A' },
+    { label:'Prezzo attuale', price:cp, color:'#F0EDE6' },
+    { label:'Acquisto', price:bp, color:'#8A8580' },
+    { label:'Target (+'+(a.targetPct||15)+'%)', price:tp2, color:'#4CAF7E' }
+  ].filter(function(l){ return l.price > 0; }).sort(function(a,b){ return b.price - a.price; });
 
-  // Livelli tecnici stimati
-  const bp = a.buyPrice || 0;
-  const cp = a.currentPrice || bp;
-  const tp = bp > 0 ? bp * (1 + (a.targetPct||15)/100) : 0;
-  const sl = bp > 0 ? bp * 0.92 : 0; // stop loss -8% di default
-  const levels = [
-    { label: 'Stop Loss (-8%)', price: sl, color: '#E05A5A', pct: sl>0&&cp>0?((sl-cp)/cp*100).toFixed(1):null },
-    { label: 'Prezzo attuale', price: cp, color: '#F0EDE6', pct: 0 },
-    { label: 'Acquisto', price: bp, color: '#8A8580', pct: bp>0&&cp>0?((bp-cp)/cp*100).toFixed(1):null },
-    { label: 'Target (+'+( a.targetPct||15)+'%)', price: tp, color: '#4CAF7E', pct: tp>0&&cp>0?((tp-cp)/cp*100).toFixed(1):null },
-  ].filter(l => l.price > 0).sort((a,b) => b.price - a.price);
+  document.getElementById('apLevels').innerHTML = levels.map(function(l){
+    var pctDiff = cp > 0 ? ((l.price - cp)/cp*100).toFixed(1) : null;
+    var pctHtml = pctDiff !== null ? ' <span style="font-size:10px;color:'+(parseFloat(pctDiff)>=0?'#4CAF7E':'#E05A5A')+'">'+(parseFloat(pctDiff)>=0?'+':'')+pctDiff+'%</span>' : '';
+    return '<div class="ap-level"><span style="font-size:10px;color:#8A8580;width:140px;white-space:nowrap">'+l.label+'</span>'
+      +'<div class="ap-level-line" style="background:'+l.color+';opacity:.3"></div>'
+      +'<span style="font-size:11px;font-family:DM Mono,monospace;color:'+l.color+'">'+l.price.toLocaleString('it-IT',{style:'currency',currency:'EUR',minimumFractionDigits:2})+'</span>'+pctHtml+'</div>';
+  }).join('');
 
-  document.getElementById('apLevels').innerHTML = levels.map(l =>
-    `<div class="ap-level">
-      <span style="font-size:10px;color:#8A8580;width:140px;white-space:nowrap">${l.label}</span>
-      <div class="ap-level-line" style="background:${l.color};opacity:.3"></div>
-      <span style="font-size:11px;font-family:'DM Mono',monospace;color:${l.color}">${l.price.toLocaleString('it-IT',{style:'currency',currency:'EUR',minimumFractionDigits:2})}</span>
-      ${l.pct !== null ? `<span style="font-size:10px;color:${parseFloat(l.pct)>=0?'#4CAF7E':'#E05A5A'};margin-left:6px">${parseFloat(l.pct)>=0?'+':''}${l.pct}%</span>` : ''}
-    </div>`
-  ).join('');
-
-  // Chart P&L simulato (sparkline history se disponibile)
+  // Chart
   _renderApChart(a, 'W');
+  document.getElementById('apChartBtns').innerHTML = ['W','M','3M'].map(function(p){
+    return '<button class="chart-btn'+(p==='W'?' active':'')+'" onclick="document.querySelectorAll(\'.chart-btn\').forEach(function(b){b.classList.remove(\'active\')});this.classList.add(\'active\');_renderApChart(assets['+idx+'],\''+p+'\')">' + p + '</button>';
+  }).join('');
 
-  // Chart buttons
-  document.getElementById('apChartBtns').innerHTML = ['W','M','3M'].map(p =>
-    `<button class="chart-btn${p==='W'?' active':''}" onclick="document.querySelectorAll('.chart-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');_renderApChart(assets[${idx}],'${p}')">${p}</button>`
-  ).join('');
-
-  // Bottoni azione
-  document.getElementById('apEditBtn').onclick = () => { closeAssetPanel(); editAsset(idx); };
-  document.getElementById('apDeleteBtn').onclick = () => { if(confirm('Rimuovere '+a.ticker+'?')){assets.splice(idx,1);saveAssets();renderAll();closeAssetPanel();} };
-  document.getElementById('apAiBtn').onclick = () => runApAi(idx);
+  // Azioni
+  document.getElementById('apEditBtn').onclick = function(){ closeAssetPanel(); editAsset(idx); };
+  document.getElementById('apDeleteBtn').onclick = function(){
+    if(confirm('Rimuovere '+a.ticker+'?')){ assets.splice(idx,1); saveAssets(); renderAll(); closeAssetPanel(); }
+  };
+  document.getElementById('apAiBtn').onclick = function(){ runApAi(idx); };
   document.getElementById('apAiResult').style.display = 'none';
 
-  // Mostra pannello
   panel.classList.add('open');
   overlay.style.display = 'block';
   document.body.style.overflow = 'hidden';
 }
 
 function closeAssetPanel() {
-  document.getElementById('assetPanel').classList.remove('open');
-  document.getElementById('assetPanelOverlay').style.display = 'none';
+  var panel = document.getElementById('assetPanel');
+  var overlay = document.getElementById('assetPanelOverlay');
+  if (panel) panel.classList.remove('open');
+  if (overlay) overlay.style.display = 'none';
   document.body.style.overflow = '';
   if (_apChart) { _apChart.destroy(); _apChart = null; }
 }
 
 function _renderApChart(a, period) {
-  const canvas = document.getElementById('apChart');
+  var canvas = document.getElementById('apChart');
   if (!canvas) return;
   if (_apChart) { _apChart.destroy(); _apChart = null; }
-
-  const bp = a.buyPrice || 0;
-  const cp = a.currentPrice || bp;
-  if (bp === 0 || cp === 0) { canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height); return; }
-
-  // Genera dati simulati realistici basati su buy price → current price
-  const pts = period === 'W' ? 7 : period === 'M' ? 30 : 90;
-  const labels = [];
-  const data = [];
-  const now = Date.now();
-  const dayMs = 86400000;
-
-  for (let i = pts; i >= 0; i--) {
-    const d = new Date(now - i * dayMs);
+  var bp = a.buyPrice || 0, cp = a.currentPrice || bp;
+  if (bp === 0 || cp === 0) return;
+  var pts = period === 'W' ? 7 : period === 'M' ? 30 : 90;
+  var labels = [], data = [];
+  var now = Date.now(), dayMs = 86400000;
+  for (var i = pts; i >= 0; i--) {
+    var d = new Date(now - i * dayMs);
     labels.push(d.toLocaleDateString('it-IT', {day:'numeric', month:'short'}));
-    // Interpolazione lineare con rumore gaussiano
-    const t = (pts - i) / pts;
-    const trend = bp + (cp - bp) * t;
-    const noise = (Math.random() - 0.5) * (cp - bp) * 0.3;
+    var t2 = (pts - i) / pts;
+    var trend = bp + (cp - bp) * t2;
+    var noise = (Math.random() - 0.5) * Math.abs(cp - bp) * 0.3;
     data.push(parseFloat((trend + noise).toFixed(2)));
   }
-  data[data.length-1] = cp; // forza il punto finale al prezzo attuale
-
-  const isUp = cp >= bp;
-  const lineColor = isUp ? '#4CAF7E' : '#E05A5A';
-  const fillColor = isUp ? 'rgba(76,175,126,.1)' : 'rgba(224,90,90,.1)';
-
+  data[data.length-1] = cp;
+  var isUp = cp >= bp;
   _apChart = new Chart(canvas, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [{
-        data,
-        borderColor: lineColor,
-        backgroundColor: fillColor,
-        borderWidth: 1.5,
-        pointRadius: 0,
-        fill: true,
-        tension: 0.3,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false }, tooltip: {
-        callbacks: { label: ctx => ctx.parsed.y.toLocaleString('it-IT',{style:'currency',currency:'EUR',minimumFractionDigits:2}) }
-      }},
-      scales: {
-        x: { grid:{color:'rgba(255,255,255,.04)'}, ticks:{color:'#8A8580',font:{size:9}, maxTicksLimit:5} },
-        y: { grid:{color:'rgba(255,255,255,.04)'}, ticks:{color:'#8A8580',font:{size:9}, callback: v => '€'+v.toFixed(0)} }
-      }
-    }
+    type:'line',
+    data:{ labels:labels, datasets:[{ data:data, borderColor:isUp?'#4CAF7E':'#E05A5A', backgroundColor:isUp?'rgba(76,175,126,.1)':'rgba(224,90,90,.1)', borderWidth:1.5, pointRadius:0, fill:true, tension:0.3 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} }, scales:{
+      x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#8A8580',font:{size:9},maxTicksLimit:5}},
+      y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#8A8580',font:{size:9},callback:function(v){return '€'+v.toFixed(0);}}}
+    }}
   });
 }
 
 async function runApAi(idx) {
-  const a = assets[idx];
-  const btn = document.getElementById('apAiBtn');
-  const result = document.getElementById('apAiResult');
-  btn.textContent = '⏳ Analisi...';
+  var a = assets[idx];
+  var btn = document.getElementById('apAiBtn');
+  var result = document.getElementById('apAiResult');
+  btn.textContent = 'Analisi...';
   btn.disabled = true;
   result.style.display = 'block';
   result.innerHTML = '<span style="color:#8A8580">Analisi AI in corso...</span>';
   try {
-    const ctrl = new AbortController();
-    setTimeout(() => ctrl.abort(), 15000);
-    const res = await fetch(WORKER_URL, {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({
-        type: 'portfolio',
-        portfolio: { assets: [{ ticker:a.ticker, name:a.name, invested:a.invested, buyPrice:a.buyPrice, currentPrice:a.currentPrice, risk:a.risk }] },
-        userId: window._currentUid||'anon'
-      }),
+    var ctrl = new AbortController();
+    setTimeout(function(){ ctrl.abort(); }, 15000);
+    var res = await fetch(WORKER_URL, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ type:'portfolio', portfolio:{ assets:[{ticker:a.ticker,name:a.name,invested:a.invested,buyPrice:a.buyPrice,currentPrice:a.currentPrice,risk:a.risk}] }, userId: window._currentUid||'anon' }),
       signal: ctrl.signal
     });
-    const data = await res.json();
-    const asset = data.assets?.[0];
+    var data = await res.json();
+    var asset = data.assets && data.assets[0];
     if (asset) {
-      const sentColor = asset.sentiment==='bullish'?'#4CAF7E':asset.sentiment==='bearish'?'#E05A5A':'#E08A3A';
-      result.innerHTML = `
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-          <span style="font-size:10px;letter-spacing:.1em;color:#8A8580;text-transform:uppercase">AI Score</span>
-          <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:rgba(74,144,217,.15);color:#4A90D9;font-family:'DM Mono',monospace">${asset.action?.toUpperCase()||'---'}</span>
-          <span style="font-size:11px;color:${sentColor};margin-left:auto">${asset.sentiment||''}</span>
-        </div>
-        <div style="font-size:12px;line-height:1.6;color:#F0EDE6">${asset.analysis||'Nessuna analisi disponibile'}</div>
-      `;
+      var sentColor = asset.sentiment==='bullish'?'#4CAF7E':(asset.sentiment==='bearish'?'#E05A5A':'#E08A3A');
+      result.innerHTML = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">'
+        +'<span style="font-size:10px;letter-spacing:.1em;color:#8A8580;text-transform:uppercase">Raccomandazione</span>'
+        +'<span style="font-size:11px;padding:2px 8px;border-radius:4px;background:rgba(74,144,217,.15);color:#4A90D9">'+(asset.action||'---').toUpperCase()+'</span>'
+        +'<span style="font-size:11px;color:'+sentColor+';margin-left:auto">'+(asset.sentiment||'')+'</span></div>'
+        +'<div style="font-size:12px;line-height:1.6;color:#F0EDE6">'+(asset.analysis||'Nessuna analisi disponibile.')+'</div>';
     } else {
-      result.innerHTML = '<span style="color:#8A8580">Nessun dato ricevuto dal modello.</span>';
+      result.innerHTML = '<span style="color:#8A8580">Nessun dato ricevuto.</span>';
     }
   } catch(e) {
-    result.innerHTML = '<span style="color:#E05A5A">Timeout o errore — riprova tra poco.</span>';
+    result.innerHTML = '<span style="color:#E05A5A">Errore — riprova tra poco.</span>';
   }
-  btn.textContent = '🤖 Analisi AI';
+  btn.textContent = 'Analisi AI';
   btn.disabled = false;
 }
-
 </script>
 
 <!-- ALTRO MENU (body-level per evitare overflow clipping) -->
