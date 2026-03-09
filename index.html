@@ -195,12 +195,13 @@ input[type=range].wi-range::-webkit-slider-thumb{-webkit-appearance:none;width:1
 @media(max-width:640px){
   .tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;scrollbar-width:none;gap:4px;}
   .tabs::-webkit-scrollbar{display:none;}
-  .tab{flex-shrink:0;padding:6px 10px;font-size:10px;}
+  .tab{flex-shrink:0;padding:7px 12px;font-size:11px;}
   .tab-dropdown{flex-shrink:0;}
   .market-ticker{height:30px;}
   .ticker-item{padding:0 12px;font-size:10px;}
   .ti-name{display:none;}
-  .topbar{padding:8px 16px;}
+  .topbar{padding:8px 12px;}
+  .user-chip>span{display:none;}
   .container{padding:16px 12px;}
   header{flex-direction:column;gap:12px;margin-bottom:16px;}
   .two-col{grid-template-columns:1fr!important;}
@@ -211,7 +212,8 @@ input[type=range].wi-range::-webkit-slider-thumb{-webkit-appearance:none;width:1
   .summary-grid{grid-template-columns:1fr 1fr!important;}
   .price-bar{flex-wrap:wrap;gap:6px;padding:8px 12px;}
   .price-item{font-size:11px;}
-  #panorSummary{grid-template-columns:1fr 1fr!important;}
+  #panorSummary{grid-template-columns:1fr 1fr!important;gap:8px!important;}
+  #tab-panoramica>div[style*="1fr 1fr"]{grid-template-columns:1fr!important;}
   #panorMovers{grid-template-columns:1fr 1fr!important;}
   .brief-header{flex-wrap:wrap;gap:6px;}
   .card{padding:14px 12px;}
@@ -462,10 +464,10 @@ svg.donut{transform:rotate(-90deg);}
       </div>
 
       <!-- Summary cards row -->
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:24px" id="panorSummary"></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:32px" id="panorSummary"></div>
 
       <!-- DNA Radar + quick stats -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-bottom:36px">
         <div class="card" id="dnaCard">
           <div class="section-title">DNA del Portafoglio</div>
           <div class="dna-wrap">
@@ -475,12 +477,12 @@ svg.donut{transform:rotate(-90deg);}
         </div>
         <div class="card">
           <div class="section-title">Composizione</div>
-          <canvas id="panorDonut" height="180"></canvas>
-          <div id="panorDonutLegend" style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px"></div>
+          <div id="panorDonutContainer" style="margin-top:8px;max-height:260px;overflow-y:auto"></div>
         </div>
       </div>
 
       <!-- Top movers -->
+      <div style="border-top:1px solid var(--border);margin:4px 0 28px"></div>
       <div class="card">
         <div class="section-title">Asset in evidenza</div>
         <div id="panorMovers" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px"></div>
@@ -955,8 +957,8 @@ function applyLang() {
   const altroBtn = document.querySelector('#altroDropdown > .tab');
   if (altroBtn) altroBtn.innerHTML = t('other') + ' &#9660;';
   const menuBtns = document.querySelectorAll('#altroMenu button');
-  if (menuBtns[0]) menuBtns[0].textContent = t('verdetti');
-  if (menuBtns[1]) menuBtns[1].textContent = t('storico');
+  if (menuBtns[2]) menuBtns[2].textContent = t('verdetti');
+  if (menuBtns[3]) menuBtns[3].textContent = t('storico');
 }
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
@@ -2042,7 +2044,6 @@ async function loadMorningBrief() {
 let panorDonutChart = null;
 
 function renderPanoramica() {
-  if (document.getElementById('tab-panoramica')?.style.display === 'none') return;
   renderPanorSummary();
   renderPanorDonut();
   renderPanorMovers();
@@ -2076,19 +2077,31 @@ function renderPanorSummary() {
 }
 
 function renderPanorDonut() {
-  const canvas = document.getElementById('panorDonut'); if(!canvas) return;
-  const legend = document.getElementById('panorDonutLegend');
-  if(assets.length===0){canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);if(legend)legend.innerHTML='';return;}
+  const container = document.getElementById('panorDonutContainer');
+  if(!container) return;
+  if(assets.length===0){container.innerHTML='<div style="color:var(--muted);font-size:13px;text-align:center;padding:24px">Aggiungi asset per vedere la composizione</div>';return;}
   const tot = assets.reduce((s,a)=>s+a.invested,0);
-  const data = assets.map(a=>({label:a.ticker,value:a.invested,color:a.color}));
-  const ctx = canvas.getContext('2d');
-  if(panorDonutChart){panorDonutChart.destroy();panorDonutChart=null;}
-  panorDonutChart = new Chart(ctx,{
-    type:'doughnut',
-    data:{labels:data.map(d=>d.label),datasets:[{data:data.map(d=>d.value),backgroundColor:data.map(d=>d.color),borderWidth:2,borderColor:'var(--surface)'}]},
-    options:{responsive:true,maintainAspectRatio:true,cutout:'70%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'€'+Math.round(c.raw).toLocaleString('it-IT')+' ('+((c.raw/tot)*100).toFixed(1)+'%)'}}}}
-  });
-  if(legend) legend.innerHTML = data.map(d=>`<span style="display:inline-flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)"><span style="width:8px;height:8px;border-radius:50%;background:${d.color};flex-shrink:0"></span>${d.label}</span>`).join('');
+  const sorted = [...assets].sort((a,b)=>b.invested-a.invested);
+  container.innerHTML = sorted.map(a=>{
+    const pct = tot>0?(a.invested/tot*100):0;
+    const barW = Math.max(2, pct);
+    const val = Math.round(a.invested).toLocaleString('it-IT');
+    return '<div style="margin-bottom:13px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">'
+      +'<div style="display:flex;align-items:center;gap:7px">'
+      +'<span style="width:9px;height:9px;border-radius:50%;background:'+a.color+';flex-shrink:0;display:inline-block"></span>'
+      +'<span style="font-family:DM Mono,monospace;font-size:12px;color:var(--gold);font-weight:500">'+a.ticker+'</span>'
+      +'</div>'
+      +'<div style="display:flex;gap:10px;align-items:baseline">'
+      +'<span style="font-family:DM Mono,monospace;font-size:12px;color:var(--text)">€'+val+'</span>'
+      +'<span style="font-family:DM Mono,monospace;font-size:10px;color:var(--muted);min-width:38px;text-align:right">'+pct.toFixed(1)+'%</span>'
+      +'</div>'
+      +'</div>'
+      +'<div style="height:6px;background:var(--surface3);border-radius:3px;overflow:hidden">'
+      +'<div style="width:'+barW+'%;height:100%;background:'+a.color+';border-radius:3px"></div>'
+      +'</div>'
+      +'</div>';
+  }).join('');
 }
 
 function renderPanorMovers() {
