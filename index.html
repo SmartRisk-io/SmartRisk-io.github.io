@@ -265,6 +265,27 @@ input[type=range].wi-range::-webkit-slider-thumb{-webkit-appearance:none;width:1
 .tab-content{display:none;}
 .tab-content.active{display:flex;flex-direction:column;flex:1;padding:24px 0 40px;overflow-y:auto;}
 .section-title{font-family:DM Mono,monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+
+/* ── STRATEGIA ── */
+.strategia-layout{display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start;}
+.strategy-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:16px;}
+.strategy-card{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px;transition:border-color .2s,transform .15s;}
+.strategy-card:hover{transform:translateY(-2px);border-left-color:var(--blue);}
+.strategy-icon{font-size:26px;}
+.strategy-title{font-size:15px;font-weight:700;color:var(--text);}
+.strategy-text{font-size:12px;color:var(--muted);line-height:1.7;}
+/* Timeline */
+.timeline{display:flex;flex-direction:column;gap:0;}
+.tl-item{display:grid;grid-template-columns:16px 1fr;grid-template-rows:auto auto;column-gap:14px;padding-bottom:24px;position:relative;}
+.tl-item:not(:last-child)::before{content:'';position:absolute;left:7px;top:20px;bottom:0;width:1px;background:var(--border);}
+.tl-dot{width:14px;height:14px;border-radius:50%;background:var(--gold);border:2px solid var(--surface);margin-top:3px;grid-row:1/3;flex-shrink:0;}
+.tl-phase{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:var(--gold);font-weight:700;text-transform:uppercase;}
+.tl-title{font-size:13px;font-weight:700;color:var(--text);margin-top:2px;}
+.tl-text{font-size:11px;color:var(--muted);line-height:1.65;margin-top:4px;grid-column:2;}
+/* ── MATRICE RISCHIO ── */
+.rischio-layout{display:grid;grid-template-columns:1fr 280px;gap:20px;align-items:start;}
+@media(max-width:900px){.strategia-layout,.rischio-layout{grid-template-columns:1fr;}.strategy-grid{grid-template-columns:1fr;}}
+
 /* ── TABS BAR ── */
 .tabs{display:flex;overflow:visible;position:sticky;top:48px;z-index:20;margin-bottom:24px;background:var(--surface);border:1px solid var(--border);border-radius:10px;}
 .tabs::-webkit-scrollbar{display:none;}
@@ -276,7 +297,7 @@ input[type=range].wi-range::-webkit-slider-thumb{-webkit-appearance:none;width:1
 .tab-dropdown{position:relative;display:flex;flex:1;overflow:visible;}
 .tab-dropdown>.tab{width:100%;border-right:none;}
 .tab-dropdown-menu{display:none;position:fixed;background:var(--surface2);border:1px solid var(--border);border-radius:10px;min-width:170px;overflow:hidden;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,.6);}
-.tab-dropdown-menu.open{display:block;}
+
 .tab-dropdown-menu button{display:block;width:100%;padding:12px 18px;background:none;border:none;border-bottom:1px solid var(--border);color:var(--text);text-align:left;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;transition:background .15s,color .15s;}
 .tab-dropdown-menu button:last-child{border-bottom:none;}
 .tab-dropdown-menu button:hover{background:rgba(201,168,76,.08);color:var(--gold);}
@@ -317,13 +338,14 @@ svg.donut{transform:rotate(-90deg);}
 .legend-dot{width:8px;height:8px;border-radius:50%;margin-right:8px;flex-shrink:0;}
 .matrix-grid{display:grid;grid-template-columns:44px repeat(4,1fr);gap:3px;margin-bottom:8px;}
 .matrix-label-y{display:flex;align-items:center;justify-content:center;font-family:DM Mono,monospace;font-size:9px;color:var(--muted);writing-mode:horizontal-lr;text-align:center;padding:4px 2px;}
-.matrix-cell{border-radius:6px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:3px;min-height:70px;padding:6px;}
+.matrix-cell{border-radius:8px;padding:10px;min-height:70px;display:flex;flex-wrap:wrap;align-items:flex-start;gap:5px;content-visibility:auto;transition:opacity .2s;}
 .mc-1{background:rgba(76,175,126,.12);border:1px solid rgba(76,175,126,.2);}
 .mc-2{background:rgba(76,175,126,.07);border:1px solid rgba(76,175,126,.12);}
 .mc-3{background:rgba(224,138,58,.1);border:1px solid rgba(224,138,58,.15);}
 .mc-4{background:rgba(224,90,90,.1);border:1px solid rgba(224,90,90,.18);}
 .mc-5{background:rgba(224,90,90,.2);border:1px solid rgba(224,90,90,.3);}
-.matrix-chip{padding:3px 7px;border-radius:4px;font-size:9px;font-weight:600;font-family:DM Mono,monospace;cursor:default;transition:transform .2s;}
+.matrix-chip:hover{transform:scale(1.08);z-index:2;position:relative;}
+.matrix-chip{padding:5px 8px;border-radius:6px;font-size:9px;font-weight:700;font-family:'DM Mono',monospace;cursor:default;transition:transform .2s;display:inline-flex;flex-direction:column;gap:1px;line-height:1.3;}
 .matrix-chip:hover{transform:scale(1.15);}
 .matrix-labels-x{display:grid;grid-template-columns:44px repeat(4,1fr);gap:3px;margin-bottom:20px;}
 .mlx{font-family:DM Mono,monospace;font-size:9px;color:var(--muted);text-align:center;padding:3px 0;}
@@ -512,11 +534,6 @@ svg.donut{transform:rotate(-90deg);}
       <button class="tab" id="tab-btn-segnali" onclick="switchTab('segnali',this)" data-tab="segnali">Segnali CFD</button>
       <div class="tab-dropdown" id="altroDropdown">
         <button class="tab" id="tab-btn-altro" onclick="toggleAltro(event)">Altro &#9660;</button>
-        <div class="tab-dropdown-menu" id="altroMenu">
-          <button onclick="event.stopPropagation();switchTab('mappa');closeAltro()">🗺 Mappa Geo</button>
-          <button onclick="event.stopPropagation();switchTab('verdetti');closeAltro()">⚖️ Verdetti</button>
-          <button onclick="event.stopPropagation();switchTab('storico');closeAltro()">📋 Storico</button>
-        </div>
       </div>
     </div>
     <!-- PANORAMICA -->
@@ -666,13 +683,10 @@ svg.donut{transform:rotate(-90deg);}
     
 <!-- STRATEGIA -->
     <div class="tab-content" id="tab-strategia">
-      <div id="strategiaContent" style="width:100%"></div>
-      <div style="display:grid;grid-template-columns:1fr 310px;gap:24px;margin-top:28px;align-items:start">
-        <div id="strategiaNotes"></div>
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 22px;position:sticky;top:90px">
-          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--muted);margin-bottom:16px">PIANO TEMPORALE</div>
-          <div class="timeline" id="timelineContent"></div>
-        </div>
+      <div id="strategiaContent"></div>
+      <div style="margin-top:36px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px 28px">
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--muted);margin-bottom:20px">PIANO TEMPORALE</div>
+        <div class="timeline" id="timelineContent"></div>
       </div>
     </div>
     <!-- VERDETTI -->
@@ -750,13 +764,22 @@ svg.donut{transform:rotate(-90deg);}
     </div>
     <!-- MAPPA GEO -->
     <div class="tab-content" id="tab-mappa">
-      <div class="section-title">Esposizione Geografica</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:20px">Distribuzione del portafoglio per area geografica, pesata per valore investito</div>
-      <div class="geo-wrap" id="geoWrap">
-        <div id="geoMapContainer"></div>
-        <div class="geo-legend" id="geoLegend"></div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+        <div>
+          <div class="section-title" style="margin:0">Mappa Geografica</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">Esposizione del portafoglio per area geografica</div>
+        </div>
       </div>
-      <div class="geo-tooltip" id="geoTooltip"></div>
+      <div style="display:grid;grid-template-columns:1fr 220px;gap:20px;align-items:start">
+        <div id="geoMapWrap" style="height:420px;border-radius:12px;overflow:hidden;border:1px solid var(--border);background:#0a0a0a;position:relative">
+          <svg id="worldMapSvg" style="width:100%;height:100%;display:block"></svg>
+          <div id="geoTooltipD3" style="position:absolute;display:none;pointer-events:none;z-index:50"></div>
+        </div>
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--muted);margin-bottom:12px">ALLOCAZIONE</div>
+          <div class="geo-legend" id="geoLegend"></div>
+        </div>
+      </div>
     </div>
     <!-- OBIETTIVO -->
     <div class="tab-content" id="tab-obiettivo">
@@ -1052,10 +1075,7 @@ function applyLang() {
   });
   const altroBtn = document.querySelector('#altroDropdown > .tab');
   if (altroBtn) altroBtn.innerHTML = t('other') + ' &#9660;';
-  const menuBtns = document.querySelectorAll('#altroMenu button');
-  if (menuBtns[0]) menuBtns[0].innerHTML = '🗺 Mappa Geo';
-  if (menuBtns[1]) menuBtns[1].innerHTML = '⚖️ ' + t('verdetti');
-  if (menuBtns[2]) menuBtns[2].innerHTML = '📋 ' + t('storico');
+  // menu già con testo fisso nel body
 }
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
@@ -1972,8 +1992,18 @@ function toggleAltro(e) {
   menu.style.minWidth = '170px';
   menu.classList.add('open');
 }
-function closeAltro() {document.getElementById('altroMenu').classList.remove('open');}
-document.addEventListener('click',()=>closeAltro());
+function closeAltro() {
+  const menu = document.getElementById('altroMenu');
+  if (menu) menu.style.display = 'none';
+  const altroBtn = document.getElementById('tab-btn-altro');
+}
+document.addEventListener('click', (e) => {
+  const menu = document.getElementById('altroMenu');
+  const btn = document.getElementById('tab-btn-altro');
+  if (menu && btn && !btn.contains(e.target) && !menu.contains(e.target)) {
+    menu.style.display = 'none';
+  }
+});
 
 // ─── NOTIFICHE ────────────────────────────────────────────────────────────────
 const NOTIF_THRESHOLD_DAY=5,NOTIF_THRESHOLD_BUY=20;
@@ -2638,5 +2668,12 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+
+<!-- ALTRO MENU (body-level per evitare overflow clipping) -->
+<div id="altroMenu" style="display:none;position:fixed;background:var(--surface2);border:1px solid var(--border);border-radius:12px;min-width:180px;overflow:hidden;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,.7)">
+  <button onclick="switchTab('mappa');closeAltro()" style="display:flex;align-items:center;gap:10px;width:100%;padding:13px 18px;background:none;border:none;border-bottom:1px solid var(--border);color:var(--text);text-align:left;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;transition:background .15s" onmouseover="this.style.background='rgba(201,168,76,.1)';this.style.color='var(--gold)'" onmouseout="this.style.background='none';this.style.color='var(--text)'">🗺 Mappa Geo</button>
+  <button onclick="switchTab('verdetti');closeAltro()" style="display:flex;align-items:center;gap:10px;width:100%;padding:13px 18px;background:none;border:none;border-bottom:1px solid var(--border);color:var(--text);text-align:left;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;transition:background .15s" onmouseover="this.style.background='rgba(201,168,76,.1)';this.style.color='var(--gold)'" onmouseout="this.style.background='none';this.style.color='var(--text)'">⚖️ Verdetti</button>
+  <button onclick="switchTab('storico');closeAltro()" style="display:flex;align-items:center;gap:10px;width:100%;padding:13px 18px;background:none;border:none;color:var(--text);text-align:left;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;transition:background .15s" onmouseover="this.style.background='rgba(201,168,76,.1)';this.style.color='var(--gold)'" onmouseout="this.style.background='none';this.style.color='var(--text)'">📋 Storico</button>
+</div>
 </body>
 </html>
