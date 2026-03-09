@@ -46,7 +46,7 @@ window.addEventListener('load', () => {
       const data=await window._fbLoad(user.uid);
       if (data&&data.assets) { assets=data.assets; localStorage.setItem('srm_assets',JSON.stringify(assets)); }
       else { const l=localStorage.getItem('srm_assets'); if(l) assets=JSON.parse(l); }
-      renderAll(); checkOnboarding();
+      renderAll(); checkOnboarding(); updateNotifBtn(); applyLang();
     } else {
       document.getElementById('loginScreen').style.display='flex';
       document.getElementById('appShell').style.display='none';
@@ -769,6 +769,11 @@ async function refreshPrices() {
         price=parseFloat(price.toFixed(2));
         livePrices[a.id]={price,change,cur};
         a.currentPrice=price; fetched++;
+        // Store price history (keep last 7 days)
+        if (!priceHistory[a.ticker]) priceHistory[a.ticker] = [];
+        priceHistory[a.ticker].push(price);
+        if (priceHistory[a.ticker].length > 7) priceHistory[a.ticker].shift();
+        localStorage.setItem('srm_history', JSON.stringify(priceHistory));
         const chip=document.createElement('div');
         chip.className='price-chip '+(change>=0?'up':'down');
         chip.innerHTML='<span class="ptick">'+sym+'</span><span class="pval">'+price.toLocaleString('it-IT',{style:'currency',currency:'EUR'})+'</span><span class="'+(change>=0?'pchg-up':'pchg-down')+'">'+(change>=0?'+':'')+change.toFixed(2)+'%</span>';
@@ -782,6 +787,7 @@ async function refreshPrices() {
     document.getElementById('sumUpdate').textContent=new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
     saveData(); await saveToCloud(); renderAll();
     showToast(fetched+' prezzi aggiornati in EUR!');
+    checkPriceAlerts();
   } else {
     msg.textContent='Nessun prezzo. Verifica ticker (es. VWCE.DE, NVDA, CAT)';
   }
@@ -792,6 +798,42 @@ function renderAll() {
   renderSummary(); renderTable(); renderDonut(); renderSectors();
   renderHeatmap(); renderVerdetti(); renderStrategia();
   populateCalcSelect();
+  setTimeout(drawAllSparklines, 50);
+}
+
+function drawAllSparklines() {
+  assets.forEach(a => {
+    const canvas = document.getElementById('spark_' + a.id);
+    if (!canvas) return;
+    const history = priceHistory[a.ticker] || [];
+    if (history.length < 2) {
+      // Draw flat line if no history
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0,0,80,32);
+      ctx.strokeStyle = '#555';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(0,16); ctx.lineTo(80,16); ctx.stroke();
+      return;
+    }
+    const lp = livePrices[a.id];
+    const color = lp && lp.change >= 0 ? '#34C759' : '#FF453A';
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,80,32);
+    const min = Math.min(...history), max = Math.max(...history);
+    const range = max - min || 1;
+    const pts = history.map((v,i) => ({
+      x: (i/(history.length-1))*80,
+      y: 32 - ((v-min)/range)*28 - 2
+    }));
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    pts.forEach((p,i) => i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y));
+    ctx.stroke();
+    // Fill
+    ctx.fillStyle = color + '22';
+    ctx.lineTo(80,32); ctx.lineTo(0,32); ctx.closePath(); ctx.fill();
+  });
 }
 
 // ─── SUMMARY CARDS ───────────────────────────────────────────────────────────
@@ -830,6 +872,9 @@ function renderTable() {
       live = '<div style="font-family:DM Mono,monospace;font-size:12px;color:' + priceColor + '">' + priceStr + '</div>';
       if (chg!==null) live += '<div style="font-size:10px;color:' + priceColor + '">' + (chg>=0?'+':'') + chg.toFixed(2) + '%</div>';
     }
+    // Sparkline
+    const sparkColor = (()=>{const lp=livePrices[a.id];if(!lp)return'#C9A84C';return lp.change>=0?'#34C759':'#FF453A';})();
+    const sparkHtml = '<canvas id="spark_'+a.id+'" width="80" height="32" style="display:block"></canvas>';
     let pnlHtml='<span style="color:var(--muted);font-size:11px">---</span>';
     if (a.currentPrice>0&&a.buyPrice>0&&a.qty>0){
       const p=(a.currentPrice-a.buyPrice)*a.qty, pp=((a.currentPrice-a.buyPrice)/a.buyPrice*100).toFixed(1);
@@ -1664,6 +1709,149 @@ switchTab = function(id, btn) {
     document.querySelectorAll('.tab-dropdown-menu button').forEach(b => b.classList.remove('active-item'));
   }
 };
+
+// ─── LANGUAGE ────────────────────────────────────────────────────────────────
+const TRANSLATIONS = {
+  it: {
+    portfolio: 'Portafoglio', calculator: 'Calcolatore', riskMatrix: 'Matrice Rischio',
+    strategy: 'Strategia', heatmap: 'Heatmap', aiAnalysis: 'Analisi AI',
+    markets: 'Mercati', signals: 'Segnali', other: 'Altro',
+    verdetti: 'Verdetti', storico: 'Storico',
+    updatePrices: 'Aggiorna prezzi', editPortfolio: 'Modifica',
+    totalInvested: 'Totale investito', positions: 'Posizioni',
+    lastUpdate: 'Ultimo aggiornamento', logout: 'Esci',
+    budget: 'Budget e liquidita', totalBudget: 'Budget totale',
+    invested: 'Investito', available: 'Liquidita disponibile',
+    risk: { low: 'Basso', medium: 'Medio', high: 'Alto' }
+  },
+  en: {
+    portfolio: 'Portfolio', calculator: 'Calculator', riskMatrix: 'Risk Matrix',
+    strategy: 'Strategy', heatmap: 'Heatmap', aiAnalysis: 'AI Analysis',
+    markets: 'Markets', signals: 'Signals', other: 'More',
+    verdetti: 'Verdicts', storico: 'History',
+    updatePrices: 'Update prices', editPortfolio: 'Edit',
+    totalInvested: 'Total invested', positions: 'Positions',
+    lastUpdate: 'Last update', logout: 'Logout',
+    budget: 'Budget & liquidity', totalBudget: 'Total budget',
+    invested: 'Invested', available: 'Available cash',
+    risk: { low: 'Low', medium: 'Medium', high: 'High' }
+  }
+};
+let currentLang = localStorage.getItem('srm_lang') || 'it';
+
+function toggleLang() {
+  currentLang = currentLang === 'it' ? 'en' : 'it';
+  localStorage.setItem('srm_lang', currentLang);
+  applyLang();
+}
+
+function t(key) {
+  const keys = key.split('.');
+  let val = TRANSLATIONS[currentLang];
+  for (const k of keys) val = val?.[k];
+  return val || key;
+}
+
+function applyLang() {
+  const btn = document.getElementById('langBtn');
+  if (btn) btn.textContent = currentLang === 'it' ? 'EN' : 'IT';
+  // Update tab labels
+  const tabMap = {
+    portafoglio: t('portfolio'), calcolatore: t('calculator'),
+    rischio: t('riskMatrix'), strategia: t('strategy'),
+    heatmap: t('heatmap'), ai: t('aiAnalysis'),
+    news: t('markets'), segnali: t('signals'),
+    verdetti: t('verdetti'), storico: t('storico')
+  };
+  document.querySelectorAll('.tab[onclick]').forEach(btn => {
+    const match = btn.getAttribute('onclick')?.match(/switchTab\('(\w+)'/);
+    if (match && tabMap[match[1]]) btn.textContent = tabMap[match[1]];
+  });
+  // Update Altro button
+  const altroBtn = document.querySelector('#altroDropdown > .tab');
+  if (altroBtn) altroBtn.innerHTML = t('other') + ' &#9660;';
+  // Update summary labels
+  const labels = {
+    'sumTotLabel': t('totalInvested'),
+    'sumPosLabel': t('positions'),
+    'sumUpdLabel': t('lastUpdate')
+  };
+  Object.entries(labels).forEach(([id, text]) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+  });
+  // Update budget section
+  const budgetTitle = document.querySelector('#tab-portafoglio .section-title:last-of-type');
+  renderAll();
+}
+
+// ─── NOTIFICHE PUSH ──────────────────────────────────────────────────────────
+const NOTIF_THRESHOLD_DAY = 5;   // % variazione giornaliera
+const NOTIF_THRESHOLD_BUY = 20;  // % dal prezzo di acquisto
+
+async function requestNotifPermission() {
+  if (!('Notification' in window)) return false;
+  if (Notification.permission === 'granted') return true;
+  const perm = await Notification.requestPermission();
+  return perm === 'granted';
+}
+
+function sendNotif(title, body, icon) {
+  if (Notification.permission !== 'granted') return;
+  new Notification(title, { body, icon: '/icon-192.png' });
+}
+
+function checkPriceAlerts() {
+  if (Notification.permission !== 'granted') return;
+  assets.forEach(a => {
+    const lp = livePrices[a.id];
+    if (!lp) return;
+    // Alert variazione giornaliera
+    if (Math.abs(lp.change) >= NOTIF_THRESHOLD_DAY) {
+      const dir = lp.change >= 0 ? '🚀' : '⚠️';
+      const sign = lp.change >= 0 ? '+' : '';
+      sendNotif(
+        dir + ' ' + a.ticker + ' ' + sign + lp.change.toFixed(1) + '% oggi',
+        a.name + ' ha avuto una variazione significativa oggi.',
+      );
+    }
+    // Alert dal prezzo di acquisto
+    if (a.buyPrice > 0 && a.currentPrice > 0) {
+      const fromBuy = ((a.currentPrice - a.buyPrice) / a.buyPrice) * 100;
+      const lastAlert = parseFloat(localStorage.getItem('srm_alert_' + a.id) || '0');
+      const newLevel = Math.floor(Math.abs(fromBuy) / NOTIF_THRESHOLD_BUY) * NOTIF_THRESHOLD_BUY;
+      if (newLevel >= NOTIF_THRESHOLD_BUY && newLevel !== lastAlert) {
+        localStorage.setItem('srm_alert_' + a.id, newLevel);
+        const dir = fromBuy >= 0 ? '🎯' : '📉';
+        const sign = fromBuy >= 0 ? '+' : '';
+        sendNotif(
+          dir + ' ' + a.ticker + ' ' + sign + fromBuy.toFixed(1) + '% dal tuo acquisto',
+          'Hai ' + (fromBuy >= 0 ? 'guadagnato' : 'perso') + ' ' + Math.abs(fromBuy).toFixed(1) + '% su ' + a.name + '.',
+        );
+      }
+    }
+  });
+}
+
+async function enableNotifications() {
+  const granted = await requestNotifPermission();
+  if (granted) {
+    showToast('Notifiche attivate!');
+    localStorage.setItem('srm_notif', '1');
+    updateNotifBtn();
+  } else {
+    showToast('Notifiche non autorizzate');
+  }
+}
+
+function updateNotifBtn() {
+  const btn = document.getElementById('notifBtn');
+  if (!btn) return;
+  const enabled = Notification.permission === 'granted';
+  btn.textContent = enabled ? '🔔' : '🔕';
+  btn.title = enabled ? 'Notifiche attive' : 'Attiva notifiche';
+  btn.style.color = enabled ? 'var(--gold)' : 'var(--muted)';
+}
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 document.getElementById('headerDate').textContent=new Date().toLocaleDateString('it-IT',{month:'long',year:'numeric'});
