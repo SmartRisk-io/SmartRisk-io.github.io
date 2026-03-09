@@ -102,6 +102,27 @@ header{border-bottom:1px solid var(--border);padding-bottom:32px;margin-bottom:3
 .pval{color:var(--text);}
 .pchg-up{color:var(--green);font-size:10px;}
 .pchg-down{color:var(--red);font-size:10px;}
+
+/* MARKET TICKER */
+.market-ticker{background:var(--surface);border-bottom:1px solid var(--border);overflow:hidden;height:36px;display:flex;align-items:center;position:relative;}
+.market-ticker::before{content:'';position:absolute;left:0;top:0;bottom:0;width:80px;background:linear-gradient(to right,var(--surface),transparent);z-index:2;pointer-events:none;}
+.market-ticker::after{content:'';position:absolute;right:0;top:0;bottom:0;width:80px;background:linear-gradient(to left,var(--surface),transparent);z-index:2;pointer-events:none;}
+.ticker-label{position:absolute;left:16px;z-index:3;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;color:var(--gold);text-transform:uppercase;font-weight:500;}
+.ticker-track{display:flex;gap:0;animation:tickerScroll 40s linear infinite;white-space:nowrap;padding-left:120px;}
+.ticker-track:hover{animation-play-state:paused;}
+.ticker-item{display:inline-flex;align-items:center;gap:8px;padding:0 24px;font-family:'DM Mono',monospace;font-size:11px;border-right:1px solid var(--border);}
+.ti-name{color:var(--muted);font-size:10px;}
+.ti-val{color:var(--text);font-weight:500;}
+.ti-chg.up{color:var(--green);}
+.ti-chg.down{color:var(--red);}
+.ti-icon{font-size:13px;}
+.fg-extreme-fear{color:#E05A5A;}
+.fg-fear{color:#E08A3A;}
+.fg-neutral{color:var(--gold);}
+.fg-greed{color:#4CAF7E;}
+.fg-extreme-greed{color:#00E676;}
+@keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
 .price-msg{font-family:DM Mono,monospace;font-size:11px;color:var(--muted);font-style:italic;}
 .tabs{display:flex;gap:6px;margin-bottom:28px;flex-wrap:wrap;}
 .tab{padding:8px 16px;font-size:12px;cursor:pointer;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-family:'DM Mono',monospace;letter-spacing:.04em;transition:all .2s;white-space:nowrap;}
@@ -280,6 +301,28 @@ svg.donut{transform:rotate(-90deg);}
       <span class="price-msg" id="priceMsg">Clicca Aggiorna prezzi per le quotazioni live</span>
       <button class="btn btn-blue" style="margin-left:auto;padding:5px 12px;font-size:10px" onclick="refreshPrices()" data-i18n="update">Aggiorna</button>
     </div>
+
+  <!-- MARKET TICKER -->
+  <div class="market-ticker" id="marketTicker">
+    <span class="ticker-label">LIVE</span>
+    <div class="ticker-track" id="tickerTrack">
+      <div class="ticker-item"><span class="ti-icon">📊</span><span class="ti-name">S&P 500</span><span class="ti-val" id="tk-sp500">---</span><span class="ti-chg" id="tk-sp500-c">---</span></div>
+      <div class="ticker-item"><span class="ti-icon">💻</span><span class="ti-name">NASDAQ</span><span class="ti-val" id="tk-nasdaq">---</span><span class="ti-chg" id="tk-nasdaq-c">---</span></div>
+      <div class="ticker-item"><span class="ti-icon">🇩🇪</span><span class="ti-name">DAX</span><span class="ti-val" id="tk-dax">---</span><span class="ti-chg" id="tk-dax-c">---</span></div>
+      <div class="ticker-item"><span class="ti-icon">🥇</span><span class="ti-name">ORO</span><span class="ti-val" id="tk-gold">---</span><span class="ti-chg" id="tk-gold-c">---</span></div>
+      <div class="ticker-item"><span class="ti-icon">🛢️</span><span class="ti-name">PETROLIO</span><span class="ti-val" id="tk-oil">---</span><span class="ti-chg" id="tk-oil-c">---</span></div>
+      <div class="ticker-item"><span class="ti-icon">💱</span><span class="ti-name">EUR/USD</span><span class="ti-val" id="tk-eurusd">---</span><span class="ti-chg" id="tk-eurusd-c">---</span></div>
+      <div class="ticker-item"><span class="ti-icon">🌡️</span><span class="ti-name">FEAR &amp; GREED</span><span class="ti-val" id="tk-fg">---</span><span class="ti-chg" id="tk-fg-label">---</span></div>
+      <!-- Duplicate for seamless loop -->
+      <div class="ticker-item"><span class="ti-icon">📊</span><span class="ti-name">S&P 500</span><span class="ti-val" id="tk-sp500b">---</span><span class="ti-chg" id="tk-sp500b-c">---</span></div>
+      <div class="ticker-item"><span class="ti-icon">💻</span><span class="ti-name">NASDAQ</span><span class="ti-val" id="tk-nasdaqb">---</span><span class="ti-chg" id="tk-nasdaq-cb">---</span></div>
+      <div class="ticker-item"><span class="ti-icon">🇩🇪</span><span class="ti-name">DAX</span><span class="ti-val" id="tk-daxb">---</span><span class="ti-chg" id="tk-dax-cb">---</span></div>
+      <div class="ticker-item"><span class="ti-icon">🥇</span><span class="ti-name">ORO</span><span class="ti-val" id="tk-goldb">---</span><span class="ti-chg" id="tk-gold-cb">---</span></div>
+      <div class="ticker-item"><span class="ti-icon">🛢️</span><span class="ti-name">PETROLIO</span><span class="ti-val" id="tk-oilb">---</span><span class="ti-chg" id="tk-oil-cb">---</span></div>
+      <div class="ticker-item"><span class="ti-icon">💱</span><span class="ti-name">EUR/USD</span><span class="ti-val" id="tk-eurusdb">---</span><span class="ti-chg" id="tk-eurusd-cb">---</span></div>
+      <div class="ticker-item"><span class="ti-icon">🌡️</span><span class="ti-name">FEAR &amp; GREED</span><span class="ti-val" id="tk-fgb">---</span><span class="ti-chg" id="tk-fg-labelb">---</span></div>
+    </div>
+  </div>
     <!-- TABS -->
     <div class="tabs">
       <button class="tab active" onclick="switchTab('portafoglio',this)" data-tab="portafoglio">Portafoglio</button>
@@ -1465,10 +1508,83 @@ function confirmClosePosition(){
   showToast('Posizione chiusa! P&L: '+(pnl>=0?'+':'')+'€'+Math.abs(pnl).toFixed(2));
 }
 
+
+// ─── MARKET TICKER ────────────────────────────────────────────────────────────
+const TICKER_SYMBOLS = [
+  {id:'sp500',    yahoo:'^GSPC',    label:'S&P 500',   fmt:'points'},
+  {id:'nasdaq',   yahoo:'^IXIC',    label:'NASDAQ',    fmt:'points'},
+  {id:'dax',      yahoo:'^GDAXI',   label:'DAX',       fmt:'points'},
+  {id:'gold',     yahoo:'GC=F',     label:'ORO',       fmt:'usd'},
+  {id:'oil',      yahoo:'CL=F',     label:'PETROLIO',  fmt:'usd'},
+  {id:'eurusd',   yahoo:'EURUSD=X', label:'EUR/USD',   fmt:'fx'},
+];
+
+function setTicker(id, val, chg, fmt) {
+  const fmtVal = v => {
+    if (fmt==='fx') return v.toFixed(4);
+    if (fmt==='points') return v.toLocaleString('it-IT',{maximumFractionDigits:0});
+    return '$'+v.toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2});
+  };
+  const chgStr = (chg>=0?'+':'')+chg.toFixed(2)+'%';
+  const cls = chg>=0?'up':'down';
+  ['','b'].forEach(suffix => {
+    const valEl = document.getElementById('tk-'+id+suffix);
+    const chgEl = document.getElementById('tk-'+id+'-c'+suffix) || document.getElementById('tk-'+id+'b-c');
+    if (valEl) valEl.textContent = fmtVal(val);
+    if (chgEl) { chgEl.textContent = chgStr; chgEl.className = 'ti-chg '+cls; }
+  });
+}
+
+function setFearGreed(value) {
+  const label = value<=25?'Paura Estrema':value<=45?'Paura':value<=55?'Neutrale':value<=75?'Avidità':'Avidità Estrema';
+  const cls = value<=25?'fg-extreme-fear':value<=45?'fg-fear':value<=55?'fg-neutral':value<=75?'fg-greed':'fg-extreme-greed';
+  const emoji = value<=25?'😱':value<=45?'😨':value<=55?'😐':value<=75?'😏':'🤑';
+  ['','b'].forEach(suffix => {
+    const valEl = document.getElementById('tk-fg'+suffix);
+    const lblEl = document.getElementById('tk-fg-label'+suffix);
+    if (valEl) { valEl.textContent = value+' '+emoji; valEl.className = 'ti-val '+cls; }
+    if (lblEl) { lblEl.textContent = label; lblEl.className = 'ti-chg '+cls; }
+  });
+}
+
+async function loadMarketTicker() {
+  // Fetch indices via Worker
+  for (const sym of TICKER_SYMBOLS) {
+    try {
+      const r = await fetch(WORKER_URL+'/price?ticker='+encodeURIComponent(sym.yahoo), {signal:AbortSignal.timeout(8000)});
+      const d = await r.json();
+      if (d?.price) setTicker(sym.id, d.price, d.change||0, sym.fmt);
+    } catch(e) { /* silent */ }
+    await new Promise(r=>setTimeout(r,200));
+  }
+  // Fear & Greed via proxy (CNN Money API)
+  try {
+    const fgUrl = 'https://production.dataviz.cnn.io/index/fearandgreed/graphdata';
+    const proxies = ['https://api.allorigins.win/get?url=','https://corsproxy.io/?'];
+    for (const proxy of proxies) {
+      try {
+        const r = await fetch(proxy+encodeURIComponent(fgUrl), {signal:AbortSignal.timeout(6000)});
+        const raw = await r.json();
+        const contents = raw.contents||raw;
+        const d = typeof contents==='string'?JSON.parse(contents):contents;
+        const score = d?.fear_and_greed?.score;
+        if (score!==undefined) { setFearGreed(Math.round(score)); break; }
+      } catch(e) { continue; }
+    }
+  } catch(e) { /* silent */ }
+}
+
+// Auto-refresh ticker every 5 minutes
+function startTickerRefresh() {
+  loadMarketTicker();
+  setInterval(loadMarketTicker, 5*60*1000);
+}
+
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 document.getElementById('headerDate').textContent=new Date().toLocaleDateString('it-IT',{month:'long',year:'numeric'});
 loadData();
 renderAll();
+startTickerRefresh();
 </script>
 <script>
 if ('serviceWorker' in navigator) {
