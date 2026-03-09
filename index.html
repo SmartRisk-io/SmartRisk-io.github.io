@@ -496,7 +496,7 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px">
         <div class="header-meta"><div>&#9899; SMARTRISK.IO</div><div id="headerDate" style="margin-top:3px"></div></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
-          <button class="btn btn-blue" onclick="refreshPrices()" data-i18n="updatePrices">Aggiorna prezzi</button>
+          <span id="autoRefreshIndicator" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-right:8px;letter-spacing:.05em" title="Ultimo aggiornamento automatico">🔄 auto</span><button class="btn btn-blue" onclick="refreshPrices()" data-i18n="updatePrices">Aggiorna prezzi</button>
           <button onclick="enableNotifications()" id="notifBtn" title="Attiva notifiche" class="btn btn-ghost" style="font-size:14px;padding:8px 12px">&#128277;</button>
           <button onclick="toggleLang()" id="langBtn" class="btn btn-ghost" style="font-size:12px;font-family:'DM Mono',monospace;padding:8px 12px">EN</button>
           <button class="btn btn-purple" onclick="runAIAnalysis()">Analisi AI</button>
@@ -2871,6 +2871,7 @@ document.getElementById('headerDate').textContent=new Date().toLocaleDateString(
 loadData();
 renderAll();
 startTickerRefresh();
+startAutoRefresh();
 </script>
 <script>
 if ('serviceWorker' in navigator) {
@@ -3105,6 +3106,83 @@ async function runApAi(idx) {
   btn.textContent = 'Analisi AI';
   btn.disabled = false;
 }
+
+// ─── AUTO REFRESH PREZZI ─────────────────────────────────────────────────────
+var _autoRefreshInterval = null;
+var _lastPriceUpdate = null;
+
+async function refreshPricesSilent() {
+  // Come refreshPrices ma senza toast, senza chip UI, silenzioso
+  if (!assets || assets.length === 0) return;
+  if (document.hidden) return; // non aggiornare se tab non visibile
+  try {
+    _eurUsdRate = null;
+    const fx = await getEurUsd();
+    let fetched = 0;
+    for (const a of assets) {
+      if (!a.ticker || a.ticker === 'NUOVO') continue;
+      const sym = a.ticker.replace(/\s+/g,'').toUpperCase();
+      try {
+        const r = await fetch(WORKER_URL+'/price?ticker='+encodeURIComponent(sym), {signal:AbortSignal.timeout(8000)});
+        const d = await r.json();
+        if (d && d.price) {
+          let price = d.price;
+          const change = d.change || 0;
+          const cur = (d.currency||'USD').toUpperCase();
+          if (cur==='USD') price = price/fx;
+          else if (cur==='GBP') price = price/0.86;
+          price = parseFloat(price.toFixed(2));
+          livePrices[a.id] = {price, change, cur};
+          a.currentPrice = price;
+          fetched++;
+          if (!priceHistory[a.ticker]) priceHistory[a.ticker] = [];
+          priceHistory[a.ticker].push(price);
+          if (priceHistory[a.ticker].length > 7) priceHistory[a.ticker].shift();
+          await new Promise(r => setTimeout(r, 300));
+        }
+      } catch(e) { /* silent */ }
+    }
+    if (fetched > 0) {
+      localStorage.setItem('srm_history', JSON.stringify(priceHistory));
+      saveData(); saveToCloud();
+      renderAll();
+      checkPriceAlerts();
+      _lastPriceUpdate = new Date();
+      updateAutoRefreshIndicator();
+      setTimeout(drawAllSparklines, 100);
+    }
+  } catch(e) { /* silent */ }
+}
+
+function updateAutoRefreshIndicator() {
+  var el = document.getElementById('autoRefreshIndicator');
+  if (!el || !_lastPriceUpdate) return;
+  var t = _lastPriceUpdate.toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit'});
+  el.textContent = '🔄 ' + t;
+  el.style.color = 'var(--green)';
+  // Torna al colore muted dopo 3s
+  setTimeout(function() { if(el) el.style.color = 'var(--muted)'; }, 3000);
+}
+
+function startAutoRefresh() {
+  if (_autoRefreshInterval) clearInterval(_autoRefreshInterval);
+  // Prima chiamata dopo 30 secondi dal login
+  var firstTimeout = setTimeout(function() {
+    refreshPricesSilent();
+    // Poi ogni 5 minuti
+    _autoRefreshInterval = setInterval(function() {
+      refreshPricesSilent();
+    }, 5 * 60 * 1000);
+  }, 30 * 1000);
+  // Riprendi quando la pagina torna visibile
+  document.addEventListener('visibilitychange', function() {
+    if (!document.hidden && _lastPriceUpdate) {
+      var mins = (Date.now() - _lastPriceUpdate.getTime()) / 60000;
+      if (mins >= 5) refreshPricesSilent(); // aggiorna subito se sono passati 5+ min
+    }
+  });
+}
+
 </script>
 
 <!-- ALTRO MENU (body-level per evitare overflow clipping) -->
