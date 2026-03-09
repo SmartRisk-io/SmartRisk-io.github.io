@@ -577,7 +577,7 @@ svg.donut{transform:rotate(-90deg);}
     <!-- PORTAFOGLIO -->
     <div class="tab-content active" id="tab-portafoglio">
       <div id="briefAnchor"></div>
-      <div id="portfolioHeader" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:20px"></div>
+
 
       <div class="section-title" data-i18n="detailedPositions">Posizioni dettagliate</div>
       <table class="table">
@@ -1244,32 +1244,8 @@ async function refreshPrices() {
 }
 
 // ─── RENDER ALL ───────────────────────────────────────────────────────────────
-// ─── PORTFOLIO HEADER KPI ──────────────────────────────────────────────────────
-function renderPortfolioHeader() {
-  const el = document.getElementById('portfolioHeader'); if (!el) return;
-  const tot = assets.reduce((s,a) => s+a.invested, 0);
-  const pnlAssets = assets.filter(a => a.currentPrice>0 && a.buyPrice>0);
-  const totalPnl = pnlAssets.reduce((s,a) => s+((a.currentPrice-a.buyPrice)/a.buyPrice*a.invested), 0);
-  const pnlPct = tot>0 ? totalPnl/tot*100 : 0;
-  const pnlColor = pnlPct >= 0 ? 'var(--green)' : 'var(--red)';
-  const winners = pnlAssets.filter(a => a.currentPrice > a.buyPrice).length;
-  const hiPct = tot>0 ? assets.filter(a=>a.risk==='high').reduce((s,a)=>s+a.invested,0)/tot*100 : 0;
-  const kpis = [
-    { label:'Totale investito', value: tot>0 ? '€'+tot.toLocaleString('it-IT',{maximumFractionDigits:0}) : '—', color:'var(--gold)' },
-    { label:'P&L totale', value: pnlAssets.length>0 ? (pnlPct>=0?'+':'')+pnlPct.toFixed(2)+'%' : '—', color: pnlColor },
-    { label:'P&L valore', value: pnlAssets.length>0 ? (totalPnl>=0?'+':'')+' €'+Math.abs(totalPnl).toLocaleString('it-IT',{maximumFractionDigits:0}) : '—', color: pnlColor },
-    { label:'Asset in portafoglio', value: assets.length, color:'var(--text)' },
-    { label:'In guadagno', value: pnlAssets.length>0 ? winners+'/'+pnlAssets.length : '—', color:'var(--green)' },
-    { label:'Rischio alto', value: tot>0 ? hiPct.toFixed(0)+'%' : '—', color: hiPct>40?'var(--red)':hiPct>25?'var(--orange)':'var(--green)' },
-  ];
-  el.innerHTML = kpis.map(k => `<div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px">
-    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:6px">${k.label}</div>
-    <div style="font-size:20px;font-weight:700;color:${k.color};font-family:'Playfair Display',serif">${k.value}</div>
-  </div>`).join('');
-}
 
 function renderAll() {
-  renderPortfolioHeader();
   renderSummary();renderTable();renderDonut();renderSectors();
   renderHeatmap();renderVerdetti();renderStrategia();
   populateCalcSelect();updateBudgetPanel();
@@ -1749,6 +1725,7 @@ function switchTab(id, el) {
     if (altroBtn) altroBtn.classList.add('active');
   }
   // Render specifico per ogni tab
+  if (id==='portafoglio') setTimeout(loadMorningBrief, 100);
   if (id==='rischio')   renderRiskMatrix();
   if (id==='panoramica') renderPanoramica();
   if (id==='mappa')     setTimeout(renderGeoMap, 50);
