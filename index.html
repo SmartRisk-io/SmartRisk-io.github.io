@@ -1498,7 +1498,7 @@ async function loadSegnali() {
     if (data.error === 'RATE_LIMIT') {
       document.getElementById('segnaliLoading').style.display = 'none';
       document.getElementById('segnaliEmpty').style.display = 'block';
-      document.getElementById('segnaliEmpty').innerHTML = '<div style="font-size:40px;margin-bottom:12px">⏳</div><div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px;color:var(--gold)">Limite giornaliero raggiunto</div><div style="font-size:13px;color:var(--muted)">Hai usato le 3 analisi gratuite di oggi. Si azzera a mezzanotte.</div>';
+      document.getElementById('segnaliEmpty').innerHTML = '<div style="font-size:40px;margin-bottom:12px">⏳</div><div style="font-family:Playfair Display,serif;font-size:20px;font-weight:700;margin-bottom:8px;color:var(--gold)">Limite giornaliero raggiunto</div><div style="font-size:13px;color:var(--muted)">Hai usato le 3 analisi gratuite di oggi. Si azzera a mezzanotte.</div>';
       return;
     }
     if (data.error) throw new Error(data.error);
@@ -1514,7 +1514,7 @@ async function loadSegnali() {
         const c = colors[a.type] || 'var(--gold)';
         return `<div style="border:1px solid ${c};border-radius:10px;padding:14px 18px;margin-bottom:10px;display:flex;gap:14px;align-items:flex-start">
           <div style="font-size:22px;flex-shrink:0">${a.icon}</div>
-          <div><div style="font-family:'DM Mono',monospace;font-size:11px;color:${c};letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">${a.urgenza}</div>
+          <div><div style="font-family:DM Mono,monospace;font-size:11px;color:${c};letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">${a.urgenza}</div>
           <div style="font-size:14px;font-weight:600;margin-bottom:4px">${a.title}</div>
           <div style="font-size:13px;color:var(--muted);line-height:1.6">${a.text}</div></div>
         </div>`;
@@ -1532,14 +1532,14 @@ async function loadSegnali() {
         const pnlColor = parseFloat(s.pnlPct) >= 0 ? 'var(--green)' : 'var(--red)';
         return `<div class="card" style="border-top:3px solid ${c}">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
-            <div><div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--gold)">${s.ticker}</div>
+            <div><div style="font-family:Playfair Display,serif;font-size:18px;font-weight:700;color:var(--gold)">${s.ticker}</div>
             <div style="font-size:11px;color:var(--muted)">${s.name||''}</div></div>
-            <div style="background:${c};color:${s.azione==='vendi'||s.azione==='riduci'?'#fff':'var(--dark)'};padding:4px 12px;border-radius:20px;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;text-transform:uppercase">${s.azione}</div>
+            <div style="background:${c};color:${s.azione==='vendi'||s.azione==='riduci'?'#fff':'var(--dark)'};padding:4px 12px;border-radius:20px;font-family:DM Mono,monospace;font-size:11px;font-weight:700;text-transform:uppercase">${s.azione}</div>
           </div>
-          ${s.pnlPct !== null ? `<div style="font-family:'DM Mono',monospace;font-size:13px;color:${pnlColor};margin-bottom:8px">${parseFloat(s.pnlPct)>=0?'+':''}${s.pnlPct}% da acquisto</div>` : ''}
+          ${s.pnlPct !== null ? `<div style="font-family:DM Mono,monospace;font-size:13px;color:${pnlColor};margin-bottom:8px">${parseFloat(s.pnlPct)>=0?'+':''}${s.pnlPct}% da acquisto</div>` : ''}
           <div style="font-size:13px;color:#C0BDB8;line-height:1.6;margin-bottom:10px">${s.motivazione}</div>
-          ${s.targetPrice ? `<div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">Target: €${s.targetPrice} · Stop: €${s.stopLoss||'---'}</div>` : ''}
-          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.05em">
+          ${s.targetPrice ? `<div style="font-family:DM Mono,monospace;font-size:11px;color:var(--muted)">Target: €${s.targetPrice} · Stop: €${s.stopLoss||'---'}</div>` : ''}
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-family:DM Mono,monospace;font-size:10px;color:var(--muted);letter-spacing:.05em">
             CONFIDENZA: <span style="color:${c}">${s.confidenza||'---'}</span>
           </div>
         </div>`;
@@ -1584,7 +1584,7 @@ async function loadSegnali() {
     if (data.error === 'RATE_LIMIT') {
       document.getElementById('segnaliLoading').style.display = 'none';
       document.getElementById('segnaliEmpty').style.display = 'block';
-      document.getElementById('segnaliEmpty').innerHTML = '<div style="font-size:40px;margin-bottom:12px">⏳</div><div style="font-family:\'Playfair Display\',serif;font-size:20px;font-weight:700;margin-bottom:8px;color:var(--gold)">Limite giornaliero raggiunto</div><div style="font-size:13px;color:var(--muted)">Hai usato le 3 analisi gratuite di oggi. Il limite si azzera a mezzanotte.</div>';
+      document.getElementById('segnaliEmpty').innerHTML = '<div style="font-size:40px;margin-bottom:12px">⏳</div><div style="font-family:Playfair Display,serif;font-size:20px;font-weight:700;margin-bottom:8px;color:var(--gold)">Limite giornaliero raggiunto</div><div style="font-size:13px;color:var(--muted)">Hai usato le 3 analisi gratuite di oggi. Il limite si azzera a mezzanotte.</div>';
       return;
     }
     if (data.error) throw new Error(data.error);
@@ -1604,14 +1604,14 @@ async function loadSegnali() {
           <div style="display:flex;align-items:center;gap:8px">
             <span style="font-size:22px">${icon}</span>
             <div>
-              <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:var(--gold)">${s.ticker}</div>
+              <div style="font-family:DM Mono,monospace;font-size:13px;font-weight:700;color:var(--gold)">${s.ticker}</div>
               <div style="font-size:11px;color:var(--muted)">${s.nome || asset.name || ''}</div>
             </div>
           </div>
-          <div style="padding:4px 12px;border-radius:20px;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:${color};border:1px solid ${color};text-transform:uppercase">${s.segnale || '---'}</div>
+          <div style="padding:4px 12px;border-radius:20px;font-family:DM Mono,monospace;font-size:11px;font-weight:700;color:${color};border:1px solid ${color};text-transform:uppercase">${s.segnale || '---'}</div>
         </div>
         <div style="font-size:13px;color:#C0BDB8;line-height:1.6;margin-bottom:10px">${s.analisi || ''}</div>
-        <div style="display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">
+        <div style="display:flex;justify-content:space-between;font-family:DM Mono,monospace;font-size:11px;color:var(--muted)">
           <span>Target: <span style="color:var(--text)">${s.target || '---'}</span></span>
           <span>Rischio: <span style="color:var(--text)">${s.rischio || '---'}</span></span>
         </div>
