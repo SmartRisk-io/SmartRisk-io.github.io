@@ -47,6 +47,7 @@ window.addEventListener('load', () => {
       if (data&&data.assets) { assets=data.assets; localStorage.setItem('srm_assets',JSON.stringify(assets)); }
       else { const l=localStorage.getItem('srm_assets'); if(l) assets=JSON.parse(l); }
       renderAll(); checkOnboarding(); updateNotifBtn(); applyLang();
+      setTimeout(()=>switchTab('panoramica', document.getElementById('tab-btn-panoramica')), 0);
       loadMorningBrief();
     } else {
       document.getElementById('loginScreen').style.display='flex';
@@ -190,7 +191,38 @@ input[type=range].wi-range::-webkit-slider-thumb{-webkit-appearance:none;width:1
 @keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
 .price-msg{font-family:DM Mono,monospace;font-size:11px;color:var(--muted);font-style:italic;}
-.tabs{display:flex;gap:6px;margin-bottom:28px;flex-wrap:wrap;}
+.tabs{display:flex;gap:6px;margin-bottom:28px;flex-wrap:wrap;position:relative;z-index:10;}
+@media(max-width:640px){
+  .tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;scrollbar-width:none;gap:4px;}
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{flex-shrink:0;padding:6px 10px;font-size:10px;}
+  .tab-dropdown{flex-shrink:0;}
+  .market-ticker{height:30px;}
+  .ticker-item{padding:0 12px;font-size:10px;}
+  .ti-name{display:none;}
+  .topbar{padding:8px 16px;}
+  .container{padding:16px 12px;}
+  header{flex-direction:column;gap:12px;margin-bottom:16px;}
+  .two-col{grid-template-columns:1fr!important;}
+  .goal-wrap{grid-template-columns:1fr!important;}
+  .geo-wrap{grid-template-columns:1fr!important;}
+  .dna-wrap{flex-direction:column;align-items:center;}
+  #dnaCanvas{width:160px!important;height:160px!important;}
+  .summary-grid{grid-template-columns:1fr 1fr!important;}
+  .price-bar{flex-wrap:wrap;gap:6px;padding:8px 12px;}
+  .price-item{font-size:11px;}
+  #panorSummary{grid-template-columns:1fr 1fr!important;}
+  #panorMovers{grid-template-columns:1fr 1fr!important;}
+  .brief-header{flex-wrap:wrap;gap:6px;}
+  .card{padding:14px 12px;}
+  .section-title{font-size:13px;}
+  .asset-table{font-size:11px;}
+  .asset-table th,.asset-table td{padding:8px 6px;}
+  .btn{padding:8px 14px;font-size:11px;}
+  .geo-legend{max-height:300px;overflow-y:auto;}
+  #tab-panoramica .dna-wrap canvas{margin:0 auto;}
+  .tab-dropdown-menu{right:0;left:auto;min-width:140px;}
+}
 .tab{padding:8px 16px;font-size:12px;cursor:pointer;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-family:'DM Mono',monospace;letter-spacing:.04em;transition:all .2s;white-space:nowrap;}
 .tab.active{color:var(--dark);background:var(--gold);border-color:var(--gold);font-weight:600;}
 .tab:hover:not(.active){color:var(--text);border-color:var(--muted);}
@@ -394,22 +426,23 @@ svg.donut{transform:rotate(-90deg);}
     </div>
   </div>
     <!-- TABS -->
-    <div class="tabs">
-      <button class="tab active" onclick="switchTab('portafoglio',this)" data-tab="portafoglio">Portafoglio</button>
-      <button class="tab" onclick="switchTab('calcolatore',this)" data-tab="calcolatore">Calcolatore</button>
-      <button class="tab" onclick="switchTab('rischio',this)" data-tab="rischio">Matrice Rischio</button>
-      <button class="tab" onclick="switchTab('strategia',this)" data-tab="strategia">Strategia</button>
-      <button class="tab" onclick="switchTab('heatmap',this)" data-tab="heatmap">Heatmap</button>
-      <button class="tab" onclick="switchTab('ai',this)" data-tab="ai">Analisi AI</button>
-      <button class="tab" onclick="switchTab('news',this)" data-tab="news">Mercati</button>
-      <button class="tab" onclick="switchTab('segnali',this)" data-tab="segnali">Segnali</button>
+    <div class="tabs" id="mainTabs">
+      <button class="tab" id="tab-btn-panoramica" onclick="switchTab('panoramica',this)" data-tab="panoramica">Panoramica</button>
+      <button class="tab" id="tab-btn-portafoglio" onclick="switchTab('portafoglio',this)" data-tab="portafoglio">Portafoglio</button>
+      <button class="tab" id="tab-btn-calcolatore" onclick="switchTab('calcolatore',this)" data-tab="calcolatore">Calcolatore</button>
+      <button class="tab" id="tab-btn-rischio" onclick="switchTab('rischio',this)" data-tab="rischio">Matrice Rischio</button>
+      <button class="tab" id="tab-btn-strategia" onclick="switchTab('strategia',this)" data-tab="strategia">Strategia</button>
+      <button class="tab" id="tab-btn-heatmap" onclick="switchTab('heatmap',this)" data-tab="heatmap">Heatmap</button>
+      <button class="tab" id="tab-btn-ai" onclick="switchTab('ai',this)" data-tab="ai">Analisi AI</button>
+      <button class="tab" id="tab-btn-news" onclick="switchTab('news',this)" data-tab="news">Mercati</button>
+      <button class="tab" id="tab-btn-segnali" onclick="switchTab('segnali',this)" data-tab="segnali">Segnali</button>
       <div class="tab-dropdown" id="altroDropdown">
-        <button class="tab" onclick="toggleAltro(event)">Altro &#9660;</button>
+        <button class="tab" id="tab-btn-altro" onclick="toggleAltro(event)">Altro &#9660;</button>
         <div class="tab-dropdown-menu" id="altroMenu">
-          <button onclick="switchTab('mappa',null);closeAltro()">Mappa Geo</button>
-          <button onclick="switchTab('obiettivo',null);closeAltro()">Obiettivo</button>
-          <button onclick="switchTab('verdetti',null);closeAltro()">Verdetti</button>
-          <button onclick="switchTab('storico',null);closeAltro()">Storico</button>
+          <button onclick="switchTab('mappa',this);closeAltro()">Mappa Geo</button>
+          <button onclick="switchTab('obiettivo',this);closeAltro()">Obiettivo</button>
+          <button onclick="switchTab('verdetti',this);closeAltro()">Verdetti</button>
+          <button onclick="switchTab('storico',this);closeAltro()">Storico</button>
         </div>
       </div>
     </div>
@@ -916,7 +949,7 @@ function applyLang() {
   // Update tab labels
   document.querySelectorAll('.tab[data-tab]').forEach(btn => {
     const tabId = btn.getAttribute('data-tab');
-    const keyMap = {portafoglio:'portfolio',calcolatore:'calculator',rischio:'riskMatrix',strategia:'strategy',heatmap:'heatmap',ai:'aiTab',news:'markets',segnali:'signals'};
+    const keyMap = {panoramica:'panoramica',portafoglio:'portfolio',calcolatore:'calculator',rischio:'riskMatrix',strategia:'strategy',heatmap:'heatmap',ai:'aiTab',news:'markets',segnali:'signals',mappa:'mappa',obiettivo:'obiettivo'};
     if (keyMap[tabId]) btn.textContent = t(keyMap[tabId]);
   });
   const altroBtn = document.querySelector('#altroDropdown > .tab');
@@ -1454,27 +1487,23 @@ function calcDCA(){
 
 // ─── TABS ─────────────────────────────────────────────────────────────────────
 function switchTab(id, el) {
-  document.querySelectorAll('.tab').forEach(tb=>tb.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(tb=>tb.classList.remove('active'));
-  const tabEl = document.getElementById('tab-'+id);
-  if (tabEl) tabEl.classList.add('active');
-  // Highlight correct tab button
-  if (el) {
-    el.classList.add('active');
-  } else {
-    // Called from dropdown — highlight Altro button
-    const altroBtn = document.querySelector('#altroDropdown > .tab');
+  document.querySelectorAll('.tab-content').forEach(t => t.style.display='none');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  const tab = document.getElementById('tab-'+id);
+  if (tab) tab.style.display='block';
+  // Activate correct tab button
+  const btn = document.getElementById('tab-btn-'+id) || el;
+  if (btn && btn.classList.contains('tab')) btn.classList.add('active');
+  // If it's a dropdown item, highlight Altro button
+  const altroCandidates = ['mappa','obiettivo','verdetti','storico'];
+  if (altroCandidates.includes(id)) {
+    const altroBtn = document.getElementById('tab-btn-altro');
     if (altroBtn) altroBtn.classList.add('active');
-    document.querySelectorAll('#altroMenu button').forEach(b=>{
-      b.classList.toggle('active-item', b.textContent.toLowerCase().includes(id.substring(0,4)));
-    });
   }
   if(id==='rischio')renderRiskMatrix();
   if(id==='panoramica')renderPanoramica();
   if(id==='mappa'){renderGeoMap();}
   if(id==='obiettivo'){loadGoal();}
-  if(id==='news'&&document.getElementById('newsContent').style.display==='none'&&document.getElementById('newsLoading').style.display==='none')loadMarketNews();
-  if(id==='storico')renderStorico();
 }
 
 // ─── EDIT PANEL ───────────────────────────────────────────────────────────────
