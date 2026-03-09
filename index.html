@@ -279,6 +279,8 @@ svg.donut{transform:rotate(-90deg);}
         <div class="header-meta"><div>&#9899; SMARTRISK.IO</div><div id="headerDate" style="margin-top:3px"></div></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
           <button class="btn btn-blue" onclick="refreshPrices()">&#128225; Aggiorna prezzi</button>
+          <button onclick="enableNotifications()" id="notifBtn" title="Attiva notifiche" class="btn btn-ghost" style="font-size:14px;padding:8px 12px">&#128277;</button>
+          <button onclick="toggleLang()" id="langBtn" class="btn btn-ghost" style="font-size:12px;font-family:'DM Mono',monospace;padding:8px 12px">EN</button>
           <button class="btn btn-purple" onclick="runAIAnalysis()">&#129302; Analisi AI</button>
           <button class="btn btn-gold" onclick="openEdit()">&#9998; Modifica</button>
         </div>
@@ -331,7 +333,7 @@ svg.donut{transform:rotate(-90deg);}
       </div>
       <div class="section-title">Posizioni dettagliate</div>
       <table class="table">
-        <thead><tr><th>Asset</th><th>Investito</th><th>Prezzo acquisto</th><th>Prezzo live</th><th>P&amp;L</th><th>Target</th><th>Rischio</th></tr></thead>
+        <thead><tr><th>Asset</th><th>Investito</th><th>Prezzo acquisto</th><th>Prezzo live</th><th>7g</th><th>P&amp;L</th><th>Target</th><th>Rischio</th></tr></thead>
         <tbody id="holdingsBody"></tbody>
       </table>
       <div id="emptyState" style="text-align:center;padding:48px;color:var(--muted);display:none">
