@@ -119,6 +119,18 @@ header{border-bottom:1px solid var(--border);padding-bottom:32px;margin-bottom:3
 .leaflet-popup-content-wrapper{background:#111!important;color:var(--text)!important;border:1px solid rgba(201,168,76,.3)!important;border-radius:10px!important;box-shadow:0 8px 32px rgba(0,0,0,.7)!important;}
 .leaflet-popup-tip{background:#111!important;}
 
+
+/* CFD Segnali */
+.cfd-cat{padding:6px 14px;font-size:11px;font-family:'DM Mono',monospace;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;background:var(--surface2);border:1px solid var(--border);border-radius:20px;color:var(--muted);transition:all .15s;}
+.cfd-cat.active{background:var(--gold);color:#0D0D0D;border-color:var(--gold);font-weight:700;}
+.cfd-cat:hover:not(.active){color:var(--text);border-color:rgba(201,168,76,.4);}
+.cfd-chip{padding:8px 10px;font-size:11px;font-family:'DM Mono',monospace;cursor:pointer;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--muted);transition:all .15s;display:flex;flex-direction:column;gap:3px;text-align:left;}
+.cfd-chip.selected{background:rgba(201,168,76,.12);border-color:var(--gold);color:var(--gold);}
+.cfd-chip:hover:not(.selected){border-color:rgba(255,255,255,.25);color:var(--text);}
+.cfd-chip-ticker{font-weight:700;font-size:12px;}
+.cfd-chip-name{font-size:9px;color:var(--muted);letter-spacing:.03em;}
+.cfd-chip.selected .cfd-chip-name{color:rgba(201,168,76,.7);}
+
 /* GEO MAP */
 .geo-wrap{display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start;}
 .geo-map-svg{width:100%;border-radius:8px;overflow:hidden;}
@@ -711,31 +723,63 @@ svg.donut{transform:rotate(-90deg);}
     </div>
     <!-- SEGNALI -->
     <div class="tab-content" id="tab-segnali">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
-        <div>
-          <div class="section-title" style="margin:0">Analisi AI del Portafoglio</div>
-          <div style="font-size:12px;color:var(--muted);margin-top:4px">Analisi e suggerimenti generati da AI — <strong style="color:var(--orange)">non sono consigli finanziari operativi</strong></div>
+
+      <!-- Header + filtri strumenti -->
+      <div style="margin-bottom:20px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+          <div>
+            <div class="section-title" style="margin:0">Segnali CFD</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px">Analisi AI in tempo reale su strumenti CFD — seleziona e genera</div>
+          </div>
+          <button class="btn btn-blue" onclick="loadSegnali()" id="segnaliBtnGenera" style="flex-shrink:0">
+            ⚡ Genera segnali
+          </button>
         </div>
-        <button class="btn btn-blue" onclick="loadSegnali()">Analizza portafoglio</button>
+
+        <!-- Filtro categoria -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px" id="cfdCatFilter">
+          <button class="cfd-cat active" onclick="setCfdCat('tutti',this)">Tutti</button>
+          <button class="cfd-cat" onclick="setCfdCat('indici',this)">📊 Indici</button>
+          <button class="cfd-cat" onclick="setCfdCat('azioni',this)">📈 Azioni</button>
+          <button class="cfd-cat" onclick="setCfdCat('forex',this)">💱 Forex</button>
+          <button class="cfd-cat" onclick="setCfdCat('materie',this)">🛢️ Materie prime</button>
+          <button class="cfd-cat" onclick="setCfdCat('crypto',this)">₿ Crypto</button>
+        </div>
+
+        <!-- Griglia strumenti selezionabili -->
+        <div id="cfdStrumentiGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px"></div>
       </div>
+
+      <!-- Loading -->
       <div id="segnaliLoading" style="display:none;text-align:center;padding:48px">
-        <div style="font-size:40px;margin-bottom:12px">&#128204;</div>
-        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:6px">Analisi in corso...</div>
-        <div style="font-size:12px;color:var(--muted)" data-i18n="aiAnalyzing">Claude sta analizzando i mercati</div>
+        <div style="font-size:40px;margin-bottom:12px">⚡</div>
+        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:6px">Analisi CFD in corso...</div>
+        <div style="font-size:12px;color:var(--muted)">Calcolo livelli tecnici e segnali operativi</div>
       </div>
-      <div id="segnaliEmpty" style="text-align:center;padding:48px">
-        <div style="font-size:40px;margin-bottom:12px">&#128204;</div>
-        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px" data-i18n="tradingSignals">Segnali di trading</div>
-        <div style="font-size:13px;color:var(--muted);margin-bottom:20px">Aggiorna prima i prezzi, poi clicca per ricevere segnali personalizzati.</div>
-        <button onclick="loadSegnali()" class="btn btn-blue" style="padding:12px 28px;justify-content:center" data-i18n="generateSignals">Genera segnali</button>
+
+      <!-- Empty state -->
+      <div id="segnaliEmpty" style="text-align:center;padding:48px;display:none">
+        <div style="font-size:40px;margin-bottom:12px">📡</div>
+        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px">Seleziona gli strumenti</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:20px">Scegli almeno uno strumento CFD dalla lista e clicca Genera segnali.</div>
       </div>
+
+      <!-- Risultati -->
       <div id="segnaliContent" style="display:none">
         <div id="segnaliAlerts" style="margin-bottom:20px"></div>
-        <div class="section-title" style="margin-bottom:12px" data-i18n="perAssetSignals">Segnali per asset</div>
-        <div id="segnaliGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:24px"></div>
-        <div class="card" id="segnaliStrategia"></div>
-        <div style="margin-top:20px;padding:14px 16px;background:rgba(224,138,58,0.08);border:1px solid rgba(224,138,58,0.2);border-radius:8px;font-size:11px;color:var(--muted);line-height:1.7">⚠️ <strong style="color:var(--orange)">Disclaimer:</strong> Le analisi AI sono generate automaticamente a scopo informativo e non costituiscono consigli di investimento. Non agire sulla base di queste informazioni senza consultare un consulente finanziario qualificato.</div>
-        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-align:right;margin-top:12px" id="segnaliDate"></div>
+
+        <!-- Sommario mercato -->
+        <div id="segnaliMktSummary" style="margin-bottom:24px"></div>
+
+        <div class="section-title" style="margin-bottom:14px">Segnali operativi</div>
+        <div id="segnaliGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px;margin-bottom:24px"></div>
+
+        <div id="segnaliStrategia" style="margin-bottom:16px"></div>
+
+        <div style="padding:14px 16px;background:rgba(224,138,58,0.08);border:1px solid rgba(224,138,58,0.2);border-radius:8px;font-size:11px;color:var(--muted);line-height:1.7">
+          ⚠️ <strong style="color:var(--orange)">Disclaimer:</strong> I segnali sono generati da AI a scopo informativo. I CFD sono strumenti complessi ad alto rischio — la maggioranza degli investitori perde denaro. Non agire senza valutare il rischio e senza consulenza professionale.
+        </div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-align:right;margin-top:10px" id="segnaliDate"></div>
       </div>
     </div>
     <div class="disclaimer">&#9888; Solo a scopo informativo. Non costituisce consulenza finanziaria. I mercati comportano rischi di perdita del capitale.</div>
@@ -1547,196 +1591,320 @@ async function loadMarketNews() {
 }
 
 // ─── SEGNALI (unica definizione) ──────────────────────────────────────────────
+// ─── CFD INSTRUMENTS DB ────────────────────────────────────────────────────────
+const CFD_INSTRUMENTS = [
+  // Indici
+  {id:'sp500',   ticker:'S&P 500',  name:'S&P 500',         cat:'indici',  emoji:'🇺🇸'},
+  {id:'nasdaq',  ticker:'NASDAQ',   name:'Nasdaq 100',       cat:'indici',  emoji:'💻'},
+  {id:'dax',     ticker:'DAX',      name:'DAX 40',           cat:'indici',  emoji:'🇩🇪'},
+  {id:'ftse',    ticker:'FTSE 100', name:'FTSE 100',         cat:'indici',  emoji:'🇬🇧'},
+  {id:'nikkei',  ticker:'Nikkei',   name:'Nikkei 225',       cat:'indici',  emoji:'🇯🇵'},
+  {id:'dow',     ticker:'Dow Jones',name:'Dow Jones 30',     cat:'indici',  emoji:'📊'},
+  // Azioni
+  {id:'aapl',    ticker:'AAPL',     name:'Apple',            cat:'azioni',  emoji:'🍎'},
+  {id:'nvda',    ticker:'NVDA',     name:'NVIDIA',           cat:'azioni',  emoji:'🤖'},
+  {id:'tsla',    ticker:'TSLA',     name:'Tesla',            cat:'azioni',  emoji:'⚡'},
+  {id:'msft',    ticker:'MSFT',     name:'Microsoft',        cat:'azioni',  emoji:'🪟'},
+  {id:'meta',    ticker:'META',     name:'Meta',             cat:'azioni',  emoji:'👁️'},
+  {id:'amzn',    ticker:'AMZN',     name:'Amazon',           cat:'azioni',  emoji:'📦'},
+  {id:'googl',   ticker:'GOOGL',    name:'Alphabet',         cat:'azioni',  emoji:'🔍'},
+  {id:'asml',    ticker:'ASML',     name:'ASML',             cat:'azioni',  emoji:'🇪🇺'},
+  {id:'pltr',    ticker:'PLTR',     name:'Palantir',         cat:'azioni',  emoji:'🛡️'},
+  // Forex
+  {id:'eurusd',  ticker:'EUR/USD',  name:'Euro vs Dollaro',  cat:'forex',   emoji:'💶'},
+  {id:'gbpusd',  ticker:'GBP/USD',  name:'Sterlina vs USD',  cat:'forex',   emoji:'💷'},
+  {id:'usdjpy',  ticker:'USD/JPY',  name:'Dollaro vs Yen',   cat:'forex',   emoji:'¥'},
+  {id:'usdchf',  ticker:'USD/CHF',  name:'Dollaro vs Franco',cat:'forex',   emoji:'🇨🇭'},
+  {id:'audusd',  ticker:'AUD/USD',  name:'AUD vs USD',       cat:'forex',   emoji:'🦘'},
+  // Materie prime
+  {id:'gold',    ticker:'Oro',      name:'Gold XAU/USD',     cat:'materie', emoji:'🥇'},
+  {id:'silver',  ticker:'Argento',  name:'Silver XAG/USD',   cat:'materie', emoji:'🥈'},
+  {id:'oil_wti', ticker:'WTI',      name:'Petrolio WTI',     cat:'materie', emoji:'🛢️'},
+  {id:'oil_brent',ticker:'Brent',   name:'Petrolio Brent',   cat:'materie', emoji:'🛢️'},
+  {id:'natgas',  ticker:'Gas Nat.', name:'Natural Gas',      cat:'materie', emoji:'🔥'},
+  // Crypto
+  {id:'btc',     ticker:'BTC/USD',  name:'Bitcoin',          cat:'crypto',  emoji:'₿'},
+  {id:'eth',     ticker:'ETH/USD',  name:'Ethereum',         cat:'crypto',  emoji:'⟠'},
+  {id:'sol',     ticker:'SOL/USD',  name:'Solana',           cat:'crypto',  emoji:'☀️'},
+  {id:'xrp',     ticker:'XRP/USD',  name:'Ripple',           cat:'crypto',  emoji:'💧'},
+];
+
+let _cfdSelectedIds = new Set(['sp500','nasdaq','gold','btc','eurusd']); // default
+let _cfdCurrentCat = 'tutti';
+
+function renderCfdStrumenti() {
+  const grid = document.getElementById('cfdStrumentiGrid');
+  if (!grid) return;
+  const visible = _cfdCurrentCat === 'tutti'
+    ? CFD_INSTRUMENTS
+    : CFD_INSTRUMENTS.filter(i => i.cat === _cfdCurrentCat);
+  grid.innerHTML = visible.map(inst => `
+    <div class="cfd-chip ${_cfdSelectedIds.has(inst.id) ? 'selected' : ''}"
+         onclick="toggleCfdChip('${inst.id}')">
+      <div class="cfd-chip-ticker">${inst.emoji} ${inst.ticker}</div>
+      <div class="cfd-chip-name">${inst.name}</div>
+    </div>
+  `).join('');
+}
+
+function toggleCfdChip(id) {
+  if (_cfdSelectedIds.has(id)) {
+    _cfdSelectedIds.delete(id);
+  } else {
+    _cfdSelectedIds.add(id);
+  }
+  renderCfdStrumenti();
+}
+
+function setCfdCat(cat, btn) {
+  _cfdCurrentCat = cat;
+  document.querySelectorAll('.cfd-cat').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCfdStrumenti();
+}
+
 async function loadSegnali() {
-  if (assets.length===0){showToast('Aggiungi prima degli asset!');return;}
-  document.getElementById('segnaliEmpty').style.display='none';
-  document.getElementById('segnaliContent').style.display='none';
-  document.getElementById('segnaliLoading').style.display='block';
+  const selected = CFD_INSTRUMENTS.filter(i => _cfdSelectedIds.has(i.id));
+  if (selected.length === 0) {
+    document.getElementById('segnaliEmpty').style.display = 'block';
+    document.getElementById('segnaliContent').style.display = 'none';
+    return;
+  }
 
-  const tot = assets.reduce((s,a)=>s+a.invested,0);
-  const portfolioCtx = assets.map(a=>{
-    const pnlPct = (a.currentPrice>0&&a.buyPrice>0) ? ((a.currentPrice-a.buyPrice)/a.buyPrice*100) : null;
-    return {
-      ticker: a.ticker, name: a.name,
+  document.getElementById('segnaliEmpty').style.display = 'none';
+  document.getElementById('segnaliContent').style.display = 'none';
+  document.getElementById('segnaliLoading').style.display = 'block';
+
+  // Contesto portafoglio (opzionale, arricchisce l'analisi)
+  const tot = assets.reduce((s,a) => s+a.invested, 0);
+  const portfolioCtx = assets.length > 0 ? {
+    totalInvested: Math.round(tot),
+    assets: assets.map(a => ({
+      ticker: a.ticker,
       invested: Math.round(a.invested),
-      pct: tot>0 ? +(a.invested/tot*100).toFixed(1) : 0,
-      buyPrice: a.buyPrice||null,
-      currentPrice: a.currentPrice||null,
-      pnlPct: pnlPct!==null ? +pnlPct.toFixed(2) : null,
-      change1d: livePrices[a.id]?.change||null,
-      risk: a.risk
-    };
-  });
+      pct: tot > 0 ? +(a.invested/tot*100).toFixed(1) : 0,
+      pnlPct: (a.currentPrice>0&&a.buyPrice>0)
+        ? +((a.currentPrice-a.buyPrice)/a.buyPrice*100).toFixed(2) : null,
+    }))
+  } : null;
 
-  // Prompt con schema JSON esatto richiesto
-  const systemPrompt = `Sei un analista di portafogli CFD. Analizza il portafoglio e rispondi SOLO con JSON valido, nessun testo fuori dal JSON.
+  const strumentiList = selected.map(i => `${i.ticker} (${i.name}, CFD ${i.cat})`).join(', ');
 
-Schema ESATTO richiesto:
+  const systemPrompt = `Sei un analista tecnico senior specializzato in CFD. Analizza gli strumenti richiesti e rispondi ESCLUSIVAMENTE con JSON valido. Nessun testo prima o dopo il JSON.
+
+STRUMENTI DA ANALIZZARE: ${strumentiList}
+
+SCHEMA JSON OBBLIGATORIO:
 {
+  "sommario": {
+    "sentimentMercato": "rialzista|ribassista|misto",
+    "testoBreve": "stringa max 2 frasi sul contesto macro attuale"
+  },
   "segnali": [
     {
-      "ticker": "string",
+      "ticker": "string (es. S&P 500, EUR/USD, BTC/USD)",
       "nome": "string",
-      "azione": "compra|vendi|mantieni|riduci|aumenta",
-      "motivazione": "string (2-3 frasi concrete con % e livelli di prezzo)",
-      "entryZone": "string (es. '€42.50 – €43.20')",
-      "targetPrice": "string (es. '€48.00')",
-      "stopLoss": "string (es. '€40.00')",
+      "categoria": "indici|azioni|forex|materie|crypto",
+      "azione": "long|short|attendi",
+      "forza": "forte|moderato|debole",
+      "motivazione": "2-3 frasi con livelli tecnici precisi, % e prezzi reali",
+      "entryZone": "string con livello entry (es. '4850 – 4890')",
+      "targetPrice": "string con target (es. '5020')",
+      "stopLoss": "string con stop (es. '4780')",
+      "riskReward": "string rapporto R/R (es. '1:2.5')",
+      "timeframe": "intraday|swing|posizionale",
       "momentum": "rialzista|ribassista|neutro",
+      "volatilita": "alta|media|bassa",
       "confidenza": "alta|media|bassa",
-      "pnlPct": number_or_null
+      "levaConsigliata": "string (es. '1:5 max' o '1:10')",
+      "noteRischio": "string breve sul rischio specifico di questo strumento"
     }
   ],
   "alerts": [
     {
       "type": "danger|warning|success|info",
       "icon": "emoji",
-      "urgenza": "string",
       "title": "string",
       "text": "string"
     }
   ],
-  "strategia": "string (2-3 frasi di strategia complessiva)"
+  "strategia": "string 2-3 frasi di strategia complessiva cross-strumento"
 }
 
-Regole:
-- Usa SEMPRE i nomi di campo esatti dello schema
-- Per ogni asset del portafoglio genera un segnale
-- Sii specifico: usa prezzi reali, percentuali concrete, livelli tecnici
-- I CFD hanno leva: evidenzia rischio/reward con stop precisi
-- motivazione deve contenere almeno un livello di prezzo o percentuale
-- Non usare parole generiche: sii operativo`;
+REGOLE FERREE:
+- Usa ESATTAMENTE i nomi di campo dello schema — mai variazioni
+- Ogni segnale DEVE avere entryZone, targetPrice, stopLoss e riskReward
+- Prezzi reali e livelli tecnici concreti basati sull'analisi attuale
+- I CFD hanno leva: specifica sempre levaConsigliata e noteRischio
+- azione è long/short/attendi (non compra/vendi)
+- motivazione deve citare almeno un supporto/resistenza o indicatore tecnico`;
 
   try {
     const res = await fetch(WORKER_URL, {
-      method:'POST', headers:{'Content-Type':'application/json'},
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        type:'segnali',
-        portfolio:{totalInvested:tot, assets:portfolioCtx},
+        type: 'segnali',
         systemPrompt,
-        userId: window._currentUid||'anon'
+        portfolio: portfolioCtx,
+        strumenti: selected.map(i => ({ticker: i.ticker, nome: i.name, categoria: i.cat})),
+        userId: window._currentUid || 'anon'
       })
     });
     const data = await res.json();
 
-    if(data.error==='RATE_LIMIT'){
-      document.getElementById('segnaliLoading').style.display='none';
-      document.getElementById('segnaliEmpty').style.display='block';
-      document.getElementById('segnaliEmpty').innerHTML='<div style="font-size:40px;margin-bottom:12px">⏳</div><div style="font-family:Playfair Display,serif;font-size:20px;font-weight:700;margin-bottom:8px;color:var(--gold)">Limite giornaliero raggiunto</div><div style="font-size:13px;color:var(--muted)">Si azzera a mezzanotte.</div>';
+    if (data.error === 'RATE_LIMIT') {
+      document.getElementById('segnaliLoading').style.display = 'none';
+      document.getElementById('segnaliEmpty').style.display = 'block';
+      document.getElementById('segnaliEmpty').innerHTML =
+        '<div style="font-size:40px;margin-bottom:12px">⏳</div>'
+        + '<div style="font-family:Playfair Display,serif;font-size:20px;font-weight:700;margin-bottom:8px;color:var(--gold)">Limite giornaliero raggiunto</div>'
+        + '<div style="font-size:13px;color:var(--muted)">Si azzera a mezzanotte.</div>';
       return;
     }
-    if(data.error) throw new Error(data.error);
+    if (data.error) throw new Error(data.error);
 
-    // Normalizza i campi: gestisce sia nomi italiani che inglesi
-    const normalizzaSegnale = (s) => ({
-      ticker:      s.ticker || s.symbol || '???',
-      nome:        s.nome || s.name || s.ticker || '',
-      azione:      (s.azione || s.action || s.signal || 'mantieni').toLowerCase(),
-      motivazione: s.motivazione || s.motivation || s.reasoning || s.rationale || s.description || '—',
-      entryZone:   s.entryZone || s.entry_zone || s.entry || null,
-      targetPrice: s.targetPrice || s.target_price || s.target || null,
-      stopLoss:    s.stopLoss || s.stop_loss || s.stop || null,
-      momentum:    s.momentum || 'neutro',
-      confidenza:  s.confidenza || s.confidence || s.strength || 'media',
-      pnlPct:      s.pnlPct ?? s.pnl ?? null,
+    // Normalizza campi (gestisce varianti di naming)
+    const normSegnale = (s) => ({
+      ticker:          s.ticker || s.symbol || '???',
+      nome:            s.nome || s.name || '',
+      categoria:       s.categoria || s.category || 'altro',
+      azione:          (s.azione || s.action || s.signal || 'attendi').toLowerCase(),
+      forza:           (s.forza || s.strength || s.confidenza || 'moderato').toLowerCase(),
+      motivazione:     s.motivazione || s.motivation || s.reasoning || s.rationale || '—',
+      entryZone:       s.entryZone || s.entry_zone || s.entry || null,
+      targetPrice:     s.targetPrice || s.target_price || s.target || null,
+      stopLoss:        s.stopLoss || s.stop_loss || s.stop || null,
+      riskReward:      s.riskReward || s.risk_reward || s.rr || null,
+      timeframe:       s.timeframe || 'swing',
+      momentum:        (s.momentum || 'neutro').toLowerCase(),
+      volatilita:      (s.volatilita || s.volatility || 'media').toLowerCase(),
+      confidenza:      (s.confidenza || s.confidence || 'media').toLowerCase(),
+      levaConsigliata: s.levaConsigliata || s.leva || s.leverage || null,
+      noteRischio:     s.noteRischio || s.risk_note || s.rischio || null,
     });
 
-    const segnaliRaw = data.segnali || data.signals || data.results || [];
-    const segnali = segnaliRaw.map(normalizzaSegnale);
-    const alerts  = data.alerts  || data.alert || [];
+    const segnali = (data.segnali || data.signals || []).map(normSegnale);
+    const alerts  = data.alerts || [];
+    const sommario = data.sommario || null;
 
-    document.getElementById('segnaliLoading').style.display='none';
-    document.getElementById('segnaliContent').style.display='block';
+    document.getElementById('segnaliLoading').style.display = 'none';
+    document.getElementById('segnaliContent').style.display = 'block';
 
-    // ── ALERTS ──────────────────────────────────────────────────
+    // ── SOMMARIO MERCATO ──────────────────────────────────────────
+    const mktEl = document.getElementById('segnaliMktSummary');
+    if (mktEl && sommario) {
+      const sColor = sommario.sentimentMercato === 'rialzista' ? 'var(--green)'
+                   : sommario.sentimentMercato === 'ribassista' ? 'var(--red)'
+                   : 'var(--gold)';
+      const sIcon  = sommario.sentimentMercato === 'rialzista' ? '📈'
+                   : sommario.sentimentMercato === 'ribassista' ? '📉' : '↔️';
+      mktEl.innerHTML = `<div style="background:var(--surface2);border-radius:10px;padding:14px 18px;border:1px solid var(--border);display:flex;gap:16px;align-items:center">
+        <div style="font-size:32px;flex-shrink:0">${sIcon}</div>
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:${sColor};margin-bottom:4px">SENTIMENT: ${(sommario.sentimentMercato||'').toUpperCase()}</div>
+          <div style="font-size:13px;color:#C0BDB8;line-height:1.6">${sommario.testoBreve||''}</div>
+        </div>
+      </div>`;
+    } else if (mktEl) { mktEl.innerHTML = ''; }
+
+    // ── ALERTS ────────────────────────────────────────────────────
     const alertsEl = document.getElementById('segnaliAlerts');
-    if(alerts.length>0){
-      const colors={danger:'var(--red)',warning:'#F59E0B',success:'var(--green)',info:'var(--blue)'};
-      alertsEl.innerHTML = alerts.map(a=>{
-        const cc=colors[a.type]||'var(--gold)';
-        return `<div style="border:1px solid ${cc};border-radius:10px;padding:14px 18px;margin-bottom:10px;display:flex;gap:14px;align-items:flex-start">
-          <div style="font-size:22px;flex-shrink:0">${a.icon||'⚠️'}</div>
-          <div>
-            <div style="font-family:'DM Mono',monospace;font-size:10px;color:${cc};letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">${a.urgenza||''}</div>
-            <div style="font-size:14px;font-weight:600;margin-bottom:4px">${a.title||''}</div>
-            <div style="font-size:13px;color:var(--muted);line-height:1.6">${a.text||''}</div>
-          </div>
+    if (alerts.length > 0) {
+      const colors = {danger:'var(--red)',warning:'#F59E0B',success:'var(--green)',info:'var(--blue)'};
+      alertsEl.innerHTML = alerts.map(a => {
+        const cc = colors[a.type] || 'var(--gold)';
+        return `<div style="border:1px solid ${cc};border-radius:10px;padding:12px 16px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-size:20px;flex-shrink:0">${a.icon||'⚠️'}</div>
+          <div><div style="font-size:14px;font-weight:600;margin-bottom:3px;color:${cc}">${a.title||''}</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.5">${a.text||''}</div></div>
         </div>`;
       }).join('');
-    } else { alertsEl.innerHTML=''; }
+    } else { alertsEl.innerHTML = ''; }
 
-    // ── SEGNALI CARD ─────────────────────────────────────────────
+    // ── SEGNALI CARD ──────────────────────────────────────────────
     const grid = document.getElementById('segnaliGrid');
-    const actionColors = {compra:'var(--green)',vendi:'var(--red)',mantieni:'var(--gold)',riduci:'#F59E0B',aumenta:'var(--blue)'};
-    const actionLabels = {compra:'▲ Considera +',vendi:'▼ Considera −',mantieni:'◆ Mantieni',riduci:'▽ Riduci',aumenta:'△ Aumenta'};
-    const momentumIcon = {rialzista:'↑',ribassista:'↓',neutro:'→'};
-    const momentumColor = {rialzista:'var(--green)',ribassista:'var(--red)',neutro:'var(--muted)'};
-    const confColor = (c)=>c.includes('alta')?'var(--green)':c.includes('bassa')?'var(--red)':'var(--gold)';
+    const aColors = {long:'var(--green)', short:'var(--red)', attendi:'var(--muted)'};
+    const aLabels = {long:'▲ LONG', short:'▼ SHORT', attendi:'◆ ATTENDI'};
+    const tfLabel  = {intraday:'⚡ Intraday', swing:'🔄 Swing', posizionale:'📅 Posizionale'};
+    const forzaColor = {forte:'var(--green)', moderato:'var(--gold)', debole:'var(--muted)'};
+    const confColor  = c => c.includes('alta')?'var(--green)':c.includes('bassa')?'var(--red)':'var(--gold)';
+    const momColor   = {rialzista:'var(--green)', ribassista:'var(--red)', neutro:'var(--muted)'};
+    const momIcon    = {rialzista:'↑', ribassista:'↓', neutro:'→'};
+    const volColor   = {alta:'var(--red)', media:'var(--gold)', bassa:'var(--green)'};
 
-    if(segnali.length>0){
-      grid.innerHTML = segnali.map(s=>{
-        const cc = actionColors[s.azione]||'var(--gold)';
-        const textOn = (s.azione==='vendi'||s.azione==='riduci')?'#fff':'#0D0C0A';
-        const pnlVal = parseFloat(s.pnlPct);
-        const pnlStr = !isNaN(pnlVal) ? `${pnlVal>=0?'+':''}${pnlVal.toFixed(2)}%` : null;
-        const pnlColor = pnlVal>=0?'var(--green)':'var(--red)';
-        const mom = (s.momentum||'neutro').toLowerCase();
-        const conf = (s.confidenza||'media').toLowerCase();
-        return `<div style="background:var(--surface2);border-radius:12px;border:1px solid var(--border);border-top:3px solid ${cc};padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0">
+    grid.innerHTML = segnali.map(s => {
+      const cc   = aColors[s.azione] || 'var(--gold)';
+      const textOn = s.azione === 'long' ? '#0D0C0A' : s.azione === 'short' ? '#fff' : 'var(--text)';
+      const mom  = s.momentum.toLowerCase();
+      const conf = s.confidenza.toLowerCase();
+      const tf   = s.timeframe.toLowerCase();
+      const forz = s.forza.toLowerCase();
+      const vol  = s.volatilita.toLowerCase();
 
-          <!-- Header: ticker + badge azione -->
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
-            <div style="min-width:0">
-              <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--gold)">${s.ticker}</div>
-              <div style="font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px">${s.nome}</div>
-            </div>
-            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0">
-              <div style="background:${cc};color:${textOn};padding:5px 12px;border-radius:20px;font-family:'DM Mono',monospace;font-size:10px;font-weight:700;white-space:nowrap">${actionLabels[s.azione]||s.azione.toUpperCase()}</div>
-              ${pnlStr ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:${pnlColor}">${pnlStr} acq.</div>` : ''}
-            </div>
+      return `<div style="background:var(--surface2);border-radius:12px;border:1px solid var(--border);border-top:3px solid ${cc};padding:18px;display:flex;flex-direction:column;gap:12px;position:relative">
+
+        <!-- Header -->
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--gold)">${s.ticker}</div>
+            <div style="font-size:11px;color:var(--muted)">${s.nome}</div>
           </div>
-
-          <!-- Motivazione -->
-          <div style="font-size:12px;color:#C0BDB8;line-height:1.7;flex:1">${s.motivazione}</div>
-
-          <!-- Livelli operativi -->
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
-            ${s.entryZone ? `<div style="background:rgba(74,144,217,.1);border:1px solid rgba(74,144,217,.2);border-radius:6px;padding:6px;text-align:center"><div style="font-size:9px;color:var(--muted);letter-spacing:.06em;margin-bottom:3px">ENTRY</div><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--blue);font-weight:600">${s.entryZone}</div></div>` : ''}
-            ${s.targetPrice ? `<div style="background:rgba(76,175,126,.1);border:1px solid rgba(76,175,126,.2);border-radius:6px;padding:6px;text-align:center"><div style="font-size:9px;color:var(--muted);letter-spacing:.06em;margin-bottom:3px">TARGET</div><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--green);font-weight:600">${s.targetPrice}</div></div>` : ''}
-            ${s.stopLoss ? `<div style="background:rgba(224,90,90,.1);border:1px solid rgba(224,90,90,.2);border-radius:6px;padding:6px;text-align:center"><div style="font-size:9px;color:var(--muted);letter-spacing:.06em;margin-bottom:3px">STOP</div><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--red);font-weight:600">${s.stopLoss}</div></div>` : ''}
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0">
+            <div style="background:${cc};color:${textOn};padding:5px 14px;border-radius:20px;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.06em">${aLabels[s.azione] || s.azione.toUpperCase()}</div>
+            <div style="font-family:'DM Mono',monospace;font-size:9px;color:${forzaColor[forz]||'var(--gold)'}">FORZA: ${forz.toUpperCase()}</div>
           </div>
+        </div>
 
-          <!-- Footer: momentum + confidenza -->
-          <div style="display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid rgba(255,255,255,.05)">
-            <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)">
-              MOMENTUM <span style="color:${momentumColor[mom]||'var(--muted)'}">${momentumIcon[mom]||'→'} ${(s.momentum||'neutro').toUpperCase()}</span>
-            </div>
-            <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)">
-              RILEVANZA <span style="color:${confColor(conf)}">${conf.toUpperCase()}</span>
-            </div>
-          </div>
-        </div>`;
-      }).join('');
-    }
+        <!-- Motivazione -->
+        <div style="font-size:12px;color:#C0BDB8;line-height:1.75">${s.motivazione}</div>
 
-    if(data.strategia){
+        <!-- Livelli operativi: entry / target / stop / R:R -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          ${s.entryZone  ? `<div style="background:rgba(74,144,217,.1);border:1px solid rgba(74,144,217,.25);border-radius:6px;padding:8px;text-align:center"><div style="font-size:9px;color:var(--muted);letter-spacing:.07em;margin-bottom:3px">ENTRY</div><div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--blue);font-weight:700">${s.entryZone}</div></div>` : ''}
+          ${s.targetPrice? `<div style="background:rgba(76,175,126,.1);border:1px solid rgba(76,175,126,.25);border-radius:6px;padding:8px;text-align:center"><div style="font-size:9px;color:var(--muted);letter-spacing:.07em;margin-bottom:3px">TARGET</div><div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--green);font-weight:700">${s.targetPrice}</div></div>` : ''}
+          ${s.stopLoss   ? `<div style="background:rgba(224,90,90,.1);border:1px solid rgba(224,90,90,.25);border-radius:6px;padding:8px;text-align:center"><div style="font-size:9px;color:var(--muted);letter-spacing:.07em;margin-bottom:3px">STOP LOSS</div><div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--red);font-weight:700">${s.stopLoss}</div></div>` : ''}
+          ${s.riskReward ? `<div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:6px;padding:8px;text-align:center"><div style="font-size:9px;color:var(--muted);letter-spacing:.07em;margin-bottom:3px">RISK/REWARD</div><div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);font-weight:700">${s.riskReward}</div></div>` : ''}
+        </div>
+
+        <!-- Leva e rischio -->
+        ${s.levaConsigliata || s.noteRischio ? `<div style="background:rgba(224,90,90,.05);border:1px solid rgba(224,90,90,.15);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)">
+          ${s.levaConsigliata ? `<span style="font-family:'DM Mono',monospace;color:var(--orange)">⚡ Leva max: ${s.levaConsigliata}</span>` : ''}
+          ${s.noteRischio ? `<div style="margin-top:${s.levaConsigliata?'5':'0'}px">${s.noteRischio}</div>` : ''}
+        </div>` : ''}
+
+        <!-- Footer: timeframe / momentum / volatilità / confidenza -->
+        <div style="display:flex;flex-wrap:wrap;gap:6px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05)">
+          <span style="font-family:'DM Mono',monospace;font-size:9px;background:var(--surface3);padding:3px 7px;border-radius:4px;color:var(--muted)">${tfLabel[tf]||tf.toUpperCase()}</span>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;background:var(--surface3);padding:3px 7px;border-radius:4px;color:${momColor[mom]||'var(--muted)'}">MOM ${momIcon[mom]||'→'} ${mom.toUpperCase()}</span>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;background:var(--surface3);padding:3px 7px;border-radius:4px;color:${volColor[vol]||'var(--gold)'}">VOL ${vol.toUpperCase()}</span>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;background:var(--surface3);padding:3px 7px;border-radius:4px;color:${confColor(conf)}">CONF ${conf.toUpperCase()}</span>
+        </div>
+      </div>`;
+    }).join('');
+
+    // ── STRATEGIA ─────────────────────────────────────────────────
+    if (data.strategia) {
       document.getElementById('segnaliStrategia').innerHTML =
-        '<div class="section-title">Strategia consigliata</div>'
-        +'<div style="font-size:13px;color:#C0BDB8;line-height:1.8">'+data.strategia+'</div>';
+        '<div class="card"><div class="section-title">Strategia cross-strumento</div>'
+        + '<div style="font-size:13px;color:#C0BDB8;line-height:1.8">' + data.strategia + '</div></div>';
     }
-    document.getElementById('segnaliDate').textContent = 'Aggiornato: '+new Date().toLocaleString('it-IT');
-    if(data._remaining!==undefined && data._remaining>=0) showToast('Analisi AI rimaste oggi: '+data._remaining);
+
+    document.getElementById('segnaliDate').textContent = 'Aggiornato: ' + new Date().toLocaleString('it-IT');
+    if (data._remaining !== undefined && data._remaining >= 0)
+      showToast('Analisi AI rimaste oggi: ' + data._remaining);
 
   } catch(e) {
-    document.getElementById('segnaliLoading').style.display='none';
-    document.getElementById('segnaliEmpty').style.display='block';
-    document.getElementById('segnaliEmpty').innerHTML=
+    document.getElementById('segnaliLoading').style.display = 'none';
+    document.getElementById('segnaliEmpty').style.display = 'block';
+    document.getElementById('segnaliEmpty').innerHTML =
       '<div style="font-size:40px;margin-bottom:12px">⚠️</div>'
-      +'<div style="font-size:16px;margin-bottom:8px">Errore</div>'
-      +'<div style="font-size:13px;color:var(--muted);margin-bottom:20px">'+e.message+'</div>'
-      +'<button onclick="loadSegnali()" class="btn btn-blue" style="padding:12px 28px;justify-content:center">Riprova</button>';
+      + '<div style="font-size:16px;margin-bottom:8px">Errore</div>'
+      + '<div style="font-size:13px;color:var(--muted);margin-bottom:20px">' + e.message + '</div>'
+      + '<button onclick="loadSegnali()" class="btn btn-blue" style="padding:12px 28px;justify-content:center">Riprova</button>';
   }
 }
+
 
 // ─── DROPDOWN ALTRO ───────────────────────────────────────────────────────────
 function toggleAltro(e) {e.stopPropagation();document.getElementById('altroMenu').classList.toggle('open');}
@@ -2427,6 +2595,7 @@ document.getElementById('headerDate').textContent=new Date().toLocaleDateString(
 loadData();
 renderAll();
 startTickerRefresh();
+renderCfdStrumenti();
 </script>
 <script>
 if ('serviceWorker' in navigator) {
