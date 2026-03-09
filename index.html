@@ -111,6 +111,12 @@ header{border-bottom:1px solid var(--border);padding-bottom:32px;margin-bottom:3
 .tab{padding:8px 16px;font-size:12px;cursor:pointer;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-family:'DM Mono',monospace;letter-spacing:.04em;transition:all .2s;white-space:nowrap;}
 .tab.active{color:var(--dark);background:var(--gold);border-color:var(--gold);font-weight:600;}
 .tab:hover:not(.active){color:var(--text);border-color:var(--muted);}
+.tab-dropdown{position:relative;}
+.tab-dropdown-menu{display:none;position:absolute;top:calc(100% + 6px);left:0;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px;min-width:140px;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,.4);}
+.tab-dropdown-menu.open{display:block;}
+.tab-dropdown-menu button{display:block;width:100%;padding:9px 14px;background:none;border:none;color:var(--muted);font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;border-radius:5px;text-align:left;transition:all .15s;}
+.tab-dropdown-menu button:hover{background:var(--surface2);color:var(--text);}
+.tab-dropdown-menu button.active-item{color:var(--gold);}
 .tab-content{display:none;}
 .tab-content.active{display:block;}
 .section-title{font-family:DM Mono,monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
@@ -296,12 +302,17 @@ svg.donut{transform:rotate(-90deg);}
       <button class="tab" onclick="switchTab('calcolatore',this)">Calcolatore</button>
       <button class="tab" onclick="switchTab('rischio',this)">Matrice Rischio</button>
       <button class="tab" onclick="switchTab('strategia',this)">Strategia</button>
-      <button class="tab" onclick="switchTab('verdetti',this)">Verdetti</button>
       <button class="tab" onclick="switchTab('heatmap',this)">Heatmap</button>
       <button class="tab" onclick="switchTab('ai',this)">Analisi AI</button>
       <button class="tab" onclick="switchTab('news',this)">Mercati</button>
-      <button class="tab" onclick="switchTab('storico',this)">&#128196; Storico</button>
-      <button class="tab" onclick="switchTab('segnali',this)">&#128204; Segnali</button>
+      <button class="tab" onclick="switchTab('segnali',this)">Segnali</button>
+      <div class="tab-dropdown" id="altroDropdown">
+        <button class="tab" onclick="toggleAltro(event)">Altro &#9660;</button>
+        <div class="tab-dropdown-menu" id="altroMenu">
+          <button onclick="switchTab('verdetti',null);closeAltro()">Verdetti</button>
+          <button onclick="switchTab('storico',null);closeAltro()">Storico</button>
+        </div>
+      </div>
     </div>
     <!-- PORTAFOGLIO -->
     <div class="tab-content active" id="tab-portafoglio">
@@ -1624,6 +1635,35 @@ async function loadSegnali() {
     document.getElementById('segnaliEmpty').innerHTML = '<div style="font-size:40px;margin-bottom:12px">⚠️</div><div style="font-size:16px;margin-bottom:8px">Errore</div><div style="font-size:13px;color:var(--muted);margin-bottom:20px">' + e.message + '</div><button onclick="loadSegnali()" class="btn btn-gold" style="padding:12px 28px;justify-content:center">Riprova</button>';
   }
 }
+
+// ─── DROPDOWN ALTRO ──────────────────────────────────────────────────────────
+function toggleAltro(e) {
+  e.stopPropagation();
+  document.getElementById('altroMenu').classList.toggle('open');
+}
+function closeAltro() {
+  document.getElementById('altroMenu').classList.remove('open');
+}
+document.addEventListener('click', () => closeAltro());
+
+// Override switchTab for dropdown items
+const _origSwitch = switchTab;
+switchTab = function(id, btn) {
+  _origSwitch(id, btn);
+  // Highlight Altro button if verdetti or storico is active
+  const altroBtn = document.querySelector('#altroDropdown .tab');
+  if (id === 'verdetti' || id === 'storico') {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    altroBtn.classList.add('active');
+    // Mark active item in menu
+    document.querySelectorAll('.tab-dropdown-menu button').forEach(b => {
+      b.classList.toggle('active-item', b.textContent.toLowerCase().includes(id));
+    });
+  } else {
+    altroBtn.classList.remove('active');
+    document.querySelectorAll('.tab-dropdown-menu button').forEach(b => b.classList.remove('active-item'));
+  }
+};
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 document.getElementById('headerDate').textContent=new Date().toLocaleDateString('it-IT',{month:'long',year:'numeric'});
