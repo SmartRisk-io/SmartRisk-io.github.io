@@ -695,22 +695,14 @@ async function refreshPrices() {
     let meta = null;
     for (const tryTick of tryTickers) {
       try {
-        const yahooUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/'+tryTick+'?interval=1d&range=1d';
-        const stockProxies = [
-          'https://api.allorigins.win/get?url=',
-          'https://api.codetabs.com/v1/proxy?quest=',
-          'https://corsproxy.io/?'
-        ];
-        for (const sp of stockProxies) {
-          try {
-            const r2 = await fetch(sp + encodeURIComponent(yahooUrl), {signal: AbortSignal.timeout(6000)});
-            const raw2 = await r2.json();
-            const contents2 = raw2.contents || raw2;
-            const d2 = typeof contents2 === 'string' ? JSON.parse(contents2) : contents2;
-            const m2 = d2?.chart?.result?.[0]?.meta;
-            if (m2 && m2.regularMarketPrice) { meta = m2; break; }
-          } catch(e2) { continue; }
-        }
+        try {
+          const r2 = await fetch(WORKER_URL + '/price?ticker=' + encodeURIComponent(tryTick), {signal: AbortSignal.timeout(8000)});
+          const d2 = await r2.json();
+          if (d2?.price) {
+            meta = { regularMarketPrice: d2.price, currency: d2.currency || 'USD', regularMarketChangePercent: d2.change || 0, shortName: d2.name || tryTick };
+            break;
+          }
+        } catch(e2) { continue; }
         if (meta) break;
       } catch(e2){ continue; }
     }
