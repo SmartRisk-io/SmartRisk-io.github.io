@@ -582,7 +582,8 @@ svg.donut{transform:rotate(-90deg);}
           <span class="brief-icon">☀️</span>
           <span class="brief-title">Morning Brief</span>
           <span class="brief-date" id="briefDate"></span>
-          <button onclick="document.getElementById('morningBrief').style.display='none'" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;margin-left:8px">×</button>
+          <button onclick="(()=>{const t=new Date().toISOString().slice(0,10);localStorage.removeItem('srm_brief_'+t);loadMorningBrief();})()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;margin-left:8px;padding:2px 6px;border:1px solid rgba(201,168,76,.3);border-radius:4px" title="Aggiorna brief">↻</button>
+          <button onclick="document.getElementById('morningBrief').style.display='none'" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;margin-left:4px">×</button>
         </div>
         <div class="brief-text" id="briefText"></div>
         <div class="brief-pills" id="briefPills"></div>
@@ -2318,60 +2319,128 @@ function drawDNA() {
 }
 
 // ─── MORNING BRIEF ────────────────────────────────────────────────────────────
+
+// ─── BRIEF LOCALE FALLBACK ────────────────────────────────────────────────────
+function generateLocalBrief() {
+  const tot = assets.reduce((s,a) => s+a.invested, 0);
+  if (tot === 0) return null;
+  const pnlAssets = assets.filter(a => a.currentPrice>0 && a.buyPrice>0);
+  const totalPnl = pnlAssets.reduce((s,a) => s+((a.currentPrice-a.buyPrice)/a.buyPrice*a.invested), 0);
+  const pnlPct = tot>0 ? totalPnl/tot*100 : 0;
+  const hiPct = assets.filter(a=>a.risk==='high').reduce((s,a)=>s+a.invested,0)/tot*100;
+  const loPct = assets.filter(a=>a.risk==='low').reduce((s,a)=>s+a.invested,0)/tot*100;
+  const winners = pnlAssets.filter(a=>a.currentPrice>a.buyPrice);
+  const losers  = pnlAssets.filter(a=>a.currentPrice<a.buyPrice);
+  const topWinner = winners.sort((a,b)=>(b.currentPrice-b.buyPrice)/b.buyPrice-(a.currentPrice-a.buyPrice)/a.buyPrice)[0];
+  const topLoser  = losers.sort((a,b)=>(a.currentPrice-a.buyPrice)/a.buyPrice-(b.currentPrice-b.buyPrice)/b.buyPrice)[0];
+  const day = new Date().getDay(); // 0=dom, 1=lun...
+  const weekMsg = day===1 ? 'Inizio settimana: momento ideale per riesaminare le posizioni aperte.' :
+                  day===5 ? 'Fine settimana: valuta se chiudere posizioni speculative prima del weekend.' :
+                  day===3 ? 'A metà settimana: controlla se i target di prezzo si stanno avvicinando.' : '';
+
+  let text = '';
+  const pills = [];
+
+  if (pnlPct > 2) {
+    text = `<b>Portafoglio in territorio positivo</b> (+${pnlPct.toFixed(1)}%). `;
+    pills.push({label:`+${pnlPct.toFixed(1)}%`, color:'#4CAF7E'});
+  } else if (pnlPct < -2) {
+    text = `<b>Portafoglio sotto pressione</b> (${pnlPct.toFixed(1)}%). `;
+    pills.push({label:`${pnlPct.toFixed(1)}%`, color:'#E05A5A'});
+  } else {
+    text = `<b>Portafoglio stabile</b> (${pnlPct>=0?'+':''}${pnlPct.toFixed(1)}%). `;
+    pills.push({label:`${pnlPct>=0?'+':''}${pnlPct.toFixed(1)}%`, color:'#C9A84C'});
+  }
+
+  if (topWinner) {
+    const wp = ((topWinner.currentPrice-topWinner.buyPrice)/topWinner.buyPrice*100);
+    text += `${topWinner.ticker} guida i rialzi (+${wp.toFixed(1)}%). `;
+    pills.push({label:`▲ ${topWinner.ticker}`, color:'#4CAF7E'});
+  }
+  if (topLoser) {
+    const lp = ((topLoser.currentPrice-topLoser.buyPrice)/topLoser.buyPrice*100);
+    text += `${topLoser.ticker} è sotto pressione (${lp.toFixed(1)}%). `;
+    pills.push({label:`▼ ${topLoser.ticker}`, color:'#E05A5A'});
+  }
+
+  if (hiPct > 35) text += `Attenzione: ${hiPct.toFixed(0)}% del capitale è in asset speculativi — considera uno stop-loss sui titoli più volatili.`;
+  else if (loPct < 30) text += `Base difensiva ridotta (${loPct.toFixed(0)}%): valuta di aggiungere un ETF obbligazionario per bilanciare il rischio.`;
+  else if (weekMsg) text += weekMsg;
+  else text += `Struttura equilibrata. Aggiorna i prezzi live per una valutazione aggiornata.`;
+
+  return { text, pills };
+}
+
 async function loadMorningBrief() {
-  if (assets.length === 0) return;
-  const today = new Date().toISOString().slice(0,10);
-  const cached = localStorage.getItem('srm_brief_' + today);
-  const el = document.getElementById('morningBrief');
-  const textEl = document.getElementById('briefText');
+  const el      = document.getElementById('morningBrief');
+  const textEl  = document.getElementById('briefText');
   const pillsEl = document.getElementById('briefPills');
-  const dateEl = document.getElementById('briefDate');
+  const dateEl  = document.getElementById('briefDate');
   if (!el || !textEl) return;
+
   if (dateEl) dateEl.textContent = new Date().toLocaleDateString('it-IT', {weekday:'long', day:'numeric', month:'long'});
-  // Mostra dalla cache se disponibile
-  if (cached) {
-    try {
-      const d = JSON.parse(cached);
-      if (d.text) {
+
+  // Se non ci sono asset, usa il fallback locale (che gestisce tot===0)
+  // o nascondi
+  if (assets.length === 0) {
+    el.style.display = 'none';
+    return;
+  }
+
+  const today  = new Date().toISOString().slice(0, 10);
+  const cacheKey = 'srm_brief_' + today;
+
+  // ── Cache di oggi ─────────────────────────────────────────────────────
+  try {
+    const raw = localStorage.getItem(cacheKey);
+    if (raw) {
+      const d = JSON.parse(raw);
+      if (d && d.text && d.text.length > 20) {
         const fonteHtml = d.fonte ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:6px;letter-spacing:.05em">📰 ${d.fonte}</div>` : '';
         textEl.innerHTML = fonteHtml + d.text;
         if (pillsEl) pillsEl.innerHTML = (d.pills||[]).map(p=>`<span class="brief-pill" style="color:${p.color};border-color:${p.color}">${p.label}</span>`).join('');
         el.style.display = 'block';
         return;
+      } else {
+        // Cache invalida — rimuovila
+        localStorage.removeItem(cacheKey);
       }
-    } catch(_) {}
+    }
+  } catch(_) { try { localStorage.removeItem(cacheKey); } catch(_){} }
+
+  // ── Mostra subito il fallback locale mentre fetcha il worker ──────────
+  const local = generateLocalBrief();
+  if (local && local.text) {
+    textEl.innerHTML = `<span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;display:block;margin-bottom:6px">📊 ANALISI PORTAFOGLIO</span>` + local.text;
+    if (pillsEl) pillsEl.innerHTML = local.pills.map(p=>`<span class="brief-pill" style="color:${p.color};border-color:${p.color}">${p.label}</span>`).join('');
+    el.style.display = 'block';
   }
-  // NON mostrare il brief finché non abbiamo una risposta valida
-  textEl.innerHTML = '';
+
+  // ── Fetch worker in background — sovrascrive il locale se risponde ────
   try {
-    const tot = assets.reduce((s,a)=>s+a.invested,0);
-    const assetList = assets.map(a=>a.ticker+(a.currentPrice>0&&a.buyPrice>0?' (P&L: '+(((a.currentPrice-a.buyPrice)/a.buyPrice*100).toFixed(1))+'%)':'')).join(', ');
-    // Timeout di 10 secondi
+    const tot = assets.reduce((s,a) => s + a.invested, 0);
+    const assetList = assets.map(a => a.ticker + (a.currentPrice>0&&a.buyPrice>0 ? ' (PnL:'+(((a.currentPrice-a.buyPrice)/a.buyPrice*100).toFixed(1))+'%)' : '')).join(', ');
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10000);
+    const timeout = setTimeout(() => controller.abort(), 12000);
     const res = await fetch(WORKER_URL, {
-      method:'POST', headers:{'Content-Type':'application/json'},
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type:'brief', portfolio:{ assets:assetList, total:tot }, userId: window._currentUid||'anon' }),
       signal: controller.signal
     });
     clearTimeout(timeout);
     const data = await res.json();
-    if (data.error === 'RATE_LIMIT' || data.error) { el.style.display='none'; return; }
-    if (data.text) {
-      // Mostra fonte se disponibile
+    if (data && data.text && data.text.length > 20) {
       const fonteHtml = data.fonte ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:6px;letter-spacing:.05em">📰 ${data.fonte}</div>` : '';
       textEl.innerHTML = fonteHtml + data.text;
       const pills = data.pills || [];
       if (pillsEl) pillsEl.innerHTML = pills.map(p=>`<span class="brief-pill" style="color:${p.color};border-color:${p.color}">${p.label}</span>`).join('');
       el.style.display = 'block';
-      localStorage.setItem('srm_brief_'+today, JSON.stringify({text:data.text, pills, fonte:data.fonte||''}));
-      logActivity('brief', 'Morning Brief', data.titolo_notizia || 'Briefing giornaliero generato');
-    } else {
-      el.style.display = 'none';
+      localStorage.setItem(cacheKey, JSON.stringify({ text:data.text, pills, fonte:data.fonte||'' }));
+      if (typeof logActivity === 'function') logActivity('brief', 'Morning Brief', data.titolo_notizia || 'Briefing generato');
     }
-  } catch(e) {
-    // Timeout o errore — nascondi silenziosamente
-    el.style.display='none';
+  } catch(_) {
+    // Worker non risponde — il fallback locale è già visibile, va bene così
   }
 }
 
