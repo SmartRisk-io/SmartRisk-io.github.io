@@ -12,8 +12,8 @@
 <link rel="apple-touch-icon" href="/icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
@@ -110,14 +110,13 @@ header{border-bottom:1px solid var(--border);padding-bottom:32px;margin-bottom:3
 
 
 
-/* LEAFLET DARK */
-.leaflet-container{background:#0A0A0A!important;}
-.leaflet-control-zoom{border:1px solid rgba(201,168,76,.2)!important;}
-.leaflet-control-zoom a{background:#141414!important;color:var(--gold)!important;border-color:rgba(201,168,76,.2)!important;}
-.leaflet-control-zoom a:hover{background:rgba(201,168,76,.1)!important;}
-.leaflet-control-attribution{background:rgba(10,10,10,.8)!important;color:#444!important;font-size:9px!important;}
-.leaflet-popup-content-wrapper{background:#111!important;color:var(--text)!important;border:1px solid rgba(201,168,76,.3)!important;border-radius:10px!important;box-shadow:0 8px 32px rgba(0,0,0,.7)!important;}
-.leaflet-popup-tip{background:#111!important;}
+/* GEO MAP SVG */
+#worldMapSvg{width:100%;height:100%;display:block;}
+#worldMapSvg .country{stroke:#1a1a1a;stroke-width:.4px;transition:opacity .2s;}
+#worldMapSvg .country:hover{opacity:.75;cursor:pointer;}
+#worldMapSvg .graticule{fill:none;stroke:#1f1f1f;stroke-width:.3px;}
+#worldMapSvg .sphere{fill:#0a0a0a;}
+#geoTooltipD3{position:absolute;background:#0D0D0D;border:1px solid rgba(201,168,76,.35);border-radius:10px;padding:10px 14px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text);pointer-events:none;display:none;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.7);min-width:140px;}
 
 
 /* CFD Segnali */
@@ -230,7 +229,7 @@ input[type=range].wi-range::-webkit-slider-thumb{-webkit-appearance:none;width:1
   .two-col{grid-template-columns:1fr!important;}
   .goal-wrap{grid-template-columns:1fr!important;}
   #tab-mappa>div[style]{grid-template-columns:1fr!important;}
-  #leafletMap{height:280px!important;}
+  #geoMapWrap{height:260px!important;}
   .dna-wrap{flex-direction:column;align-items:center;}
   #dnaCanvas{width:160px!important;height:160px!important;}
   .summary-grid{grid-template-columns:1fr 1fr!important;}
@@ -691,7 +690,10 @@ svg.donut{transform:rotate(-90deg);}
       <div class="section-title">Esposizione Geografica</div>
       <div style="font-size:12px;color:var(--muted);margin-bottom:20px">Distribuzione del portafoglio per area geografica, pesata per valore investito</div>
       <div style="display:grid;grid-template-columns:1fr 280px;gap:24px;align-items:start">
-        <div id="leafletMap" style="height:420px;border-radius:10px;overflow:hidden;border:1px solid var(--border)"></div>
+        <div id="geoMapWrap" style="height:420px;border-radius:10px;overflow:hidden;border:1px solid var(--border);background:#0a0a0a;position:relative">
+          <svg id="worldMapSvg"></svg>
+          <div id="geoTooltipD3"></div>
+        </div>
         <div class="geo-legend" id="geoLegend"></div>
       </div>
     </div>
@@ -959,8 +961,9 @@ function applyLang() {
   const altroBtn = document.querySelector('#altroDropdown > .tab');
   if (altroBtn) altroBtn.innerHTML = t('other') + ' &#9660;';
   const menuBtns = document.querySelectorAll('#altroMenu button');
-  if (menuBtns[2]) menuBtns[2].textContent = t('verdetti');
-  if (menuBtns[3]) menuBtns[3].textContent = t('storico');
+  if (menuBtns[0]) menuBtns[0].textContent = 'Mappa Geo';
+  if (menuBtns[1]) menuBtns[1].textContent = t('verdetti');
+  if (menuBtns[2]) menuBtns[2].textContent = t('storico');
 }
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
@@ -2424,57 +2427,159 @@ function computeGeoExposure() {
 
 function renderGeoMap() {
   const legend = document.getElementById('geoLegend');
-  const mapDiv = document.getElementById('leafletMap');
-  if (!mapDiv || !legend) return;
+  const wrap   = document.getElementById('geoMapWrap');
+  const svgEl  = document.getElementById('worldMapSvg');
+  if (!wrap || !svgEl || !legend) return;
+
   const exp = computeGeoExposure();
-  const tot = assets.reduce((s,a)=>s+a.invested,0);
-  legend.innerHTML = Object.entries(exp).filter(([,v])=>v>0.1)
-    .map(([region,pct])=>{
-      const color=GEO_COLORS[region]||'#8A8580';
-      const flag=GEO_FLAGS[region]||'🌐';
-      const val=tot*pct/100;
-      const label=region==='EmergingMarkets'?'Emergenti':region;
-      return '<div class="geo-leg-item" style="border-color:'+color+'">'
-        +'<div class="geo-leg-left"><span class="geo-leg-flag">'+flag+'</span>'
-        +'<div><div class="geo-leg-name">'+label+'</div>'
-        +'<div class="geo-leg-val">€'+val.toLocaleString('it-IT',{maximumFractionDigits:0})+'</div></div></div>'
-        +'<span class="geo-leg-pct" style="color:'+color+'">'+pct.toFixed(1)+'%</span></div>';
-    }).join('')||'<div style="color:var(--muted);font-size:13px">Aggiungi asset</div>';
-  if(window._leafletMap){window._leafletMap.remove();window._leafletMap=null;}
-  if(!window.L){mapDiv.innerHTML='<div style="padding:40px;text-align:center;color:var(--muted)">Caricamento mappa...</div>';return;}
-  const map=L.map('leafletMap',{center:[25,10],zoom:2,minZoom:1,maxZoom:6,zoomControl:true});
-  window._leafletMap=map;
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_matter/{z}/{x}/{y}{r}.png',{
-    attribution:'© OpenStreetMap © CARTO',subdomains:'abcd',maxZoom:19
-  }).addTo(map);
-  setTimeout(()=>map.invalidateSize(),150);
-  const REGIONS={
-    USA:            {bounds:[[24,-125],[50,-66]],  center:[39,-98]},
-    Europa:         {bounds:[[36,-10],[71,40]],    center:[51,12]},
-    Giappone:       {bounds:[[31,130],[45,145]],   center:[36,138]},
-    Taiwan:         {bounds:[[22,120],[25.5,122]], center:[23.7,120.9]},
-    EmergingMarkets:{bounds:[[5,68],[55,135]],     center:[28,103]},
-    Altro:          {bounds:[[-35,-75],[20,55]],   center:[-10,20]},
-  };
-  Object.entries(exp).forEach(([region,pct])=>{
-    if(pct<0.5)return;
-    const reg=REGIONS[region];if(!reg)return;
-    const color=GEO_COLORS[region]||'#8A8580';
-    const opacity=0.12+(pct/100)*0.55;
-    const rect=L.rectangle(reg.bounds,{color,weight:1.5,fillColor:color,fillOpacity:opacity,opacity:0.7}).addTo(map);
-    const flag=GEO_FLAGS[region]||'🌐';
-    const label=region==='EmergingMarkets'?'Emergenti':region;
-    const val=(tot*pct/100).toLocaleString('it-IT',{maximumFractionDigits:0});
-    rect.bindPopup('<div style="font-family:DM Mono,monospace;text-align:center;padding:4px">'
-      +'<div style="font-size:22px">'+flag+'</div>'
-      +'<div style="font-size:13px;font-weight:700;color:'+color+';margin:4px 0">'+label+'</div>'
-      +'<div style="font-size:20px;font-weight:700">'+pct.toFixed(1)+'%</div>'
-      +'<div style="font-size:11px;color:#8A8580">€'+val+'</div>'
-      +'</div>');
-    const icon=L.divIcon({html:'<div style="background:'+color+';color:#0D0D0D;padding:3px 8px;border-radius:20px;font-family:DM Mono,monospace;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.5)">'+pct.toFixed(0)+'%</div>',className:'',iconAnchor:[20,10]});
-    L.marker(reg.center,{icon,interactive:false}).addTo(map);
+  const tot = assets.reduce((s,a) => s+a.invested, 0);
+
+  // ── Legend ────────────────────────────────────────────────────────────────
+  legend.innerHTML = Object.entries(exp).filter(([,v]) => v > 0.1)
+    .map(([region, pct]) => {
+      const color = GEO_COLORS[region] || '#8A8580';
+      const flag  = GEO_FLAGS[region]  || '🌐';
+      const val   = tot * pct / 100;
+      const label = region === 'EmergingMarkets' ? 'Emergenti' : region;
+      return `<div class="geo-leg-item" style="border-color:${color}">
+        <div class="geo-leg-left">
+          <span class="geo-leg-flag">${flag}</span>
+          <div>
+            <div class="geo-leg-name">${label}</div>
+            <div class="geo-leg-val">€${val.toLocaleString('it-IT',{maximumFractionDigits:0})}</div>
+          </div>
+        </div>
+        <span class="geo-leg-pct" style="color:${color}">${pct.toFixed(1)}%</span>
+      </div>`;
+    }).join('') || '<div style="color:var(--muted);font-size:13px">Aggiungi asset</div>';
+
+  if (!window.d3 || !window.topojson) {
+    wrap.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:13px">Caricamento mappa...</div>';
+    return;
+  }
+
+  // ── Mappa regioni → colore esposizione ───────────────────────────────────
+  // Mapping ISO-3166 country codes → regione portafoglio
+  const COUNTRY_REGION = {};
+  // USA & Canada & Messico → USA
+  ['USA','CAN','MEX'].forEach(c => COUNTRY_REGION[c] = 'USA');
+  // Europa
+  ['DEU','FRA','GBR','ITA','ESP','NLD','BEL','AUT','CHE','SWE','NOR','DNK','FIN','PRT',
+   'POL','CZE','HUN','ROU','GRC','IRL','LUX','ISL','HRV','SVK','SVN','EST','LVA','LTU',
+   'BGR','SRB','UKR','BLR','MDA','ALB','MKD','BIH','MNE','XKX','LIE','MCO','AND','SMR','VAT'
+  ].forEach(c => COUNTRY_REGION[c] = 'Europa');
+  // Giappone
+  COUNTRY_REGION['JPN'] = 'Giappone';
+  // Taiwan
+  COUNTRY_REGION['TWN'] = 'Taiwan';
+  // Emerging Markets (Cina, India, Brasile, Corea del Sud, ecc.)
+  ['CHN','IND','BRA','KOR','ZAF','IDN','THA','MYS','PHL','VNM','PAK','BGD','EGY','NGA',
+   'ETH','TZA','KEN','GHA','CIV','CMR','AGO','MOZ','ZMB','ZWE','SEN','SDN','TUN','MAR',
+   'DZA','LBY','SAU','IRN','IRQ','SYR','YEM','AFG','UZB','KAZ','AZE','GEO','ARM','TKM'
+  ].forEach(c => COUNTRY_REGION[c] = 'EmergingMarkets');
+  // Altro (tutto il resto)
+
+  // ── Disegna mappa con D3 ─────────────────────────────────────────────────
+  const W = wrap.clientWidth  || 680;
+  const H = wrap.clientHeight || 420;
+  const svg = d3.select('#worldMapSvg')
+    .attr('width', W).attr('height', H)
+    .attr('viewBox', `0 0 ${W} ${H}`);
+  svg.selectAll('*').remove();
+
+  const proj = d3.geoNaturalEarth1()
+    .scale(W / 6.5)
+    .translate([W / 2, H / 2]);
+  const path = d3.geoPath().projection(proj);
+
+  // Sfondo oceano
+  svg.append('path')
+    .datum({type:'Sphere'})
+    .attr('class','sphere')
+    .attr('d', path);
+
+  // Graticule
+  svg.append('path')
+    .datum(d3.geoGraticule()())
+    .attr('class','graticule')
+    .attr('d', path);
+
+  const tooltip = document.getElementById('geoTooltipD3');
+
+  // Carica TopoJSON world
+  const WORLD_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
+  d3.json(WORLD_URL).then(world => {
+    const countries = topojson.feature(world, world.objects.countries);
+    // ISO numeric → alpha3 lookup (subset principale)
+    const NUM_TO_A3 = {
+      4:'AFG',8:'ALB',12:'DZA',24:'AGO',32:'ARG',36:'AUS',40:'AUT',50:'BGD',56:'BEL',
+      64:'BTN',68:'BOL',76:'BRA',100:'BGR',116:'KHM',120:'CMR',124:'CAN',144:'LKA',
+      152:'CHL',156:'CHN',170:'COL',180:'COD',192:'CUB',203:'CZE',208:'DNK',231:'ETH',
+      246:'FIN',250:'FRA',266:'GAB',276:'DEU',288:'GHA',300:'GRC',320:'GTM',332:'HTI',
+      340:'HND',348:'HUN',356:'IND',360:'IDN',364:'IRN',368:'IRQ',372:'IRL',376:'ISR',
+      380:'ITA',388:'JAM',392:'JPN',400:'JOR',404:'KEN',410:'KOR',414:'KWT',422:'LBN',
+      426:'LSO',430:'LBR',434:'LBY',442:'LUX',484:'MEX',504:'MAR',516:'NAM',524:'NPL',
+      528:'NLD',540:'NCL',554:'NZL',566:'NGA',578:'NOR',586:'PAK',591:'PAN',604:'PER',
+      608:'PHL',616:'POL',620:'PRT',630:'PRI',634:'QAT',642:'ROU',643:'RUS',646:'RWA',
+      682:'SAU',706:'SOM',710:'ZAF',724:'ESP',729:'SDN',752:'SWE',756:'CHE',760:'SYR',
+      764:'THA',788:'TUN',792:'TUR',800:'UGA',804:'UKR',784:'ARE',826:'GBR',834:'TZA',
+      840:'USA',858:'URY',860:'UZB',862:'VEN',704:'VNM',887:'YEM',894:'ZMB',716:'ZWE',
+      158:'TWN',344:'HKG',446:'MAC',188:'CRI',214:'DOM',218:'ECU',222:'SLV',320:'GTM',
+      558:'NIC',591:'PAN',600:'PRY',32:'ARG',
+    };
+
+    svg.selectAll('.country')
+      .data(countries.features)
+      .enter().append('path')
+      .attr('class', 'country')
+      .attr('d', path)
+      .attr('fill', d => {
+        const a3 = NUM_TO_A3[+d.id];
+        const region = a3 ? (COUNTRY_REGION[a3] || 'Altro') : 'Altro';
+        const pct = exp[region] || 0;
+        if (pct < 0.5) return '#1c1c1c';
+        const base = GEO_COLORS[region] || '#8A8580';
+        const opacity = Math.min(0.9, 0.2 + pct / 100 * 1.4);
+        // Usa d3 per interpolare verso il colore base
+        return d3.interpolate('#1c1c1c', base)(opacity);
+      })
+      .on('mousemove', (event, d) => {
+        const a3 = NUM_TO_A3[+d.id];
+        const region = a3 ? (COUNTRY_REGION[a3] || 'Altro') : 'Altro';
+        const pct = exp[region] || 0;
+        if (pct < 0.1) { tooltip.style.display = 'none'; return; }
+        const flag  = GEO_FLAGS[region]  || '🌐';
+        const color = GEO_COLORS[region] || '#8A8580';
+        const label = region === 'EmergingMarkets' ? 'Emergenti' : region;
+        const val   = (tot * pct / 100).toLocaleString('it-IT', {maximumFractionDigits:0});
+        tooltip.innerHTML = `<div style="font-size:18px;margin-bottom:4px">${flag}</div>
+          <div style="font-weight:700;color:${color};margin-bottom:2px">${label}</div>
+          <div style="font-size:16px;font-weight:700">${pct.toFixed(1)}%</div>
+          <div style="font-size:10px;color:#8A8580">€${val}</div>`;
+        tooltip.style.display = 'block';
+        const rect = wrap.getBoundingClientRect();
+        let x = event.clientX - rect.left + 12;
+        let y = event.clientY - rect.top  - 10;
+        if (x + 160 > W) x -= 170;
+        if (y + 100 > H) y -= 110;
+        tooltip.style.left = x + 'px';
+        tooltip.style.top  = y + 'px';
+      })
+      .on('mouseleave', () => { tooltip.style.display = 'none'; });
+
+    // Bordi paesi (linee sottili)
+    svg.append('path')
+      .datum(topojson.mesh(world, world.objects.countries, (a,b) => a !== b))
+      .attr('fill', 'none')
+      .attr('stroke', '#111')
+      .attr('stroke-width', '.3')
+      .attr('d', path);
+
+  }).catch(() => {
+    wrap.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:13px">Mappa non disponibile</div>';
   });
 }
+
 
 
 // ─── GOAL TRACKER ─────────────────────────────────────────────────────────────
