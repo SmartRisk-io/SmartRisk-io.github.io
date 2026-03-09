@@ -267,7 +267,7 @@ svg.donut{transform:rotate(-90deg);}
     <div class="topbar-brand">Smart <span>Risk</span></div>
     <div style="display:flex;align-items:center;gap:10px">
       <div class="user-chip"><div class="user-avatar" id="userAvatar">?</div><span id="userEmail" style="color:var(--muted)"></span></div>
-      <button class="logout-btn" onclick="window._fbSignOut&&window._fbSignOut()"><span data-i18n="logout">Esci</span></button>
+      <button class="logout-btn" onclick="window._fbSignOut&&window._fbSignOut()" data-i18n="logout">Esci</button>
     </div>
   </div>
   <div class="container">
@@ -278,25 +278,25 @@ svg.donut{transform:rotate(-90deg);}
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px">
         <div class="header-meta"><div>&#9899; SMARTRISK.IO</div><div id="headerDate" style="margin-top:3px"></div></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
-          <button class="btn btn-blue" onclick="refreshPrices()"><span data-i18n="updatePrices">Aggiorna prezzi</span></button>
+          <button class="btn btn-blue" onclick="refreshPrices()" data-i18n="updatePrices">Aggiorna prezzi</button>
           <button onclick="enableNotifications()" id="notifBtn" title="Attiva notifiche" class="btn btn-ghost" style="font-size:14px;padding:8px 12px">&#128277;</button>
           <button onclick="toggleLang()" id="langBtn" class="btn btn-ghost" style="font-size:12px;font-family:'DM Mono',monospace;padding:8px 12px">EN</button>
           <button class="btn btn-purple" onclick="runAIAnalysis()">Analisi AI</button>
-          <button class="btn btn-gold" onclick="openEdit()"><span data-i18n="edit">Modifica</span></button>
+          <button class="btn btn-gold" onclick="openEdit()" data-i18n="edit">Modifica</button>
         </div>
       </div>
     </header>
     <!-- SUMMARY CARDS -->
     <div class="summary-grid">
-      <div class="sum-card"><div class="sum-label"><span data-i18n="totalInvested">Totale investito</span></div><div class="sum-value" id="sumInvested">&#8212;</div><div class="sum-sub" id="sumInvestedSub"><span data-i18n="openPositions">Posizioni aperte</span></div></div>
-      <div class="sum-card"><div class="sum-label">P&amp;L totale</div><div class="sum-value" id="sumPnl" style="color:var(--green)">&#8212;</div><div class="sum-sub" id="sumPnlSub"><span data-i18n="livePositions">Su posizioni con prezzo live</span></div></div>
-      <div class="sum-card"><div class="sum-label">N&#176; posizioni</div><div class="sum-value" id="sumPositions">&#8212;</div><div class="sum-sub" id="sumRisk"><span data-i18n="portfolioAssets">Asset in portafoglio</span></div></div>
-      <div class="sum-card"><div class="sum-label"><span data-i18n="lastUpdate">Ultimo aggiornamento</span></div><div class="sum-value" id="sumUpdate" style="font-size:16px;margin-top:4px">&#8212;</div><div class="sum-sub"><span data-i18n="liveYahoo">Prezzi live Yahoo Finance</span></div></div>
+      <div class="sum-card"><div class="sum-label">Totale investito</div><div class="sum-value" id="sumInvested">&#8212;</div><div class="sum-sub" id="sumInvestedSub">Posizioni aperte</div></div>
+      <div class="sum-card"><div class="sum-label">P&amp;L totale</div><div class="sum-value" id="sumPnl" style="color:var(--green)">&#8212;</div><div class="sum-sub" id="sumPnlSub">Su posizioni con prezzo live</div></div>
+      <div class="sum-card"><div class="sum-label">N&#176; posizioni</div><div class="sum-value" id="sumPositions">&#8212;</div><div class="sum-sub" id="sumRisk">Asset in portafoglio</div></div>
+      <div class="sum-card"><div class="sum-label">Ultimo aggiornamento</div><div class="sum-value" id="sumUpdate" style="font-size:16px;margin-top:4px">&#8212;</div><div class="sum-sub">Prezzi live Yahoo Finance</div></div>
     </div>
     <!-- PRICE BAR -->
     <div class="price-bar" id="priceBar">
       <span class="price-msg" id="priceMsg">Clicca Aggiorna prezzi per le quotazioni live</span>
-      <button class="btn btn-blue" style="margin-left:auto;padding:5px 12px;font-size:10px" onclick="refreshPrices()"><span data-i18n="update">Aggiorna</span></button>
+      <button class="btn btn-blue" style="margin-left:auto;padding:5px 12px;font-size:10px" onclick="refreshPrices()" data-i18n="update">Aggiorna</button>
     </div>
     <!-- TABS -->
     <div class="tabs">
@@ -320,7 +320,7 @@ svg.donut{transform:rotate(-90deg);}
     <div class="tab-content active" id="tab-portafoglio">
       <div class="two-col">
         <div class="card">
-          <div class="section-title"><span data-i18n="allocation">Allocazione</span></div>
+          <div class="section-title" data-i18n="allocation">Allocazione</div>
           <div class="donut-wrap">
             <svg class="donut" id="donutSvg" width="160" height="160" viewBox="0 0 160 160">
               <circle cx="80" cy="80" r="60" fill="none" stroke="#252525" stroke-width="22"/>
@@ -329,11 +329,11 @@ svg.donut{transform:rotate(-90deg);}
           </div>
           <div id="legendList"><div style="text-align:center;padding:16px;color:var(--muted);font-size:12px">Aggiungi asset &#8594;</div></div>
         </div>
-        <div class="card"><div class="section-title"><span data-i18n="riskExposure">Esposizione per livello di rischio</span></div><div id="sectorBars" style="margin-top:16px"></div></div>
+        <div class="card"><div class="section-title" data-i18n="riskExposure">Esposizione per livello di rischio</div><div id="sectorBars" style="margin-top:16px"></div></div>
       </div>
-      <div class="section-title"><span data-i18n="detailedPositions">Posizioni dettagliate</span></div>
+      <div class="section-title" data-i18n="detailedPositions">Posizioni dettagliate</div>
       <table class="table">
-        <thead><tr><th><span data-i18n="asset">Asset</span></th><th><span data-i18n="invested">Investito</span></th><th><span data-i18n="buyPrice">Prezzo acquisto</span></th><th><span data-i18n="livePrice">Prezzo live</span></th><th>7g</th><th>P&amp;L</th><th><span data-i18n="target">Target</span></th><th><span data-i18n="risk">Rischio</span></th></tr></thead>
+        <thead><tr><th data-i18n="asset">Asset</th><th data-i18n="invested">Investito</th><th data-i18n="buyPrice">Prezzo acquisto</th><th data-i18n="livePrice">Prezzo live</th><th>7g</th><th>P&amp;L</th><th data-i18n="target">Target</th><th data-i18n="risk">Rischio</th></tr></thead>
         <tbody id="holdingsBody"></tbody>
       </table>
       <div id="emptyState" style="text-align:center;padding:48px;color:var(--muted);display:none">
@@ -343,10 +343,10 @@ svg.donut{transform:rotate(-90deg);}
       </div>
       <!-- BUDGET PANEL -->
       <div style="margin-top:32px">
-        <div class="section-title"><span data-i18n="budget">Budget e liquidita</span></div>
+        <div class="section-title" data-i18n="budget">Budget e liquidita</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
           <div class="card">
-            <div class="sum-label"><span data-i18n="totalBudget">Budget totale</span></div>
+            <div class="sum-label">Budget totale</div>
             <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
               <input type="number" id="budgetInput" placeholder="es. 10000" step="100"
                 style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;font-family:'DM Mono',monospace;font-size:14px;width:100%;outline:none;"
@@ -361,7 +361,7 @@ svg.donut{transform:rotate(-90deg);}
             <div style="font-size:11px;color:var(--muted);margin-top:4px" id="budgetInvestedPct">0% del budget</div>
           </div>
           <div class="card">
-            <div class="sum-label"><span data-i18n="availableLiquidity">Liquidita disponibile</span></div>
+            <div class="sum-label">Liquidita disponibile</div>
             <div class="sum-value" id="budgetLiquid" style="font-size:22px">---</div>
             <div style="margin-top:8px"><div class="mini-bar"><div class="mini-fill" id="budgetLiquidBar" style="width:0%;background:var(--green)"></div></div></div>
             <div style="font-size:11px;color:var(--muted);margin-top:4px" id="budgetLiquidPct">0% del budget</div>
@@ -372,7 +372,7 @@ svg.donut{transform:rotate(-90deg);}
     <!-- PERFORMANCE -->
     <div class="tab-content" id="tab-performance" style="display:none!important">
       <div class="two-col">
-        <div class="card"><div class="section-title">Rendimento atteso per asset</div><canvas id="barChart" height="220"></canvas></div>
+        <div class="card"><div class="section-title" data-i18n="expectedReturn">Rendimento atteso per asset</div><canvas id="barChart" height="220"></canvas></div>
         <div class="card"><div class="section-title">Scenari (1 anno)</div><div id="scenarioList" style="margin-top:12px"></div></div>
       </div>
     </div>
@@ -389,7 +389,7 @@ svg.donut{transform:rotate(-90deg);}
           <div class="cf" style="display:flex;align-items:flex-end"><button class="btn btn-gold" style="width:100%;justify-content:center;padding:10px" onclick="calculate()">Calcola &#8594;</button></div>
         </div>
         <div class="calc-result" id="calcResult">
-          <div class="section-title">Risultati</div>
+          <div class="section-title" data-i18n="results">Risultati</div>
           <div class="res-grid">
             <div class="res-item"><div class="res-val" id="resInvested">&#8212;</div><div class="res-lbl">Investito</div></div>
             <div class="res-item"><div class="res-val" id="resValue">&#8212;</div><div class="res-lbl">Valore attuale</div></div>
@@ -400,7 +400,7 @@ svg.donut{transform:rotate(-90deg);}
         </div>
       </div>
       <div class="calc-card">
-        <div class="section-title"><span data-i18n="dcaSimulator">Simulatore DCA</span></div>
+        <div class="section-title" data-i18n="dcaSimulator">Simulatore DCA</div>
         <div class="calc-grid">
           <div class="cf"><label>Capitale iniziale (&#8364;)</label><input type="number" id="dcaInitial" value="0"></div>
           <div class="cf"><label>Aggiunta mensile (&#8364;)</label><input type="number" id="dcaMonthly" value="100"></div>
@@ -427,12 +427,12 @@ svg.donut{transform:rotate(-90deg);}
     </div>
     <!-- VERDETTI -->
     <div class="tab-content" id="tab-verdetti">
-      <div class="section-title"><span data-i18n="positionEval">Valutazione posizioni</span></div>
+      <div class="section-title" data-i18n="positionEval">Valutazione posizioni</div>
       <div id="dynamicVerdicts"></div>
     </div>
     <!-- HEATMAP -->
     <div class="tab-content" id="tab-heatmap">
-      <div class="section-title"><span data-i18n="heatmapPerf">Heatmap performance</span></div>
+      <div class="section-title" data-i18n="heatmapPerf">Heatmap performance</div>
       <p style="font-size:12px;color:var(--muted);margin-bottom:20px">Verde = guadagno, Rosso = perdita. Si attiva con prezzi live.</p>
       <div id="heatmapGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px"></div>
     </div>
@@ -440,27 +440,27 @@ svg.donut{transform:rotate(-90deg);}
     <div class="tab-content" id="tab-ai">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
         <div>
-          <div class="section-title" style="margin:0"><span data-i18n="aiPortfolio">Analisi AI del portafoglio</span></div>
+          <div class="section-title" style="margin:0">Analisi AI del portafoglio</div>
           <div style="font-size:12px;color:var(--muted);margin-top:4px">Motore locale basato su dati storici e regole finanziarie</div>
         </div>
-        <button class="btn btn-purple" onclick="runAIAnalysis()"><span data-i18n="analyzeNow">Analizza ora</span></button>
+        <button class="btn btn-purple" onclick="runAIAnalysis()" data-i18n="analyzeNow">Analizza ora</button>
       </div>
       <div id="aiLoading" style="display:none;text-align:center;padding:48px">
         <div style="font-size:40px;margin-bottom:12px">&#129302;</div>
         <div style="font-family:Playfair Display,serif;font-size:20px;font-weight:700;margin-bottom:6px">Analisi in corso...</div>
-        <div style="font-size:12px;color:var(--muted)"><span data-i18n="portfolioEval">Valutazione del portafoglio</span></div>
+        <div style="font-size:12px;color:var(--muted)">Valutazione del portafoglio</div>
       </div>
       <div id="aiEmpty" style="text-align:center;padding:48px">
         <div style="font-size:40px;margin-bottom:12px">&#129302;</div>
         <div style="font-family:Playfair Display,serif;font-size:20px;font-weight:700;margin-bottom:8px">Analisi AI pronta</div>
         <div style="font-size:13px;color:var(--muted);margin-bottom:20px">Clicca "Analizza ora" o aggiorna i prezzi per generare un report completo.</div>
-        <button onclick="runAIAnalysis()" class="btn btn-purple" style="padding:12px 28px;justify-content:center"><span data-i18n="analyzePortfolio">Analizza portafoglio</span></button>
+        <button onclick="runAIAnalysis()" class="btn btn-purple" style="padding:12px 28px;justify-content:center" data-i18n="analyzePortfolio">Analizza portafoglio</button>
       </div>
       <div id="aiResults" style="display:none">
         <div class="ai-score-box" id="aiScoreBox"></div>
-        <div class="section-title"><span data-i18n="perAssetEval">Valutazione per asset</span></div>
+        <div class="section-title" data-i18n="perAssetEval">Valutazione per asset</div>
         <div class="ai-asset-cards" id="aiAssetCards"></div>
-        <div class="section-title"><span data-i18n="concreteHints">Suggerimenti concreti</span></div>
+        <div class="section-title" data-i18n="concreteHints">Suggerimenti concreti</div>
         <div id="aiRecList"></div>
       </div>
     </div>
@@ -468,10 +468,10 @@ svg.donut{transform:rotate(-90deg);}
     <div class="tab-content" id="tab-news">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
         <div>
-          <div class="section-title" style="margin:0"><span data-i18n="dailyBriefing">Briefing mercati giornaliero</span></div>
+          <div class="section-title" style="margin:0">Briefing mercati giornaliero</div>
           <div style="font-size:12px;color:var(--muted);margin-top:4px">Analisi AI con contesto geopolitico aggiornato</div>
         </div>
-        <button class="btn btn-blue" onclick="loadMarketNews()"><span data-i18n="updateBriefing">Aggiorna briefing</span></button>
+        <button class="btn btn-blue" onclick="loadMarketNews()" data-i18n="updateBriefing">Aggiorna briefing</button>
       </div>
       <div id="newsLoading" style="display:none;text-align:center;padding:48px">
         <div style="font-size:40px;margin-bottom:12px">&#127757;</div>
@@ -482,7 +482,7 @@ svg.donut{transform:rotate(-90deg);}
         <div style="font-size:40px;margin-bottom:12px">&#127757;</div>
         <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px">Briefing mercati</div>
         <div style="font-size:13px;color:var(--muted);margin-bottom:20px">Clicca "Aggiorna briefing" per ricevere l'analisi giornaliera dei mercati con contesto geopolitico.</div>
-        <button onclick="loadMarketNews()" class="btn btn-blue" style="padding:12px 28px;justify-content:center"><span data-i18n="loadBriefing">Carica briefing</span></button>
+        <button onclick="loadMarketNews()" class="btn btn-blue" style="padding:12px 28px;justify-content:center" data-i18n="loadBriefing">Carica briefing</button>
       </div>
       <div id="newsContent" style="display:none">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
@@ -501,14 +501,14 @@ svg.donut{transform:rotate(-90deg);}
     <div class="tab-content" id="tab-storico">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
         <div>
-          <div class="section-title" style="margin:0"><span data-i18n="closedPositions">Storico posizioni chiuse</span></div>
-          <div style="font-size:12px;color:var(--muted);margin-top:4px"><span data-i18n="tradeLog">Registro di tutti i trade completati</span></div>
+          <div class="section-title" style="margin:0">Storico posizioni chiuse</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">Registro di tutti i trade completati</div>
         </div>
         <button class="btn btn-gold" onclick="openClosePosition()">+ Chiudi posizione</button>
       </div>
       <div id="storicoEmpty" style="text-align:center;padding:48px;color:var(--muted)">
         <div style="font-size:40px;margin-bottom:12px">&#128196;</div>
-        <div style="font-size:16px;margin-bottom:8px"><span data-i18n="noClosedPos">Nessuna posizione chiusa</span></div>
+        <div style="font-size:16px;margin-bottom:8px">Nessuna posizione chiusa</div>
         <div style="font-size:13px">Quando chiudi una posizione, apparira qui con il P&L finale.</div>
       </div>
       <div id="storicoSummary" style="display:none;margin-bottom:20px">
@@ -519,7 +519,7 @@ svg.donut{transform:rotate(-90deg);}
         </div>
       </div>
       <table class="table" id="storicoTable" style="display:none">
-        <thead><tr><th><span data-i18n="asset">Asset</span></th><th><span data-i18n="invested">Investito</span></th><th><span data-i18n="buyPrice">Prezzo acquisto</span></th><th><span data-i18n="closePrice">Prezzo chiusura</span></th><th>P&L</th><th><span data-i18n="closeDate">Data chiusura</span></th><th></th></tr></thead>
+        <thead><tr><th data-i18n="asset">Asset</th><th data-i18n="invested">Investito</th><th data-i18n="buyPrice">Prezzo acquisto</th><th data-i18n="closePrice">Prezzo chiusura</th><th>P&L</th><th data-i18n="closeDate">Data chiusura</th><th></th></tr></thead>
         <tbody id="storicoBody"></tbody>
       </table>
     </div>
@@ -527,10 +527,10 @@ svg.donut{transform:rotate(-90deg);}
     <div class="tab-content" id="tab-segnali">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
         <div>
-          <div class="section-title" style="margin:0"><span data-i18n="tradingSignals">Segnali di trading</span></div>
+          <div class="section-title" style="margin:0">Segnali di trading</div>
           <div style="font-size:12px;color:var(--muted);margin-top:4px">Suggerimenti basati su variazioni prezzi e analisi AI</div>
         </div>
-        <button class="btn btn-blue" onclick="loadSegnali()"><span data-i18n="updateSignals">Aggiorna segnali</span></button>
+        <button class="btn btn-blue" onclick="loadSegnali()" data-i18n="updateSignals">Aggiorna segnali</button>
       </div>
       <div id="segnaliLoading" style="display:none;text-align:center;padding:48px">
         <div style="font-size:40px;margin-bottom:12px">&#128204;</div>
@@ -539,15 +539,15 @@ svg.donut{transform:rotate(-90deg);}
       </div>
       <div id="segnaliEmpty" style="text-align:center;padding:48px">
         <div style="font-size:40px;margin-bottom:12px">&#128204;</div>
-        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px"><span data-i18n="tradingSignals">Segnali di trading</span></div>
+        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px">Segnali di trading</div>
         <div style="font-size:13px;color:var(--muted);margin-bottom:20px">Aggiorna prima i prezzi, poi clicca per ricevere segnali personalizzati basati sul tuo portafoglio.</div>
-        <button onclick="loadSegnali()" class="btn btn-blue" style="padding:12px 28px;justify-content:center"><span data-i18n="generateSignals">Genera segnali</span></button>
+        <button onclick="loadSegnali()" class="btn btn-blue" style="padding:12px 28px;justify-content:center" data-i18n="generateSignals">Genera segnali</button>
       </div>
       <div id="segnaliContent" style="display:none">
         <!-- Alert urgenti -->
         <div id="segnaliAlerts" style="margin-bottom:20px"></div>
         <!-- Griglia segnali per asset -->
-        <div class="section-title" style="margin-bottom:12px"><span data-i18n="perAssetSignals">Segnali per asset</span></div>
+        <div class="section-title" style="margin-bottom:12px">Segnali per asset</div>
         <div id="segnaliGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:24px"></div>
         <!-- Riepilogo strategia -->
         <div class="card" id="segnaliStrategia"></div>
@@ -558,10 +558,10 @@ svg.donut{transform:rotate(-90deg);}
     <div class="tab-content" id="tab-segnali">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
         <div>
-          <div class="section-title" style="margin:0"><span data-i18n="marketSignals">Segnali di mercato</span></div>
+          <div class="section-title" style="margin:0">Segnali di mercato</div>
           <div style="font-size:12px;color:var(--muted);margin-top:4px">Analisi AI su azioni e indici globali &mdash; usa 1 credito AI</div>
         </div>
-        <button class="btn btn-gold" onclick="loadSegnali()"><span data-i18n="generateSignals">Genera segnali</span></button>
+        <button class="btn btn-gold" onclick="loadSegnali()" data-i18n="generateSignals">Genera segnali</button>
       </div>
       <div id="segnaliLoading" style="display:none;text-align:center;padding:48px">
         <div style="font-size:40px;margin-bottom:12px">&#128308;</div>
@@ -570,9 +570,9 @@ svg.donut{transform:rotate(-90deg);}
       </div>
       <div id="segnaliEmpty" style="text-align:center;padding:48px">
         <div style="font-size:40px;margin-bottom:12px">&#128308;</div>
-        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px"><span data-i18n="marketSignals">Segnali di mercato</span></div>
+        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px">Segnali di mercato</div>
         <div style="font-size:13px;color:var(--muted);margin-bottom:20px">Clicca "Genera segnali" per ricevere consigli di acquisto e vendita su azioni e indici globali.</div>
-        <button onclick="loadSegnali()" class="btn btn-gold" style="padding:12px 28px;justify-content:center"><span data-i18n="generateSignals">Genera segnali</span></button>
+        <button onclick="loadSegnali()" class="btn btn-gold" style="padding:12px 28px;justify-content:center" data-i18n="generateSignals">Genera segnali</button>
       </div>
       <div id="segnaliContent" style="display:none">
         <div id="segnaliGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:16px"></div>
@@ -619,7 +619,7 @@ svg.donut{transform:rotate(-90deg);}
   <div class="edit-section-title">Posizioni</div>
   <div id="editAssetsList"></div>
   <button class="add-asset-btn" onclick="addAsset()">+ Aggiungi asset</button>
-  <button class="save-btn" onclick="saveAll()"><span data-i18n="saveCloud">Salva su cloud</span></button>
+  <button class="save-btn" onclick="saveAll()" data-i18n="saveCloud">Salva su cloud</button>
 </div>
 <!-- ONBOARDING -->
 <div id="onboarding">
@@ -985,8 +985,8 @@ function renderStrategia() {
   tips.push({i:'🔄',t:'Ribilanciamento',d:'Ogni 3 mesi controlla la tab Verdetti. Se un asset supera il 15% del totale, valuta di alleggerire.'});
   if(assets.length>0) tips.push({i:'📡',t:'Prezzi live',d:'Clicca "Aggiorna prezzi" per quotazioni in tempo reale con conversione automatica USD/EUR.'});
   if(assets.length>0) tips.push({i:'🤖',t:'Analisi AI',d:'Usa la tab Analisi AI per valutazione automatica del rischio e rendimento atteso per ogni asset.'});
-  el.innerHTML='<div class="section-title"><span data-i18n="personalHints">Suggerimenti personalizzati</span></div><div class="strategy-grid">'+tips.map(t=>'<div class="strategy-card"><div class="strategy-icon">'+t.i+'</div><div class="strategy-title">'+t.t+'</div><div class="strategy-text">'+t.d+'</div></div>').join('')+'</div>';
-  if(tl)tl.innerHTML='<div class="tl-item"><div class="tl-dot"></div><div class="tl-phase">SETTIMANALE</div><div class="tl-title">Aggiorna i prezzi</div><div class="tl-text">Clicca Aggiorna prezzi per sincronizzare le quotazioni in EUR e vedere il P&L aggiornato.</div></div><div class="tl-item"><div class="tl-dot"></div><div class="tl-phase">MENSILE</div><div class="tl-title">DCA — aggiungi capitale</div><div class="tl-text">Usa il <span data-i18n="dcaSimulator">Simulatore DCA</span> per pianificare contributi mensili e massimizzare la crescita.</div></div><div class="tl-item"><div class="tl-dot"></div><div class="tl-phase">TRIMESTRALE</div><div class="tl-title">Ribilanciamento</div><div class="tl-text">Controlla Verdetti e Matrice Rischio. Se un asset supera il 15% del totale, valuta di alleggerire.</div></div><div class="tl-item"><div class="tl-dot"></div><div class="tl-phase">ANNUALE</div><div class="tl-title">Revisione strategica</div><div class="tl-text">Rivaluta gli obiettivi e adatta la composizione del portafoglio al contesto di mercato.</div></div>';
+  el.innerHTML='<div class="section-title" data-i18n="personalHints">Suggerimenti personalizzati</div><div class="strategy-grid">'+tips.map(t=>'<div class="strategy-card"><div class="strategy-icon">'+t.i+'</div><div class="strategy-title">'+t.t+'</div><div class="strategy-text">'+t.d+'</div></div>').join('')+'</div>';
+  if(tl)tl.innerHTML='<div class="tl-item"><div class="tl-dot"></div><div class="tl-phase">SETTIMANALE</div><div class="tl-title">Aggiorna i prezzi</div><div class="tl-text">Clicca Aggiorna prezzi per sincronizzare le quotazioni in EUR e vedere il P&L aggiornato.</div></div><div class="tl-item"><div class="tl-dot"></div><div class="tl-phase">MENSILE</div><div class="tl-title">DCA — aggiungi capitale</div><div class="tl-text">Usa il Simulatore DCA per pianificare contributi mensili e massimizzare la crescita.</div></div><div class="tl-item"><div class="tl-dot"></div><div class="tl-phase">TRIMESTRALE</div><div class="tl-title">Ribilanciamento</div><div class="tl-text">Controlla Verdetti e Matrice Rischio. Se un asset supera il 15% del totale, valuta di alleggerire.</div></div><div class="tl-item"><div class="tl-dot"></div><div class="tl-phase">ANNUALE</div><div class="tl-title">Revisione strategica</div><div class="tl-text">Rivaluta gli obiettivi e adatta la composizione del portafoglio al contesto di mercato.</div></div>';
 }
 
 // ─── VERDETTI ────────────────────────────────────────────────────────────────
@@ -1274,7 +1274,7 @@ async function loadMarketNews() {
   } catch(e) {
     document.getElementById('newsLoading').style.display='none';
     document.getElementById('newsEmpty').style.display='block';
-    document.getElementById('newsEmpty').innerHTML='<div style="font-size:40px;margin-bottom:12px">&#9888;&#65039;</div><div style="font-size:16px;margin-bottom:8px">Errore caricamento</div><div style="font-size:13px;color:var(--muted);margin-bottom:20px">'+e.message+'</div><button onclick="loadMarketNews()" class="btn btn-blue" style="padding:12px 28px;justify-content:center"><span data-i18n="retry">Riprova</span></button>';
+    document.getElementById('newsEmpty').innerHTML='<div style="font-size:40px;margin-bottom:12px">&#9888;&#65039;</div><div style="font-size:16px;margin-bottom:8px">Errore caricamento</div><div style="font-size:13px;color:var(--muted);margin-bottom:20px">'+e.message+'</div><button onclick="loadMarketNews()" class="btn btn-blue" style="padding:12px 28px;justify-content:center" data-i18n="retry">Riprova</button>';
     console.error('News error:', e);
   }
 }
@@ -1606,7 +1606,7 @@ async function loadSegnali() {
     // Render strategy summary
     if (data.strategia) {
       document.getElementById('segnaliStrategia').innerHTML = `
-        <div class="section-title"><span data-i18n="recommendedStrategy">Strategia consigliata</span></div>
+        <div class="section-title" data-i18n="recommendedStrategy">Strategia consigliata</div>
         <div style="font-size:13px;color:#C0BDB8;line-height:1.8">${data.strategia}</div>`;
     }
 
@@ -1616,7 +1616,7 @@ async function loadSegnali() {
   } catch(e) {
     document.getElementById('segnaliLoading').style.display = 'none';
     document.getElementById('segnaliEmpty').style.display = 'block';
-    document.getElementById('segnaliEmpty').innerHTML = `<div style="font-size:40px;margin-bottom:12px">⚠️</div><div style="font-size:16px;margin-bottom:8px">Errore</div><div style="font-size:13px;color:var(--muted);margin-bottom:20px">${e.message}</div><button onclick="loadSegnali()" class="btn btn-blue" style="padding:12px 28px;justify-content:center"><span data-i18n="retry">Riprova</span></button>`;
+    document.getElementById('segnaliEmpty').innerHTML = `<div style="font-size:40px;margin-bottom:12px">⚠️</div><div style="font-size:16px;margin-bottom:8px">Errore</div><div style="font-size:13px;color:var(--muted);margin-bottom:20px">${e.message}</div><button onclick="loadSegnali()" class="btn btn-blue" style="padding:12px 28px;justify-content:center" data-i18n="retry">Riprova</button>`;
   }
 }
 
@@ -1679,7 +1679,7 @@ async function loadSegnali() {
   } catch(e) {
     document.getElementById('segnaliLoading').style.display = 'none';
     document.getElementById('segnaliEmpty').style.display = 'block';
-    document.getElementById('segnaliEmpty').innerHTML = '<div style="font-size:40px;margin-bottom:12px">⚠️</div><div style="font-size:16px;margin-bottom:8px">Errore</div><div style="font-size:13px;color:var(--muted);margin-bottom:20px">' + e.message + '</div><button onclick="loadSegnali()" class="btn btn-gold" style="padding:12px 28px;justify-content:center"><span data-i18n="retry">Riprova</span></button>';
+    document.getElementById('segnaliEmpty').innerHTML = '<div style="font-size:40px;margin-bottom:12px">⚠️</div><div style="font-size:16px;margin-bottom:8px">Errore</div><div style="font-size:13px;color:var(--muted);margin-bottom:20px">' + e.message + '</div><button onclick="loadSegnali()" class="btn btn-gold" style="padding:12px 28px;justify-content:center" data-i18n="retry">Riprova</button>';
   }
 }
 
@@ -1723,12 +1723,12 @@ const TRANSLATIONS = {
     edit: 'Modifica',
     update: 'Aggiorna',
     // Summary cards
-    totalInvested: '<span data-i18n="totalInvested">Totale investito</span>',
-    openPositions: '<span data-i18n="openPositions">Posizioni aperte</span>',
-    livePositions: '<span data-i18n="livePositions">Su posizioni con prezzo live</span>',
-    portfolioAssets: '<span data-i18n="portfolioAssets">Asset in portafoglio</span>',
-    lastUpdate: '<span data-i18n="lastUpdate">Ultimo aggiornamento</span>',
-    liveYahoo: '<span data-i18n="liveYahoo">Prezzi live Yahoo Finance</span>',
+    totalInvested: 'Totale investito',
+    openPositions: 'Posizioni aperte',
+    livePositions: 'Su posizioni con prezzo live',
+    portfolioAssets: 'Asset in portafoglio',
+    lastUpdate: 'Ultimo aggiornamento',
+    liveYahoo: 'Prezzi live Yahoo Finance',
     // Tabs
     portfolio: 'Portafoglio',
     calculator: 'Calcolatore',
@@ -1742,9 +1742,9 @@ const TRANSLATIONS = {
     verdetti: 'Verdetti',
     storico: 'Storico',
     // Portfolio tab
-    allocation: '<span data-i18n="allocation">Allocazione</span>',
-    riskExposure: '<span data-i18n="riskExposure">Esposizione per livello di rischio</span>',
-    detailedPositions: '<span data-i18n="detailedPositions">Posizioni dettagliate</span>',
+    allocation: 'Allocazione',
+    riskExposure: 'Esposizione per livello di rischio',
+    detailedPositions: 'Posizioni dettagliate',
     asset: 'Asset',
     invested: 'Investito',
     buyPrice: 'Prezzo acquisto',
@@ -1754,10 +1754,10 @@ const TRANSLATIONS = {
     noAsset: 'Nessun asset',
     addAsset: 'Aggiungi asset',
     saveCloud: 'Salva su cloud',
-    budget: '<span data-i18n="budget">Budget e liquidita</span>',
-    totalBudget: '<span data-i18n="totalBudget">Budget totale</span>',
+    budget: 'Budget e liquidita',
+    totalBudget: 'Budget totale',
     budgetPlaceholder: 'Inserisci il tuo capitale totale',
-    availableLiquidity: '<span data-i18n="availableLiquidity">Liquidita disponibile</span>',
+    availableLiquidity: 'Liquidita disponibile',
     lowRisk: 'Basso',
     medRisk: 'Medio',
     highRisk: 'Alto',
@@ -1765,21 +1765,21 @@ const TRANSLATIONS = {
     expectedReturn: 'Rendimento atteso per asset',
     results: 'Risultati',
     currentValue: 'Valore attuale',
-    dcaSimulator: '<span data-i18n="dcaSimulator">Simulatore DCA</span>',
+    dcaSimulator: 'Simulatore DCA',
     // Risk Matrix
-    positionEval: '<span data-i18n="positionEval">Valutazione posizioni</span>',
+    positionEval: 'Valutazione posizioni',
     // Heatmap
-    heatmapPerf: '<span data-i18n="heatmapPerf">Heatmap performance</span>',
+    heatmapPerf: 'Heatmap performance',
     // AI tab
-    aiPortfolio: '<span data-i18n="aiPortfolio">Analisi AI del portafoglio</span>',
+    aiPortfolio: 'Analisi AI del portafoglio',
     analyzeNow: 'Analizza ora',
-    portfolioEval: '<span data-i18n="portfolioEval">Valutazione del portafoglio</span>',
+    portfolioEval: 'Valutazione del portafoglio',
     aiReady: 'Analisi AI pronta',
     analyzePortfolio: 'Analizza portafoglio',
-    perAssetEval: '<span data-i18n="perAssetEval">Valutazione per asset</span>',
-    concreteHints: '<span data-i18n="concreteHints">Suggerimenti concreti</span>',
+    perAssetEval: 'Valutazione per asset',
+    concreteHints: 'Suggerimenti concreti',
     // Markets
-    dailyBriefing: '<span data-i18n="dailyBriefing">Briefing mercati giornaliero</span>',
+    dailyBriefing: 'Briefing mercati giornaliero',
     updateBriefing: 'Aggiorna briefing',
     briefingMarkets: 'Briefing mercati',
     loadBriefing: 'Carica briefing',
@@ -1789,22 +1789,22 @@ const TRANSLATIONS = {
     opportunities: 'Opportunita',
     riskMonitor: 'Rischi da monitorare',
     // Storico
-    closedPositions: '<span data-i18n="closedPositions">Storico posizioni chiuse</span>',
-    tradeLog: '<span data-i18n="tradeLog">Registro di tutti i trade completati</span>',
-    noClosedPos: '<span data-i18n="noClosedPos">Nessuna posizione chiusa</span>',
+    closedPositions: 'Storico posizioni chiuse',
+    tradeLog: 'Registro di tutti i trade completati',
+    noClosedPos: 'Nessuna posizione chiusa',
     winTrades: 'Trade vincenti',
     lossTrades: 'Trade perdenti',
     closePrice: 'Prezzo chiusura',
     closeDate: 'Data chiusura',
     // Signals
-    tradingSignals: '<span data-i18n="tradingSignals">Segnali di trading</span>',
+    tradingSignals: 'Segnali di trading',
     updateSignals: 'Aggiorna segnali',
     generateSignals: 'Genera segnali',
-    perAssetSignals: '<span data-i18n="perAssetSignals">Segnali per asset</span>',
-    marketSignals: '<span data-i18n="marketSignals">Segnali di mercato</span>',
+    perAssetSignals: 'Segnali per asset',
+    marketSignals: 'Segnali di mercato',
     aiAnalyzing: 'Claude sta analizzando i mercati',
     // Strategy
-    recommendedStrategy: '<span data-i18n="recommendedStrategy">Strategia consigliata</span>',
+    recommendedStrategy: 'Strategia consigliata',
     weekly: 'SETTIMANALE',
     monthly: 'MENSILE',
     quarterly: 'TRIMESTRALE',
@@ -1812,7 +1812,7 @@ const TRANSLATIONS = {
     rebalancing: 'Ribilanciamento',
     strategicReview: 'Revisione strategica',
     updatePricesHint: 'Aggiorna i prezzi',
-    personalHints: '<span data-i18n="personalHints">Suggerimenti personalizzati</span>',
+    personalHints: 'Suggerimenti personalizzati',
     score: 'SCORE',
     riskLabel: 'RISCHIO',
     // Form fields
@@ -1959,12 +1959,11 @@ function applyLang() {
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     const val = t(key);
-    if (val) {
-      if (el.tagName === 'INPUT' && el.placeholder !== undefined) {
-        el.placeholder = val;
-      } else {
-        el.textContent = val;
-      }
+    if (!val) return;
+    if (el.tagName === 'INPUT') {
+      el.placeholder = val;
+    } else {
+      el.textContent = val;
     }
   });
 
@@ -1982,8 +1981,6 @@ function applyLang() {
   });
   const altroBtn = document.querySelector('#altroDropdown > .tab');
   if (altroBtn) altroBtn.innerHTML = t('other') + ' &#9660;';
-
-  renderAll();
 }
 
 // ─── NOTIFICHE PUSH ──────────────────────────────────────────────────────────
