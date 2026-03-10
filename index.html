@@ -127,13 +127,15 @@ window.addEventListener('load', () => {
   font-family: 'DM Mono', monospace;
   font-size: 11px;
   font-weight: 700;
-  color: var(--text);
+  color: #F0EDE6;
+  margin-right: 2px;
 }
 .ti-chg {
   font-family: 'DM Mono', monospace;
   font-size: 10px;
-  color: var(--muted);
-  min-width: 52px;
+  color: #8A8580;
+  min-width: 48px;
+  font-weight: 600;
 }
 
 
@@ -2636,7 +2638,7 @@ function setTicker(id, val, chg, fmt) {
   };
   var chgNum = (chg === null || chg === undefined) ? 0 : parseFloat(chg);
   var chgStr = (chgNum >= 0 ? '+' : '') + chgNum.toFixed(2) + '%';
-  var chgCol = chgNum >= 0 ? 'var(--green)' : 'var(--red)';
+  var chgCol = chgNum > 0 ? '#4CAF7E' : chgNum < 0 ? '#E05A5A' : '#8A8580';
   // Aggiorna copia A
   var va = document.getElementById('tk-' + id);
   var ca = document.getElementById('tk-' + id + '-c');
