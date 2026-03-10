@@ -99,7 +99,7 @@ window.addEventListener('load', () => {
   height: 36px;
   white-space: nowrap;
   padding-left: 56px;
-  animation: ticker-move 160s linear infinite;
+  animation: ticker-move 60s linear infinite;
   will-change: transform;
 }
 .ticker-track:hover { animation-play-state: paused; }
@@ -132,6 +132,7 @@ window.addEventListener('load', () => {
 .ti-chg {
   font-family: 'DM Mono', monospace;
   font-size: 10px;
+  color: var(--muted);
 }
 
 
@@ -2619,7 +2620,7 @@ function initTickerDOM() {
   var track = document.getElementById('tickerTrack');
   if (track) {
     var n = 35;
-    track.style.animationDuration = Math.max(60, n * 3.5) + 's';
+    track.style.animationDuration = Math.max(30, n * 1.5) + 's';
   }
 }
 
@@ -2632,7 +2633,7 @@ function setTicker(id, val, chg, fmt) {
     if (fmt === 'eur')    return v.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2});
     return v.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2});
   };
-  var chgStr = Math.abs(chg) > 0.001 ? (chg >= 0 ? '+' : '') + chg.toFixed(2) + '%' : '';
+  var chgStr = chg !== undefined ? (chg >= 0 ? '+' : '') + chg.toFixed(2) + '%' : '---';
   var chgCol = chg >= 0 ? 'var(--green)' : 'var(--red)';
   // Aggiorna copia A
   var va = document.getElementById('tk-' + id);
