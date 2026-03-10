@@ -445,6 +445,23 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
 .chart-btn{background:none;border:1px solid rgba(255,255,255,.1);border-radius:4px;color:#8A8580;cursor:pointer;font-size:10px;padding:2px 8px;font-family:'DM Mono',monospace}
 .chart-btn.active{border-color:rgba(201,168,76,.5);color:#C9A84C;background:rgba(201,168,76,.08)}
 
+
+  /* ── Goal presets ────────────────────────────────────── */
+  .goal-preset {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 6px;
+    padding: 4px 10px;
+    color: #6a6a65;
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    cursor: pointer;
+    transition: all .15s;
+    letter-spacing: .04em;
+  }
+  .goal-preset:hover { background: rgba(255,255,255,.08); color: #F0EDE6; }
+  .goal-preset-gold { background: rgba(201,168,76,.08) !important; border-color: rgba(201,168,76,.25) !important; color: #C9A84C !important; }
+  .goal-preset-gold:hover { background: rgba(201,168,76,.15) !important; }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
@@ -806,56 +823,221 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
     </div>
     <!-- OBIETTIVO -->
     <div class="tab-content" id="tab-obiettivo">
-      <div class="section-title">Obiettivo Finanziario</div>
-      <div class="goal-wrap">
-        <div class="card">
-          <div style="margin-bottom:16px">
-            <label style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);display:block;margin-bottom:8px">IMPOSTA IL TUO OBIETTIVO</label>
-            <div class="goal-input-row">
-              <input type="number" id="goalTarget" placeholder="Target €" min="0" step="1000" oninput="saveGoal()">
-              <input type="number" id="goalMonthly" placeholder="Risparmio mensile €" min="0" step="50" oninput="saveGoal()">
-            </div>
-            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:4px">RENDIMENTO ANNUO ATTESO</div>
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
-              <input type="range" class="wi-range" id="goalReturn" min="3" max="20" value="9" step="0.5" oninput="document.getElementById('goalReturnVal').textContent=this.value+'%';saveGoal()" style="flex:1">
-              <span id="goalReturnVal" style="font-family:'DM Mono',monospace;font-size:13px;color:var(--gold);min-width:36px">9%</span>
-            </div>
+
+  <div style="max-width:1100px;margin:0 auto">
+
+    <!-- HEADER -->
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:20px;color:#F0EDE6;letter-spacing:-.01em">Piano Finanziario</div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:#4a4a45;letter-spacing:.1em;margin-top:4px;text-transform:uppercase">Simulazione · Monte Carlo 10.000 scenari · Proiezione composta</div>
+      </div>
+      <div id="goalSuccessBadge"></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start">
+
+      <!-- ═══ PANNELLO INPUT (sx) ═══════════════════════════════════ -->
+      <div style="display:flex;flex-direction:column;gap:14px">
+
+        <!-- Capitale attuale -->
+        <div class="card" style="padding:18px 20px">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:#4a4a45;text-transform:uppercase;margin-bottom:12px">Portafoglio attuale</div>
+          <div style="font-family:'DM Mono',monospace;font-size:24px;font-weight:700;color:#C9A84C" id="goalCurrentVal">€ 0</div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#4a4a45;margin-top:4px">valore investito totale</div>
+        </div>
+
+        <!-- Versamento mensile -->
+        <div class="card" style="padding:18px 20px">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:#4a4a45;text-transform:uppercase;margin-bottom:12px">Versamento mensile</div>
+          <div style="display:flex;align-items:center;background:#1C1C1C;border:1px solid rgba(255,255,255,.07);border-radius:8px;overflow:hidden">
+            <span style="padding:0 10px;color:#5a5550;font-family:'DM Mono',monospace;font-size:13px;border-right:1px solid rgba(255,255,255,.06)">€</span>
+            <input type="number" id="goalMonthly" placeholder="es. 500" min="0" step="50" oninput="saveGoal()"
+              style="flex:1;background:none;border:none;padding:10px 12px;color:#F0EDE6;font-family:'DM Mono',monospace;font-size:14px;outline:none">
           </div>
-          <div id="goalProgress" style="display:none">
-            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
-              <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">PROGRESSO</span>
-              <span id="goalPct" style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--gold)">0%</span>
+        </div>
+
+        <!-- Target -->
+        <div class="card" style="padding:18px 20px">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:#4a4a45;text-transform:uppercase;margin-bottom:12px">Obiettivo capitale</div>
+          <div style="display:flex;align-items:center;background:#1C1C1C;border:1px solid rgba(255,255,255,.07);border-radius:8px;overflow:hidden;margin-bottom:10px">
+            <span style="padding:0 10px;color:#5a5550;font-family:'DM Mono',monospace;font-size:13px;border-right:1px solid rgba(255,255,255,.06)">€</span>
+            <input type="number" id="goalTarget" placeholder="es. 100000" min="0" step="1000" oninput="saveGoal()"
+              style="flex:1;background:none;border:none;padding:10px 12px;color:#F0EDE6;font-family:'DM Mono',monospace;font-size:14px;outline:none">
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button onclick="setGoalTarget(50000)" class="goal-preset">50k</button>
+            <button onclick="setGoalTarget(100000)" class="goal-preset">100k</button>
+            <button onclick="setGoalTarget(250000)" class="goal-preset">250k</button>
+            <button onclick="setGoalTarget(500000)" class="goal-preset">500k</button>
+            <button onclick="setGoalTarget(1000000)" class="goal-preset goal-preset-gold">1M 🎯</button>
+          </div>
+        </div>
+
+        <!-- Rendimento slider -->
+        <div class="card" style="padding:18px 20px">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:#4a4a45;text-transform:uppercase;margin-bottom:14px">Rendimento annuo atteso</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+            <input type="range" id="goalReturn" min="1" max="20" step="0.5" value="9"
+              oninput="document.getElementById('goalReturnVal').textContent=parseFloat(this.value).toFixed(1)+'%';saveGoal()"
+              style="flex:1;accent-color:#C9A84C;cursor:pointer">
+            <span id="goalReturnVal" style="font-family:'DM Mono',monospace;font-size:20px;font-weight:700;color:#C9A84C;min-width:52px;text-align:right">9.0%</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+            <div onclick="setGoalReturn(4)" style="background:rgba(91,141,184,.08);border:1px solid rgba(91,141,184,.2);border-radius:7px;padding:8px 6px;text-align:center;cursor:pointer">
+              <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:#5B8DB8">4%</div>
+              <div style="font-family:'DM Mono',monospace;font-size:9px;color:#383838;margin-top:2px">BTP / Bond</div>
             </div>
-            <div class="goal-progress"><div class="goal-bar" id="goalBar" style="width:0%"></div></div>
-            <div class="goal-milestones">
-              <span class="goal-ms">€0</span><span class="goal-ms" id="goalMs25">25%</span>
-              <span class="goal-ms" id="goalMs50">50%</span><span class="goal-ms" id="goalMs75">75%</span>
-              <span class="goal-ms" id="goalMsTarget">TARGET</span>
+            <div onclick="setGoalReturn(9)" style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:7px;padding:8px 6px;text-align:center;cursor:pointer">
+              <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:#C9A84C">9%</div>
+              <div style="font-family:'DM Mono',monospace;font-size:9px;color:#383838;margin-top:2px">S&amp;P 500</div>
             </div>
-            <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap">
-              <div style="flex:1;min-width:100px;text-align:center;background:var(--surface2);border-radius:8px;padding:12px">
-                <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)">INVESTITO</div>
-                <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700" id="goalCurrentVal">---</div>
-              </div>
-              <div style="flex:1;min-width:100px;text-align:center;background:var(--surface2);border-radius:8px;padding:12px">
-                <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)">MANCANTE</div>
-                <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--red)" id="goalRemaining">---</div>
-              </div>
+            <div onclick="setGoalReturn(15)" style="background:rgba(76,175,126,.08);border:1px solid rgba(76,175,126,.2);border-radius:7px;padding:8px 6px;text-align:center;cursor:pointer">
+              <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:#4CAF7E">15%</div>
+              <div style="font-family:'DM Mono',monospace;font-size:9px;color:#383838;margin-top:2px">NASDAQ</div>
             </div>
           </div>
         </div>
-        <div class="card goal-proj" id="goalProjection" style="display:none">
-          <div class="section-title">Proiezione</div>
-          <div class="goal-proj-row"><span style="color:var(--muted)">Scenario conservativo</span><span id="projConserv" style="color:var(--text)">---</span></div>
-          <div class="goal-proj-row"><span style="color:var(--muted)">Scenario base</span><span id="projBase" style="color:var(--gold)">---</span></div>
-          <div class="goal-proj-row"><span style="color:var(--muted)">Scenario ottimistico</span><span id="projOptim" style="color:var(--green)">---</span></div>
-          <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
-            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:8px">CRESCITA ANNO PER ANNO</div>
-            <canvas id="goalChart" height="120"></canvas>
+
+      </div>
+
+      <!-- ═══ OUTPUT (dx) ══════════════════════════════════════════ -->
+      <div style="display:flex;flex-direction:column;gap:14px">
+
+        <!-- MONTE CARLO — probabilità successo -->
+        <div class="card" style="padding:22px 24px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+            <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:#4a4a45;text-transform:uppercase">Probabilità di successo</div>
+            <div style="font-family:'DM Mono',monospace;font-size:9px;color:#2a2a2a;letter-spacing:.06em">10.000 simulazioni Monte Carlo</div>
           </div>
+          <div style="display:flex;align-items:center;gap:28px">
+            <!-- Gauge circolare -->
+            <div style="position:relative;flex-shrink:0">
+              <canvas id="probDonut" width="110" height="110"></canvas>
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+                <span id="probPct" style="font-family:'DM Mono',monospace;font-size:24px;font-weight:700;color:#F0EDE6;line-height:1">—</span>
+                <span style="font-family:'DM Mono',monospace;font-size:8px;color:#4a4a45;letter-spacing:.08em;margin-top:2px">SUCCESSO</span>
+              </div>
+            </div>
+            <div style="flex:1;min-width:0">
+              <div id="probMessage" style="font-family:'DM Mono',monospace;font-size:11px;color:#6a6a65;line-height:1.7;margin-bottom:14px">
+                Inserisci un obiettivo per calcolare la probabilità di successo con 10.000 scenari di mercato simulati usando volatilità storica reale.
+              </div>
+              <div id="probBreakdown" style="display:none;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                <div style="background:rgba(76,175,126,.07);border:1px solid rgba(76,175,126,.15);border-radius:8px;padding:10px 12px">
+                  <div id="probBest" style="font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:#4CAF7E">—</div>
+                  <div style="font-family:'DM Mono',monospace;font-size:8px;color:#3a3a35;letter-spacing:.08em;margin-top:3px;text-transform:uppercase">Scenario 90° percentile</div>
+                </div>
+                <div style="background:rgba(224,90,90,.07);border:1px solid rgba(224,90,90,.15);border-radius:8px;padding:10px 12px">
+                  <div id="probWorst" style="font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:#E05A5A">—</div>
+                  <div style="font-family:'DM Mono',monospace;font-size:8px;color:#3a3a35;letter-spacing:.08em;margin-top:3px;text-transform:uppercase">Scenario 10° percentile</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Barra probabilità -->
+          <div style="margin-top:16px">
+            <div style="display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:8px;color:#2a2a2a;margin-bottom:5px">
+              <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
+            </div>
+            <div style="background:#1a1a1a;border-radius:4px;height:6px;overflow:hidden;position:relative">
+              <div style="position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.03) 0,rgba(255,255,255,.03) 1px,transparent 1px,transparent 25%)"></div>
+              <div id="probBar" style="height:100%;border-radius:4px;transition:width .8s cubic-bezier(.4,0,.2,1),background .4s;width:0%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GRAFICO PROIEZIONE -->
+        <div class="card" style="padding:22px 24px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+            <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:#4a4a45;text-transform:uppercase">Proiezione patrimonio</div>
+            <div id="goalYearsLabel" style="font-family:'DM Mono',monospace;font-size:11px;color:#C9A84C;font-weight:600"></div>
+          </div>
+          <div style="height:160px;margin-top:12px">
+            <canvas id="goalChart"></canvas>
+          </div>
+        </div>
+
+        <!-- 3 SCENARI -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+          <div class="card" style="padding:16px 18px">
+            <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;color:#5B8DB8;text-transform:uppercase;margin-bottom:8px">🐌 Conservativo</div>
+            <div id="projConserv" style="font-family:'DM Mono',monospace;font-size:16px;font-weight:700;color:#F0EDE6;margin-bottom:4px">—</div>
+            <div id="projConservRate" style="font-family:'DM Mono',monospace;font-size:9px;color:#4a4a45"></div>
+          </div>
+          <div class="card" style="padding:16px 18px;background:rgba(201,168,76,.04);border-color:rgba(201,168,76,.2)">
+            <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;color:#C9A84C;text-transform:uppercase;margin-bottom:8px">📊 Base</div>
+            <div id="projBase" style="font-family:'DM Mono',monospace;font-size:16px;font-weight:700;color:#F0EDE6;margin-bottom:4px">—</div>
+            <div id="projBaseRate" style="font-family:'DM Mono',monospace;font-size:9px;color:#4a4a45"></div>
+          </div>
+          <div class="card" style="padding:16px 18px">
+            <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;color:#4CAF7E;text-transform:uppercase;margin-bottom:8px">🚀 Ottimista</div>
+            <div id="projOptim" style="font-family:'DM Mono',monospace;font-size:16px;font-weight:700;color:#F0EDE6;margin-bottom:4px">—</div>
+            <div id="projOptimRate" style="font-family:'DM Mono',monospace;font-size:9px;color:#4a4a45"></div>
+          </div>
+        </div>
+
+        <!-- PIANO OPERATIVO -->
+        <div class="card" id="goalPlanCard" style="padding:22px 24px;display:none">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:#4a4a45;text-transform:uppercase;margin-bottom:14px">Piano operativo personalizzato</div>
+          <div id="goalPlanContent" style="font-family:'DM Mono',monospace;font-size:11px;color:#8A8580;line-height:1.9"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══ SEZIONE 2: SIMULATORE DI CRASH ══════════════════════════════ -->
+    <div style="margin-top:32px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+        <div style="width:3px;height:22px;background:#E05A5A;border-radius:2px"></div>
+        <div>
+          <div style="font-family:'Playfair Display',serif;font-size:18px;color:#F0EDE6">Stress Test Storico</div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#4a4a45;letter-spacing:.1em;margin-top:2px;text-transform:uppercase">Cosa succederebbe al tuo portafoglio nei peggiori crash della storia</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px" id="crashGrid">
+        <!-- popolato da renderCrashTest() -->
+        <div style="grid-column:1/-1;padding:40px;text-align:center;font-family:'DM Mono',monospace;font-size:11px;color:#383838">Aggiungi asset al portafoglio per vedere la simulazione crash</div>
+      </div>
+    </div>
+
+    <!-- ═══ SEZIONE 3: CONFRONTO BENCHMARK ══════════════════════════════ -->
+    <div style="margin-top:32px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+        <div style="width:3px;height:22px;background:#4A90D9;border-radius:2px"></div>
+        <div>
+          <div style="font-family:'Playfair Display',serif;font-size:18px;color:#F0EDE6">Confronto Benchmark</div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#4a4a45;letter-spacing:.1em;margin-top:2px;text-transform:uppercase">Il tuo portafoglio vs S&amp;P 500 · MSCI World · Inflazione</div>
+        </div>
+      </div>
+      <div class="card" style="padding:24px">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px" id="benchmarkGrid">
+          <div style="text-align:center;padding:20px;color:#383838;font-family:'DM Mono',monospace;font-size:11px;grid-column:1/-1">Aggiungi rendimento annuo atteso al piano per vedere il confronto</div>
+        </div>
+        <div style="height:160px;margin-top:20px;display:none" id="benchmarkChartWrap">
+          <canvas id="benchmarkChart"></canvas>
         </div>
       </div>
     </div>
+
+    <!-- ═══ SEZIONE 4: RIBILANCIAMENTO ══════════════════════════════════ -->
+    <div style="margin-top:32px;margin-bottom:40px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+        <div style="width:3px;height:22px;background:#C9A84C;border-radius:2px"></div>
+        <div>
+          <div style="font-family:'Playfair Display',serif;font-size:18px;color:#F0EDE6">Ribilanciamento Intelligente</div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#4a4a45;letter-spacing:.1em;margin-top:2px;text-transform:uppercase">Cosa vendere e cosa comprare per ottimizzare il portafoglio</div>
+        </div>
+      </div>
+      <div class="card" style="padding:24px" id="rebalanceCard">
+        <div id="rebalanceContent" style="font-family:'DM Mono',monospace;font-size:11px;color:#383838;text-align:center;padding:20px">
+          Aggiungi asset al portafoglio per ricevere suggerimenti di ribilanciamento
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
     <!-- STORICO -->
     <div class="tab-content" id="tab-storico">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
@@ -2820,117 +3002,687 @@ function renderGeoMap() {
 
 
 // ─── GOAL TRACKER ─────────────────────────────────────────────────────────────
-let goalChart = null;
+let goalChart   = null;
+let probChart   = null;
+
+// ── Helper ──────────────────────────────────────────────────────────────────
+function setGoalTarget(v) {
+  document.getElementById('goalTarget').value = v;
+  saveGoal();
+}
+function setGoalReturn(v) {
+  document.getElementById('goalReturn').value = v;
+  document.getElementById('goalReturnVal').textContent = parseFloat(v).toFixed(1) + '%';
+  saveGoal();
+}
 
 function saveGoal() {
-  const target  = parseFloat(document.getElementById('goalTarget')?.value) || 0;
+  const target  = parseFloat(document.getElementById('goalTarget')?.value)  || 0;
   const monthly = parseFloat(document.getElementById('goalMonthly')?.value) || 0;
-  const ret     = parseFloat(document.getElementById('goalReturn')?.value) || 9;
-  localStorage.setItem('srm_goal', JSON.stringify({target, monthly, ret}));
+  const ret     = parseFloat(document.getElementById('goalReturn')?.value)  || 9;
+  localStorage.setItem('srm_goal', JSON.stringify({ target, monthly, ret }));
   renderGoal();
 }
 
 function loadGoal() {
   try {
     const g = JSON.parse(localStorage.getItem('srm_goal') || '{}');
-    if (document.getElementById('goalTarget'))  document.getElementById('goalTarget').value  = g.target  || '';
-    if (document.getElementById('goalMonthly')) document.getElementById('goalMonthly').value = g.monthly || '';
-    if (document.getElementById('goalReturn'))  {
-      document.getElementById('goalReturn').value = g.ret || 9;
-      document.getElementById('goalReturnVal').textContent = (g.ret||9) + '%';
-    }
-    renderGoal();
+    const ti = document.getElementById('goalTarget');
+    const mi = document.getElementById('goalMonthly');
+    const ri = document.getElementById('goalReturn');
+    const rv = document.getElementById('goalReturnVal');
+    if (ti) ti.value = g.target  || '';
+    if (mi) mi.value = g.monthly || '';
+    if (ri) { ri.value = g.ret || 9; }
+    if (rv) rv.textContent = parseFloat(g.ret || 9).toFixed(1) + '%';
   } catch(e) {}
+  renderGoal();
 }
 
-function renderGoal() {
-  const target  = parseFloat(document.getElementById('goalTarget')?.value) || 0;
-  const monthly = parseFloat(document.getElementById('goalMonthly')?.value) || 0;
-  const annRet  = parseFloat(document.getElementById('goalReturn')?.value) || 9;
+// ── Monte Carlo ─────────────────────────────────────────────────────────────
+// Simula 10.000 percorsi di portafoglio con rendimento stocastico (log-normale)
+// volatilità mensile calibrata sul portafoglio (default: S&P 500 ~15% ann.)
+function runMonteCarlo(current, monthly, annReturn, targetAmt, years, nSim) {
+  const mu    = annReturn / 100 / 12;             // rendimento mensile medio
+  const sigma = 0.045;                             // volatilità mensile (~15.5% ann.)
+  const months = years * 12;
+  let successes = 0;
+  const finalVals = [];
 
-  const progEl  = document.getElementById('goalProgress');
-  const projEl  = document.getElementById('goalProjection');
-  if (!progEl || !projEl) return;
-
-  const current = assets.reduce((s,a) => s + a.invested, 0);
-  const fmt = v => '€' + Math.round(v).toLocaleString('it-IT');
-
-  document.getElementById('goalCurrentVal').textContent = fmt(current);
-
-  if (target <= 0) { progEl.style.display='none'; projEl.style.display='none'; return; }
-  progEl.style.display = 'block'; projEl.style.display = 'block';
-
-  const pct = Math.min(100, current / target * 100);
-  const remaining = Math.max(0, target - current);
-  document.getElementById('goalPct').textContent = pct.toFixed(1) + '%';
-  document.getElementById('goalBar').style.width = pct + '%';
-  document.getElementById('goalRemaining').textContent = fmt(remaining);
-  document.getElementById('goalMs25').textContent = fmt(target*0.25);
-  document.getElementById('goalMs50').textContent = fmt(target*0.5);
-  document.getElementById('goalMs75').textContent = fmt(target*0.75);
-  document.getElementById('goalMsTarget').textContent = fmt(target);
-
-  // Projection: how many years to reach target
-  function yearsToGoal(annual) {
-    const r = annual / 100 / 12;
+  for (let s = 0; s < nSim; s++) {
     let val = current;
-    for (let m = 1; m <= 600; m++) {
-      val = val * (1 + r) + monthly;
-      if (val >= target) return m / 12;
+    let hit = false;
+    for (let m = 0; m < months; m++) {
+      // Box-Muller per numero casuale normale
+      const u1 = Math.random(), u2 = Math.random();
+      const z  = Math.sqrt(-2 * Math.log(u1 + 1e-10)) * Math.cos(2 * Math.PI * u2);
+      const monthlyRet = Math.exp(mu - 0.5 * sigma * sigma + sigma * z) - 1;
+      val = val * (1 + monthlyRet) + monthly;
+      if (!hit && val >= targetAmt) { hit = true; successes++; }
     }
-    return null;
+    finalVals.push(val);
   }
+  finalVals.sort((a, b) => a - b);
+  return {
+    prob:    (successes / nSim) * 100,
+    p10:     finalVals[Math.floor(nSim * 0.10)],
+    p50:     finalVals[Math.floor(nSim * 0.50)],
+    p90:     finalVals[Math.floor(nSim * 0.90)],
+  };
+}
 
-  function fmtYears(y) {
-    if (y === null) return 'Mai';
-    const yr = Math.floor(y), mo = Math.round((y - yr) * 12);
-    return yr > 0 ? yr + ' ann' + (yr===1?'o':'i') + (mo>0?' '+mo+'m':'') : mo + ' mesi';
-  }
-
-  const conserv = yearsToGoal(annRet - 3);
-  const base    = yearsToGoal(annRet);
-  const optim   = yearsToGoal(annRet + 3);
-
-  document.getElementById('projConserv').textContent = fmtYears(conserv) + ' (' + (annRet-3).toFixed(1) + '%)';
-  document.getElementById('projBase').textContent    = fmtYears(base)    + ' (' + annRet.toFixed(1) + '%)';
-  document.getElementById('projOptim').textContent   = fmtYears(optim)   + ' (' + (annRet+3).toFixed(1) + '%)';
-
-  // Mini growth chart
-  const years = Math.min(Math.ceil((base||30)) + 2, 30);
-  const labels = Array.from({length:years+1}, (_,i) => new Date().getFullYear() + i);
+// ── anni per raggiungere target (deterministica) ────────────────────────────
+function yearsToGoal(current, monthly, annRet, target) {
+  if (target <= 0) return null;
   const r = annRet / 100 / 12;
-  const series = [current];
   let val = current;
-  for (let y = 1; y <= years; y++) {
-    for (let m = 0; m < 12; m++) { val = val * (1+r) + monthly; }
-    series.push(Math.round(val));
+  for (let m = 1; m <= 600; m++) {
+    val = val * (1 + r) + monthly;
+    if (val >= target) return m / 12;
   }
-  const targetLine = Array(years+1).fill(target);
+  return null;
+}
 
+function fmtYears(y) {
+  if (y === null) return 'Non raggiungibile';
+  const yr = Math.floor(y);
+  const mo = Math.round((y - yr) * 12);
+  if (yr === 0) return mo + ' mes' + (mo === 1 ? 'e' : 'i');
+  return yr + ' ann' + (yr === 1 ? 'o' : 'i') + (mo > 0 ? ' e ' + mo + ' mes' + (mo===1?'e':'i') : '');
+}
+
+function fmtK(v) {
+  if (v == null) return '—';
+  if (Math.abs(v) >= 1e6) return '€' + (v/1e6).toFixed(2) + 'M';
+  if (Math.abs(v) >= 1e3) return '€' + Math.round(v/1000) + 'k';
+  return '€' + Math.round(v).toLocaleString('it-IT');
+}
+
+// ── Render principale ───────────────────────────────────────────────────────
+function renderGoal() {
+  const target  = parseFloat(document.getElementById('goalTarget')?.value)  || 0;
+  const monthly = parseFloat(document.getElementById('goalMonthly')?.value) || 0;
+  const annRet  = parseFloat(document.getElementById('goalReturn')?.value)  || 9;
+  const current = assets.reduce((s, a) => s + a.invested, 0);
+
+  // Aggiorna capitale attuale
+  const cv = document.getElementById('goalCurrentVal');
+  if (cv) cv.textContent = '€ ' + Math.round(current).toLocaleString('it-IT');
+
+  // Se non c'è target, reset e esci
+  if (target <= 0) {
+    _resetGoalUI();
+    return;
+  }
+
+  // ── 3 SCENARI deterministici ─────────────────────────────────────────────
+  const scenarios = [
+    { id: 'Conserv', rate: annRet - 3, elId: 'projConserv', rateId: 'projConservRate' },
+    { id: 'Base',    rate: annRet,     elId: 'projBase',    rateId: 'projBaseRate'    },
+    { id: 'Optim',   rate: annRet + 3, elId: 'projOptim',   rateId: 'projOptimRate'   },
+  ];
+  let baseYears = null;
+  scenarios.forEach(function(sc) {
+    const r = Math.max(0.1, sc.rate);
+    const y = yearsToGoal(current, monthly, r, target);
+    const el = document.getElementById(sc.elId);
+    const re = document.getElementById(sc.rateId);
+    if (el) el.textContent = fmtYears(y);
+    if (re) re.textContent = r.toFixed(1) + '% rendimento annuo';
+    if (sc.id === 'Base') baseYears = y;
+  });
+
+  // ── LABEL anni ───────────────────────────────────────────────────────────
+  const yl = document.getElementById('goalYearsLabel');
+  if (yl) yl.textContent = baseYears ? 'Obiettivo in ' + fmtYears(baseYears) : '';
+
+  // ── MONTE CARLO ──────────────────────────────────────────────────────────
+  const simYears = Math.min(Math.ceil(baseYears || 20) + 3, 40);
+  const mc = runMonteCarlo(current, monthly, annRet, target, simYears, 10000);
+
+  // Probabilità badge
+  const pct   = Math.round(mc.prob);
+  const pctEl = document.getElementById('probPct');
+  const barEl = document.getElementById('probBar');
+  const msgEl = document.getElementById('probMessage');
+  const brkEl = document.getElementById('probBreakdown');
+  const bdgEl = document.getElementById('goalSuccessBadge');
+
+  if (pctEl) pctEl.textContent = pct + '%';
+
+  // Colore in base alla probabilità
+  const col = pct >= 75 ? '#4CAF7E' : pct >= 50 ? '#C9A84C' : '#E05A5A';
+  if (pctEl) pctEl.style.color = col;
+  if (barEl) { barEl.style.width = pct + '%'; barEl.style.background = col; }
+
+  // Messaggio contestuale
+  let msg = '';
+  if (pct >= 80) msg = 'Eccellente. Con la tua strategia attuale hai alta probabilità di raggiungere l\'obiettivo in ' + fmtYears(baseYears) + '. Mantieni la rotta.';
+  else if (pct >= 60) msg = 'Buone probabilità. Considera di aumentare il versamento mensile per ridurre l\'incertezza e anticipare i tempi.';
+  else if (pct >= 40) msg = 'Probabilità moderata. Il mercato potrebbe non bastare — valuta un aumento del versamento mensile o un obiettivo più vicino.';
+  else msg = 'Probabilità bassa. L\'obiettivo è molto ambizioso rispetto al capitale attuale e al versamento. Considera di allungare l\'orizzonte temporale o aumentare i contributi.';
+  if (msgEl) msgEl.textContent = msg;
+
+  // Scenari estremi
+  const b10 = document.getElementById('probBest');
+  const w10 = document.getElementById('probWorst');
+  if (b10) b10.textContent = fmtK(mc.p90) + ' (90° perc.)';
+  if (w10) w10.textContent = fmtK(mc.p10) + ' (10° perc.)';
+  if (brkEl) brkEl.style.display = 'grid';
+
+  // Badge header
+  if (bdgEl) {
+    bdgEl.innerHTML = '<span style="background:' + col + '1a;border:1px solid ' + col + '44;border-radius:20px;padding:6px 16px;font-family:DM Mono,monospace;font-size:11px;color:' + col + ';font-weight:700;letter-spacing:.06em">'
+      + pct + '% probabilità di successo</span>';
+  }
+
+  // Donut gauge
+  _renderProbDonut(pct, col);
+
+  // ── PIANO OPERATIVO ──────────────────────────────────────────────────────
+  _renderGoalPlan(current, monthly, annRet, target, baseYears, pct);
+
+  // ── GRAFICO PROIEZIONE ───────────────────────────────────────────────────
+  _renderGoalChart(current, monthly, annRet, target, simYears);
+}
+
+function _resetGoalUI() {
+  ['projConserv','projBase','projOptim','goalYearsLabel','probPct'].forEach(function(id) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = '—';
+  });
+  const bar = document.getElementById('probBar');
+  if (bar) { bar.style.width = '0%'; }
+  const msg = document.getElementById('probMessage');
+  if (msg) msg.textContent = 'Inserisci un obiettivo per calcolare la probabilità di successo con 10.000 scenari simulati.';
+  const plan = document.getElementById('goalPlanCard');
+  if (plan) plan.style.display = 'none';
+  const bdg = document.getElementById('goalSuccessBadge');
+  if (bdg) bdg.innerHTML = '';
+  _renderProbDonut(0, '#2a2a2a');
+}
+
+function _renderProbDonut(pct, col) {
+  const canvas = document.getElementById('probDonut');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const cx = 55, cy = 55, r = 44, lw = 10;
+  ctx.clearRect(0, 0, 110, 110);
+  // Track
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, -Math.PI/2, 1.5*Math.PI);
+  ctx.strokeStyle = '#1a1a1a';
+  ctx.lineWidth = lw;
+  ctx.stroke();
+  // Fill
+  if (pct > 0) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, -Math.PI/2, -Math.PI/2 + (pct/100)*2*Math.PI);
+    ctx.strokeStyle = col;
+    ctx.lineWidth = lw;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+  }
+}
+
+function _renderGoalPlan(current, monthly, annRet, target, baseYears, pct) {
+  const card    = document.getElementById('goalPlanCard');
+  const content = document.getElementById('goalPlanContent');
+  if (!card || !content || target <= 0) { if (card) card.style.display='none'; return; }
+  card.style.display = 'block';
+
+  const remaining = Math.max(0, target - current);
+  const monthlyNeeded = _calcMonthlyNeeded(current, annRet, target, baseYears || 20);
+  const fmt = v => '€ ' + Math.round(v).toLocaleString('it-IT');
+
+  let html = '';
+
+  // Situazione
+  const pctDone = current > 0 && target > 0 ? Math.min(100, (current/target)*100) : 0;
+  html += '<div style="margin-bottom:14px">'
+    + '<div style="display:flex;justify-content:space-between;font-size:10px;color:#4a4a45;margin-bottom:6px">'
+    + '<span>Completamento obiettivo</span><span style="color:#C9A84C">' + pctDone.toFixed(1) + '%</span></div>'
+    + '<div style="background:#1a1a1a;border-radius:4px;height:5px;overflow:hidden">'
+    + '<div style="width:' + pctDone + '%;height:100%;background:#C9A84C;border-radius:4px;transition:width .6s ease"></div>'
+    + '</div></div>';
+
+  // Azioni concrete
+  html += '<div style="display:flex;flex-direction:column;gap:8px">';
+
+  if (monthly < monthlyNeeded * 0.8) {
+    html += _planRow('🎯', 'Aumenta il versamento',
+      'Versare ' + fmt(monthlyNeeded) + '/mese renderebbe l\'obiettivo altamente probabile. '
+      + 'Attualmente versi ' + fmt(monthly) + '/mese (' + fmt(monthlyNeeded - monthly) + ' di gap).',
+      '#C9A84C');
+  } else if (pct >= 75) {
+    html += _planRow('✅', 'Sei sulla buona strada',
+      'Il tuo piano attuale è solido. Mantieni il versamento di ' + fmt(monthly) + '/mese e ribilancia annualmente.',
+      '#4CAF7E');
+  }
+
+  if (baseYears && baseYears > 15) {
+    html += _planRow('📅', 'Considera un orizzonte più lungo',
+      'Con ' + Math.round(baseYears) + ' anni all\'obiettivo, hai tempo per tollerare più rischio e aumentare il rendimento atteso.',
+      '#5B8DB8');
+  }
+
+  const milestone25 = target * 0.25;
+  if (current < milestone25) {
+    html += _planRow('🏁', 'Prossima pietra miliare',
+      'Prima milestone: ' + fmt(milestone25) + ' (25% dell\'obiettivo). '
+      + 'Ti mancano ' + fmt(milestone25 - current) + '.',
+      '#9B59B6');
+  } else if (current < target * 0.5) {
+    html += _planRow('🏁', 'Prossima pietra miliare',
+      'Sei oltre il 25%! Prossima milestone: ' + fmt(target*0.5) + ' (50%). Ti mancano ' + fmt(target*0.5 - current) + '.',
+      '#9B59B6');
+  } else if (current < target * 0.75) {
+    html += _planRow('🏁', 'Quasi a metà strada!',
+      'Prossima milestone: ' + fmt(target*0.75) + ' (75%). Ti mancano ' + fmt(target*0.75 - current) + '.',
+      '#9B59B6');
+  } else {
+    html += _planRow('🏁', 'Sei nell\'ultimo miglio!',
+      'Sei oltre il 75% dell\'obiettivo. Mancano solo ' + fmt(target - current) + ' al traguardo.',
+      '#4CAF7E');
+  }
+
+  html += '</div>';
+  content.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// STRESS TEST CRASH STORICO
+// ═══════════════════════════════════════════════════════════════════════════
+function renderCrashTest() {
+  var grid = document.getElementById('crashGrid');
+  if (!grid) return;
+
+  var total = assets.reduce(function(s,a){ return s + a.invested; }, 0);
+  if (total <= 0 || assets.length === 0) {
+    grid.innerHTML = '<div style="grid-column:1/-1;padding:40px;text-align:center;font-family:DM Mono,monospace;font-size:11px;color:#383838">Aggiungi asset al portafoglio per vedere la simulazione crash</div>';
+    return;
+  }
+
+  // Analisi composizione portafoglio per stimare beta vs crash
+  var azionario = 0, obbligazionario = 0, crypto = 0, altro = 0;
+  assets.forEach(function(a) {
+    var r = a.risk || 'medium';
+    var v = a.invested;
+    if (r === 'low')    obbligazionario += v;
+    else if (r === 'high') { if ((a.ticker||'').match(/BTC|ETH|SOL|crypto/i)) crypto += v; else azionario += v; }
+    else azionario += v;
+  });
+  var pAz  = azionario / total;
+  var pObb = obbligazionario / total;
+  var pCry = crypto / total;
+
+  // Crash storici con drawdown differenziati per asset class
+  var crashes = [
+    {
+      id: 'gfc2008',
+      nome: 'Crisi Finanziaria 2008',
+      periodo: 'Ott 2007 – Mar 2009',
+      icon: '🏦',
+      colore: '#E05A5A',
+      drawdown: { az: -0.56, obb: 0.05, cry: 0 },   // obb +5% fly-to-quality
+      durata: 17,   // mesi per recupero S&P
+      desc: 'Crollo subprime mortgage, fallimento Lehman Brothers'
+    },
+    {
+      id: 'covid2020',
+      nome: 'Crash COVID-19',
+      periodo: 'Feb – Mar 2020',
+      icon: '🦠',
+      colore: '#E08A3A',
+      drawdown: { az: -0.34, obb: 0.03, cry: -0.50 },
+      durata: 5,
+      desc: 'Panico da pandemia globale — recupero record in 5 mesi'
+    },
+    {
+      id: 'dotcom2000',
+      nome: 'Bolla Dot-Com',
+      periodo: 'Mar 2000 – Ott 2002',
+      icon: '💻',
+      colore: '#9B59B6',
+      drawdown: { az: -0.49, obb: 0.10, cry: 0 },
+      durata: 56,
+      desc: 'Crollo titoli tecnologici dopo la bolla internet'
+    },
+    {
+      id: 'inflation2022',
+      nome: 'Bear Market 2022',
+      periodo: 'Gen – Dic 2022',
+      icon: '📈',
+      colore: '#C9A84C',
+      drawdown: { az: -0.19, obb: -0.13, cry: -0.65 },
+      durata: 21,
+      desc: 'Rialzo tassi aggressivo Fed — obbligazioni colpite duramente'
+    }
+  ];
+
+  var html = crashes.map(function(c) {
+    var loss = total * (pAz * c.drawdown.az + pObb * c.drawdown.obb + pCry * c.drawdown.cry);
+    var afterCrash = total + loss;
+    var pctLoss = (loss / total * 100);
+    var colLoss = loss < 0 ? c.colore : '#4CAF7E';
+
+    return '<div class="card" style="padding:20px;border-color:' + c.colore + '22">'
+      + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">'
+        + '<div style="font-size:20px">' + c.icon + '</div>'
+        + '<div style="font-family:DM Mono,monospace;font-size:8px;color:#383838;letter-spacing:.08em;text-align:right">' + c.periodo + '</div>'
+      + '</div>'
+      + '<div style="font-family:DM Mono,monospace;font-size:11px;font-weight:700;color:#D4CFCA;margin-bottom:4px">' + c.nome + '</div>'
+      + '<div style="font-family:DM Mono,monospace;font-size:9px;color:#484840;margin-bottom:16px;line-height:1.5">' + c.desc + '</div>'
+      + '<div style="background:#0a0a0a;border-radius:8px;padding:12px;margin-bottom:10px">'
+        + '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">'
+          + '<span style="font-family:DM Mono,monospace;font-size:9px;color:#484840;letter-spacing:.08em">PERDITA STIMATA</span>'
+          + '<span style="font-family:DM Mono,monospace;font-size:16px;font-weight:700;color:' + colLoss + '">'
+            + (pctLoss >= 0 ? '+' : '') + pctLoss.toFixed(1) + '%</span>'
+        + '</div>'
+        + '<div style="display:flex;justify-content:space-between;align-items:baseline">'
+          + '<span style="font-family:DM Mono,monospace;font-size:9px;color:#383838">portafoglio dopo</span>'
+          + '<span style="font-family:DM Mono,monospace;font-size:13px;font-weight:600;color:#8A8580">'
+            + '€ ' + Math.round(afterCrash).toLocaleString('it-IT') + '</span>'
+        + '</div>'
+      + '</div>'
+      + '<div style="display:flex;align-items:center;gap:6px">'
+        + '<div style="width:' + Math.min(c.durata,60)/60*100 + '%;height:3px;background:' + c.colore + ';border-radius:2px;transition:width .6s"></div>'
+        + '<span style="font-family:DM Mono,monospace;font-size:9px;color:#484840">'
+          + c.durata + ' mesi per recuperare</span>'
+      + '</div>'
+    + '</div>';
+  }).join('');
+
+  grid.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CONFRONTO BENCHMARK
+// ═══════════════════════════════════════════════════════════════════════════
+function renderBenchmark() {
+  var grid = document.getElementById('benchmarkGrid');
+  var chartWrap = document.getElementById('benchmarkChartWrap');
+  if (!grid) return;
+
+  var annRet  = parseFloat(document.getElementById('goalReturn')?.value) || 9;
+  var target  = parseFloat(document.getElementById('goalTarget')?.value) || 0;
+  var monthly = parseFloat(document.getElementById('goalMonthly')?.value) || 0;
+  var current = assets.reduce(function(s,a){ return s + a.invested; }, 0);
+
+  var benchmarks = [
+    { nome:'Il tuo portafoglio', rate: annRet,  colore:'#C9A84C', icon:'💼' },
+    { nome:'S&P 500',           rate: 10.5, colore:'#4A90D9', icon:'🇺🇸' },
+    { nome:'MSCI World',        rate: 9.2,  colore:'#4CAF7E', icon:'🌍' },
+    { nome:'Inflazione EU',     rate: 2.5,  colore:'#E05A5A', icon:'📉' },
+  ];
+
+  var years = 10;
+  if (target > 0 && current < target) {
+    years = Math.min(40, Math.max(5, Math.ceil(yearsToGoal(current, monthly, annRet, target) || 10)));
+  }
+
+  grid.innerHTML = benchmarks.map(function(b) {
+    var finalVal = current * Math.pow(1 + b.rate/100, years) + monthly * 12 * ((Math.pow(1 + b.rate/100, years) - 1) / (b.rate/100));
+    var isYou = b.nome === 'Il tuo portafoglio';
+    var spRate = 10.5;
+    var diff = b.rate - spRate;
+    var diffStr = diff >= 0 ? '+' + diff.toFixed(1) + '% vs S&P' : diff.toFixed(1) + '% vs S&P';
+    var diffCol = diff >= 0 ? '#4CAF7E' : '#E05A5A';
+
+    return '<div class="card" style="padding:18px 20px' + (isYou ? ';background:rgba(201,168,76,.04);border-color:rgba(201,168,76,.2)' : '') + '">'
+      + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">'
+        + '<span style="font-size:16px">' + b.icon + '</span>'
+        + '<div>'
+          + '<div style="font-family:DM Mono,monospace;font-size:11px;font-weight:700;color:#D4CFCA">' + b.nome + '</div>'
+          + '<div style="font-family:DM Mono,monospace;font-size:10px;color:' + b.colore + '">' + b.rate + '% annuo</div>'
+        + '</div>'
+      + '</div>'
+      + '<div style="font-family:DM Mono,monospace;font-size:18px;font-weight:700;color:' + b.colore + ';margin-bottom:4px">'
+        + '€ ' + fmtK(finalVal)
+      + '</div>'
+      + '<div style="font-family:DM Mono,monospace;font-size:9px;color:#484840">in ' + years + ' anni</div>'
+      + (!isYou && b.nome !== 'Inflazione EU' ? '<div style="font-family:DM Mono,monospace;font-size:9px;color:' + diffCol + ';margin-top:6px">' + diffStr + '</div>' : '')
+    + '</div>';
+  }).join('');
+
+  if (chartWrap) chartWrap.style.display = 'block';
+  _renderBenchmarkChart(current, monthly, benchmarks, years);
+}
+
+function _renderBenchmarkChart(current, monthly, benchmarks, years) {
+  var canvas = document.getElementById('benchmarkChart');
+  if (!canvas) return;
+  if (window._benchChartInst) { window._benchChartInst.destroy(); window._benchChartInst = null; }
+  var labels = [];
+  for (var y = 0; y <= years; y++) labels.push(y === 0 ? 'Oggi' : 'Anno ' + y);
+  var datasets = benchmarks.map(function(b) {
+    var data = [];
+    for (var y = 0; y <= years; y++) {
+      var v = current * Math.pow(1 + b.rate/100, y) + (y > 0 ? monthly * 12 * ((Math.pow(1 + b.rate/100, y) - 1) / (b.rate/100)) : 0);
+      data.push(Math.round(v));
+    }
+    return { label: b.nome, data: data, borderColor: b.colore, borderWidth: b.nome === 'Il tuo portafoglio' ? 2.5 : 1.5,
+      pointRadius: 0, tension: 0.4, fill: false, borderDash: b.nome === 'Inflazione EU' ? [4,4] : [] };
+  });
+  window._benchChartInst = new Chart(canvas, {
+    type: 'line',
+    data: { labels: labels, datasets: datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: { duration: 600 },
+      plugins: { legend: { display: true, position: 'bottom', labels: { color: '#4a4a45', font: { family: 'DM Mono', size: 9 }, boxWidth: 12, padding: 12 } } },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,.03)' }, ticks: { color: '#383838', font: { family: 'DM Mono', size: 8 }, maxTicksLimit: 6 } },
+        y: { grid: { color: 'rgba(255,255,255,.04)' }, ticks: { color: '#383838', font: { family: 'DM Mono', size: 8 },
+          callback: function(v) { return v >= 1000000 ? (v/1000000).toFixed(1)+'M' : v >= 1000 ? (v/1000).toFixed(0)+'k' : v; } } }
+      }
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RIBILANCIAMENTO INTELLIGENTE
+// ═══════════════════════════════════════════════════════════════════════════
+function renderRebalance() {
+  var el = document.getElementById('rebalanceContent');
+  if (!el) return;
+
+  if (assets.length < 2) {
+    el.innerHTML = '<div style="text-align:center;padding:20px;color:#383838">Aggiungi almeno 2 asset al portafoglio</div>';
+    return;
+  }
+
+  var total = assets.reduce(function(s,a){ return s + a.invested; }, 0);
+  if (total <= 0) return;
+
+  // Allocazione attuale
+  var actual = {};
+  assets.forEach(function(a) {
+    var cat = a.risk === 'low' ? 'Basso Rischio' : a.risk === 'high' ? 'Alto Rischio' : 'Medio Rischio';
+    if (!actual[cat]) actual[cat] = 0;
+    actual[cat] += a.invested;
+  });
+
+  // Target ottimale suggerito basato su composizione attuale
+  var nHigh = assets.filter(function(a){ return a.risk==='high'; }).length;
+  var nLow  = assets.filter(function(a){ return a.risk==='low'; }).length;
+  var nMed  = assets.length - nHigh - nLow;
+
+  // Regola 60/30/10 adattata
+  var targets = { 'Medio Rischio': 0.60, 'Alto Rischio': 0.30, 'Basso Rischio': 0.10 };
+  // Se ha molto azionario → 70/20/10
+  if (nHigh > nLow + nMed) targets = { 'Medio Rischio': 0.20, 'Alto Rischio': 0.70, 'Basso Rischio': 0.10 };
+  // Se conservativo → 20/30/50
+  if (nLow > nHigh + nMed) targets = { 'Medio Rischio': 0.30, 'Alto Rischio': 0.20, 'Basso Rischio': 0.50 };
+
+  var actions = [];
+  var cats = ['Alto Rischio', 'Medio Rischio', 'Basso Rischio'];
+  cats.forEach(function(cat) {
+    var curr = (actual[cat] || 0) / total;
+    var tgt  = targets[cat] || 0;
+    var diff = tgt - curr;
+    var diffEur = diff * total;
+    if (Math.abs(diffEur) > total * 0.03) { // soglia 3%
+      actions.push({ cat: cat, curr: curr*100, target: tgt*100, diff: diffEur });
+    }
+  });
+
+  // Asset più concentrati (>35% singolo)
+  var concentrated = assets.filter(function(a){ return a.invested/total > 0.35; });
+
+  var html = '';
+
+  // Header stato
+  var isBalanced = actions.length === 0 && concentrated.length === 0;
+  if (isBalanced) {
+    html += '<div style="display:flex;align-items:center;gap:10px;padding:16px;background:rgba(76,175,126,.07);border:1px solid rgba(76,175,126,.15);border-radius:10px;margin-bottom:16px">'
+      + '<span style="font-size:18px">✅</span>'
+      + '<div style="font-family:DM Mono,monospace;font-size:11px;color:#4CAF7E;font-weight:600">Portafoglio bilanciato — nessuna azione necessaria</div>'
+    + '</div>';
+  }
+
+  // Azioni di ribilanciamento
+  if (actions.length > 0) {
+    html += '<div style="margin-bottom:16px">'
+      + '<div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:#484840;text-transform:uppercase;margin-bottom:10px">Azioni suggerite</div>';
+    actions.forEach(function(act) {
+      var isBuy = act.diff > 0;
+      var col = isBuy ? '#4CAF7E' : '#E05A5A';
+      var icon = isBuy ? '⬆️' : '⬇️';
+      var verb = isBuy ? 'AUMENTA' : 'RIDUCI';
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#111;border-radius:8px;margin-bottom:6px;border-left:3px solid ' + col + '">'
+        + '<div>'
+          + '<span style="font-family:DM Mono,monospace;font-size:10px;font-weight:700;color:' + col + '">' + icon + ' ' + verb + ' ' + act.cat.toUpperCase() + '</span>'
+          + '<span style="font-family:DM Mono,monospace;font-size:9px;color:#484840;margin-left:10px">'
+            + act.curr.toFixed(1) + '% → ' + act.target.toFixed(0) + '% target</span>'
+        + '</div>'
+        + '<span style="font-family:DM Mono,monospace;font-size:13px;font-weight:700;color:' + col + '">'
+          + (isBuy ? '+' : '') + '€ ' + Math.abs(Math.round(act.diff)).toLocaleString('it-IT')
+        + '</span>'
+      + '</div>';
+    });
+    html += '</div>';
+  }
+
+  // Warning concentrazione
+  if (concentrated.length > 0) {
+    html += '<div style="padding:12px 16px;background:rgba(224,138,58,.07);border:1px solid rgba(224,138,58,.2);border-radius:8px;margin-bottom:16px">'
+      + '<div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:#E08A3A;text-transform:uppercase;margin-bottom:8px">⚠️  Concentrazione elevata</div>';
+    concentrated.forEach(function(a) {
+      html += '<div style="font-family:DM Mono,monospace;font-size:10px;color:#8A8580;margin-bottom:3px">'
+        + '<strong style="color:#E08A3A">' + a.ticker + '</strong> pesa il '
+        + (a.invested/total*100).toFixed(1) + '% del portafoglio — considera di diversificare oltre il 30%'
+      + '</div>';
+    });
+    html += '</div>';
+  }
+
+  // Allocazione attuale vs target — barre
+  html += '<div style="margin-top:4px"><div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:#484840;text-transform:uppercase;margin-bottom:10px">Allocazione attuale vs target</div>';
+  cats.forEach(function(cat) {
+    var curr = ((actual[cat] || 0) / total * 100);
+    var tgt  = (targets[cat] || 0) * 100;
+    var col  = cat==='Alto Rischio' ? '#E05A5A' : cat==='Medio Rischio' ? '#C9A84C' : '#5B8DB8';
+    html += '<div style="margin-bottom:10px">'
+      + '<div style="display:flex;justify-content:space-between;font-family:DM Mono,monospace;font-size:9px;margin-bottom:4px">'
+        + '<span style="color:' + col + '">' + cat + '</span>'
+        + '<span style="color:#484840">' + curr.toFixed(1) + '% / target ' + tgt.toFixed(0) + '%</span>'
+      + '</div>'
+      + '<div style="background:#1a1a1a;border-radius:3px;height:6px;position:relative;overflow:visible">'
+        + '<div style="height:100%;border-radius:3px;background:' + col + ';width:' + Math.min(curr,100) + '%;transition:width .6s"></div>'
+        + '<div style="position:absolute;top:-2px;bottom:-2px;width:2px;background:rgba(255,255,255,.15);left:' + tgt + '%;border-radius:1px" title="Target: ' + tgt + '%"></div>'
+      + '</div>'
+    + '</div>';
+  });
+  html += '</div>';
+
+  el.innerHTML = html;
+}
+
+
+function _planRow(icon, title, text, col) {
+  return '<div style="display:flex;gap:10px;background:rgba(255,255,255,.03);border-radius:8px;padding:12px 14px;border-left:3px solid ' + col + '44">'
+    + '<span style="font-size:14px;flex-shrink:0;margin-top:1px">' + icon + '</span>'
+    + '<div>'
+      + '<div style="font-family:DM Mono,monospace;font-size:11px;font-weight:700;color:#D4CFCA;margin-bottom:3px">' + title + '</div>'
+      + '<div style="font-family:DM Mono,monospace;font-size:11px;color:#6a6a65;line-height:1.6">' + text + '</div>'
+    + '</div></div>';
+}
+
+function _calcMonthlyNeeded(current, annRet, target, years) {
+  const r = annRet / 100 / 12;
+  const n = years * 12;
+  const fv = target - current * Math.pow(1+r, n);
+  if (r === 0) return fv / n;
+  return fv * r / (Math.pow(1+r, n) - 1);
+}
+
+function _renderGoalChart(current, monthly, annRet, target, years) {
   const ctx = document.getElementById('goalChart')?.getContext('2d');
   if (!ctx) return;
   if (goalChart) { goalChart.destroy(); goalChart = null; }
+
+  const now = new Date().getFullYear();
+  const labels = [];
+  const seriesBase = [current];
+  const seriesBull = [current];
+  const seriesBear = [current];
+
+  let vBase = current, vBull = current, vBear = current;
+  const rBase = annRet / 100 / 12;
+  const rBull = (annRet + 4) / 100 / 12;
+  const rBear = Math.max(0.5, annRet - 4) / 100 / 12;
+
+  for (let y = 1; y <= years; y++) {
+    labels.push(now + y);
+    for (let m = 0; m < 12; m++) {
+      vBase = vBase * (1 + rBase) + monthly;
+      vBull = vBull * (1 + rBull) + monthly;
+      vBear = vBear * (1 + rBear) + monthly;
+    }
+    seriesBase.push(Math.round(vBase));
+    seriesBull.push(Math.round(vBull));
+    seriesBear.push(Math.round(vBear));
+  }
+  labels.unshift(now);
+
+  const targetLine = Array(labels.length).fill(target);
+
   goalChart = new Chart(ctx, {
     type: 'line',
     data: {
       labels,
       datasets: [
-        { label:'Portafoglio', data:series, borderColor:'#C9A84C', backgroundColor:'rgba(201,168,76,.1)', fill:true, tension:.4, pointRadius:0, borderWidth:2 },
-        { label:'Target', data:targetLine, borderColor:'rgba(76,175,126,.5)', borderDash:[4,4], pointRadius:0, borderWidth:1.5, fill:false }
+        { label: 'Ottimista',   data: seriesBull, borderColor: 'rgba(76,175,126,.35)',  backgroundColor: 'transparent', pointRadius: 0, borderWidth: 1, borderDash: [3,3], fill: false, tension: .4 },
+        { label: 'Base',        data: seriesBase, borderColor: '#C9A84C',               backgroundColor: 'rgba(201,168,76,.08)', pointRadius: 0, borderWidth: 2.5, fill: true, tension: .4 },
+        { label: 'Conservativo',data: seriesBear, borderColor: 'rgba(91,141,184,.35)',  backgroundColor: 'transparent', pointRadius: 0, borderWidth: 1, borderDash: [3,3], fill: false, tension: .4 },
+        { label: 'Target',      data: targetLine, borderColor: 'rgba(76,175,126,.6)',   backgroundColor: 'transparent', pointRadius: 0, borderWidth: 1.5, borderDash: [6,4], fill: false },
       ]
     },
     options: {
-      responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{display:false}, tooltip:{
-        callbacks:{ label: ctx => '€'+Math.round(ctx.raw).toLocaleString('it-IT') }
-      }},
-      scales:{
-        x:{ ticks:{color:'#8A8580',font:{size:9},maxTicksLimit:6}, grid:{color:'rgba(255,255,255,.04)'} },
-        y:{ ticks:{color:'#8A8580',font:{size:9}, callback:v=>'€'+(v/1000).toFixed(0)+'k'}, grid:{color:'rgba(255,255,255,.04)'} }
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1C1C1C',
+          borderColor: 'rgba(201,168,76,.2)',
+          borderWidth: 1,
+          titleColor: '#8A8580',
+          bodyColor: '#F0EDE6',
+          titleFont: { family: 'DM Mono', size: 10 },
+          bodyFont:  { family: 'DM Mono', size: 11 },
+          callbacks: { label: c => c.dataset.label + ': €' + Math.round(c.raw).toLocaleString('it-IT') }
+        }
+      },
+      scales: {
+        x: { ticks: { color: '#3a3a35', font: { size: 9, family: 'DM Mono' }, maxTicksLimit: 7 }, grid: { color: 'rgba(255,255,255,.04)' } },
+        y: { ticks: { color: '#3a3a35', font: { size: 9, family: 'DM Mono' }, callback: v => '€' + (v>=1e6 ? (v/1e6).toFixed(1)+'M' : Math.round(v/1000)+'k') }, grid: { color: 'rgba(255,255,255,.04)' } }
       }
     }
   });
 }
+
+
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 document.getElementById('headerDate').textContent=new Date().toLocaleDateString('it-IT',{month:'long',year:'numeric'});
