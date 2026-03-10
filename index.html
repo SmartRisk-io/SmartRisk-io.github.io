@@ -64,6 +64,40 @@ window.addEventListener('load', () => {
 </script>
 <style>
 :root{--gold:#C9A84C;--dark:#0D0D0D;--surface:#141414;--surface2:#1C1C1C;--surface3:#252525;--text:#F0EDE6;--muted:#8A8580;--green:#4CAF7E;--red:#E05A5A;--orange:#E08A3A;--blue:#4A90D9;--purple:#9B59B6;--border:rgba(201,168,76,.15);}
+
+/* ── Ticker tape animation ── */
+@keyframes ticker-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+#tickerTrack:hover { animation-play-state: paused; }
+.tk-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 16px;
+  border-right: 1px solid rgba(201,168,76,.1);
+  height: 36px;
+  flex-shrink: 0;
+}
+.tk-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: #555;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+.tk-price {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: #D4CFCA;
+}
+.tk-chg {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+}
+
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--dark);color:var(--text);font-family:DM Sans,sans-serif;min-height:100vh;}
 #loginScreen{display:flex;position:fixed;inset:0;z-index:500;background:var(--dark);align-items:center;justify-content:center;background-image:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(201,168,76,.13) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 80% 80%,rgba(74,144,217,.06) 0%,transparent 60%);}
@@ -541,10 +575,12 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
   </div>
   <!-- MARKET TICKER -->
   <div id="marketTicker" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);height:36px;overflow:hidden;position:relative;">
-    <span style="position:absolute;left:0;top:0;bottom:0;width:56px;background:var(--surface);z-index:3;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:var(--gold);font-weight:600;border-right:1px solid var(--border)">LIVE</span>
+    <div style="position:absolute;left:0;top:0;bottom:0;width:56px;background:var(--surface);z-index:10;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--border);">
+      <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:var(--gold);font-weight:700;">LIVE</span>
+    </div>
     <div style="position:absolute;left:56px;right:0;top:0;bottom:0;overflow:hidden;">
-      <div id="tickerTrack" style="display:inline-flex;align-items:center;height:36px;white-space:nowrap;will-change:transform;">
-  </div>
+      <div id="tickerTrack" style="display:flex;align-items:center;height:36px;white-space:nowrap;animation:ticker-scroll 120s linear infinite;">
+      </div>
     </div>
   </div>
     <!-- TABS -->
@@ -2080,7 +2116,7 @@ function switchTab(id, el) {
       window._screenerInt = setInterval(function() {
         var tab = document.getElementById('tab-screener');
         if (tab && tab.style.display !== 'none') _screenerAutoRefresh();
-      }, 20000);
+      }, 120000);
     }
   }
   if (id==='verdetti')  renderVerdetti();
@@ -2709,39 +2745,26 @@ function _buildTicker() {
   var track = document.getElementById('tickerTrack');
   if (!track) return;
 
-  // Larghezza stimata: ~110px per item × numero item
-  var estimated = TICKER_DATA.length * 110;
-
-  function makeItems(pfx) {
-    return TICKER_DATA.map(function(s) {
-      var col = s.fmt==='pts'?'#4A90D9':s.fmt==='fx'?'#9B59B6':s.fmt==='pct'?'#E08A3A':'#D4CFCA';
-      return '<span style="display:inline-flex;align-items:center;gap:5px;padding:0 14px;border-right:1px solid rgba(201,168,76,.12);height:36px;flex-shrink:0;">'
-        +'<span style="font-family:monospace;font-size:9px;color:#666;letter-spacing:.05em;">'+s.lab+'</span>'
-        +'<span id="tv'+pfx+s.id+'" style="font-family:monospace;font-size:11px;font-weight:700;color:'+col+';">···</span>'
-        +'<span id="tc'+pfx+s.id+'" style="font-family:monospace;font-size:10px;margin-left:2px;"></span>'
-        +'</span>';
-    }).join('');
+  function makeItem(s, pfx) {
+    var col = s.fmt==='pts'?'#4A90D9':s.fmt==='fx'?'#9B59B6':s.fmt==='pct'?'#E08A3A':'#D4CFCA';
+    return '<span class="tk-item">'
+      +'<span class="tk-label">'+s.lab+'</span>'
+      +'<span id="tv'+pfx+s.id+'" class="tk-price" style="color:'+col+'">···</span>'
+      +'<span id="tc'+pfx+s.id+'" class="tk-chg"></span>'
+      +'</span>';
   }
 
-  track.innerHTML = makeItems('A') + makeItems('B');
-  if (window._tickerRAF) { cancelAnimationFrame(window._tickerRAF); window._tickerRAF = null; }
+  var htmlA = TICKER_DATA.map(function(s){ return makeItem(s,'A'); }).join('');
+  var htmlB = TICKER_DATA.map(function(s){ return makeItem(s,'B'); }).join('');
+  track.innerHTML = htmlA + htmlB;
 
-  var x = 0;
-  var half = estimated; // usa stima finché scrollWidth non disponibile
-
-  function step() {
-    // Ricalibra half appena il DOM è renderizzato
-    if (track.scrollWidth > 200) half = track.scrollWidth / 2;
-    x += 0.5;
-    if (x >= half) x -= half;
-    track.style.transform = 'translateX(-' + x.toFixed(1) + 'px)';
-    window._tickerRAF = requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
+  // Velocita' basata sul numero di item (piu' item = piu' lenta per leggibilita')
+  var duration = Math.max(80, TICKER_DATA.length * 1.2);
+  track.style.animation = 'ticker-scroll ' + duration + 's linear infinite';
 }
 
 async function _fetchTickerBatch(startIdx) {
-  var BATCH = 6;
+  var BATCH = 8;
   for (var i = startIdx; i < TICKER_DATA.length; i += BATCH) {
     var batch = TICKER_DATA.slice(i, i + BATCH);
     await Promise.allSettled(batch.map(function(sym) {
@@ -2756,25 +2779,24 @@ async function _fetchTickerBatch(startIdx) {
 
           var p = d.price;
           var fv;
-          if (sym.fmt === 'fx')   fv = p.toFixed(4);
-          else if (sym.fmt==='pts') fv = p.toLocaleString('it-IT',{maximumFractionDigits:0});
+          if (sym.fmt === 'fx')    fv = p.toFixed(4);
+          else if (sym.fmt==='pts') fv = p >= 1000 ? p.toLocaleString('it-IT',{maximumFractionDigits:0}) : p.toFixed(2);
           else if (sym.fmt==='pct') fv = p.toFixed(2)+'%';
-          else if (sym.fmt==='krw') fv = (p/1000).toFixed(0)+'K';
-          else fv = p.toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2});
+          else fv = p >= 1000 ? p.toLocaleString('it-IT',{maximumFractionDigits:0}) : p.toFixed(2);
 
-          var cs = Math.abs(chg)>0.001 ? (chg>=0?'+':'')+chg.toFixed(2)+'%' : '';
+          var cs = Math.abs(chg) > 0.001 ? (chg >= 0 ? '+' : '') + chg.toFixed(2) + '%' : '';
           var cc = chg >= 0 ? '#4CAF7E' : '#E05A5A';
 
           ['A','B'].forEach(function(pfx) {
             var ve = document.getElementById('tv' + pfx + sym.id);
             var ce = document.getElementById('tc' + pfx + sym.id);
-            if (ve) { ve.textContent = fv; ve.style.color = chg>=0 ? '#F0EDE6' : '#F0EDE6'; }
+            if (ve) ve.textContent = fv;
             if (ce) { ce.textContent = cs; ce.style.color = cc; }
           });
         }).catch(function(){});
     }));
     if (i + BATCH < TICKER_DATA.length)
-      await new Promise(function(r){ setTimeout(r, 250); });
+      await new Promise(function(r){ setTimeout(r, 200); });
   }
 }
 
