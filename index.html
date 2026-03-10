@@ -221,7 +221,7 @@ input[type=range].wi-range::-webkit-slider-thumb{-webkit-appearance:none;width:1
 .market-ticker::before{content:'';position:absolute;left:0;top:0;bottom:0;width:80px;background:linear-gradient(to right,var(--surface),transparent);z-index:2;pointer-events:none;}
 .market-ticker::after{content:'';position:absolute;right:0;top:0;bottom:0;width:80px;background:linear-gradient(to left,var(--surface),transparent);z-index:2;pointer-events:none;}
 .ticker-label{position:absolute;left:16px;z-index:3;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;color:var(--gold);text-transform:uppercase;font-weight:500;}
-.ticker-track{display:flex;gap:0;animation:tickerScroll var(--ticker-dur,392s) linear infinite paused;white-space:nowrap;}
+.ticker-track{display:flex;gap:0;white-space:nowrap;will-change:transform;}
 .ticker-track:hover{animation-play-state:paused;}
 .ticker-item{display:inline-flex;align-items:center;gap:8px;padding:0 20px;font-family:'DM Mono',monospace;font-size:11px;border-right:1px solid var(--border);}
 .ti-name{color:var(--muted);font-size:10px;}
@@ -234,7 +234,7 @@ input[type=range].wi-range::-webkit-slider-thumb{-webkit-appearance:none;width:1
 .fg-neutral{color:var(--gold);}
 .fg-greed{color:#4CAF7E;}
 .fg-extreme-greed{color:#00E676;}
-@keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+}
 
 .price-msg{font-family:DM Mono,monospace;font-size:11px;color:var(--muted);font-style:italic;}
 @media(max-width:640px){
@@ -2619,6 +2619,8 @@ async function loadMarketTicker() {
 function initTickerDOM() {
   var track = document.getElementById('tickerTrack');
   if (!track) return;
+
+  // Costruisce il DOM con due copie per scroll seamless
   var html = '';
   [1, 2].forEach(function(copy) {
     TICKER_SYMBOLS.forEach(function(sym) {
@@ -2631,10 +2633,20 @@ function initTickerDOM() {
     });
   });
   track.innerHTML = html;
-  // Imposta durata e AVVIA l'animazione dopo che il contenuto è pronto
-  var dur = (TICKER_SYMBOLS.length * 4) + 's';
-  track.style.animationDuration = dur;
-  track.style.animationPlayState = 'running';
+
+  // Avvia scroll JS — più robusto dell'animazione CSS
+  if (window._tickerRAF) cancelAnimationFrame(window._tickerRAF);
+  var offset = 0;
+  var speed = 0.5; // px per frame (~30px/s a 60fps)
+
+  function tickStep() {
+    offset += speed;
+    var halfW = track.scrollWidth / 2;
+    if (offset >= halfW) offset -= halfW; // loop seamless
+    track.style.transform = 'translateX(-' + offset + 'px)';
+    window._tickerRAF = requestAnimationFrame(tickStep);
+  }
+  window._tickerRAF = requestAnimationFrame(tickStep);
 }
 
 function startTickerRefresh() {
