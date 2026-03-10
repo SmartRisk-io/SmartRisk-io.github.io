@@ -2653,21 +2653,25 @@ function setTicker(id, val, chg, fmt) {
 
 // ─── LOAD MARKET TICKER ──────────────────────────────────────────────────────
 async function loadMarketTicker() {
+  var ok = 0, fail = 0;
   for (var i = 0; i < TICKER_SYMBOLS.length; i++) {
     var sym = TICKER_SYMBOLS[i];
     try {
-      var r = await fetch(WORKER_URL + '/price?ticker=' + encodeURIComponent(sym.yahoo),
-        {signal: AbortSignal.timeout(8000)});
+      var url = WORKER_URL + '/price?ticker=' + encodeURIComponent(sym.yahoo);
+      var r = await fetch(url, {signal: AbortSignal.timeout(10000)});
+      if (!r.ok) { fail++; continue; }
       var d = await r.json();
-      if (d && d.price) {
-        var chg = d.change || 0;
-        if (!chg && d.previousClose && d.previousClose > 0)
+      if (d && d.price != null) {
+        var chg = (d.change != null) ? d.change : 0;
+        if (chg === 0 && d.previousClose && d.previousClose > 0)
           chg = (d.price - d.previousClose) / d.previousClose * 100;
         setTicker(sym.id, d.price, chg, sym.fmt);
-      }
-    } catch(e) {}
-    await new Promise(function(res){ setTimeout(res, 150); });
+        ok++;
+      } else { fail++; }
+    } catch(e) { fail++; }
+    await new Promise(function(res){ setTimeout(res, 100); });
   }
+  console.log('[Ticker] Completato: ' + ok + ' ok, ' + fail + ' fail');
 }
 
 // ─── START TICKER ────────────────────────────────────────────────────────────
@@ -4033,6 +4037,17 @@ document.getElementById('headerDate').textContent=new Date().toLocaleDateString(
 loadData();
 renderAll();
 startTickerRefresh();
+
+// Test immediato connessione worker (rimuovi dopo debug)
+(async function testWorker() {
+  try {
+    var r = await fetch(WORKER_URL + '/price?ticker=%5EGSPC', {signal: AbortSignal.timeout(8000)});
+    var d = await r.json();
+    console.log('[Worker test] S&P 500:', JSON.stringify(d));
+  } catch(e) {
+    console.error('[Worker test] FAIL:', e.message);
+  }
+})();
 startAutoRefresh();
 </script>
 <script>
