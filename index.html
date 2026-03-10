@@ -562,6 +562,7 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
           <button onclick="event.stopPropagation();switchTab('verdetti');closeAltro()">⚖️ Verdetti</button>
           <button onclick="event.stopPropagation();switchTab('storico');closeAltro()">📋 Storico</button>
           <button onclick="event.stopPropagation();switchTab('screener');closeAltro()">🔍 Screener</button>
+          <button onclick="event.stopPropagation();switchTab('obiettivo');closeAltro()">🎯 Piano Finanziario</button>
         </div>
       </div>
     </div>
@@ -674,7 +675,55 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
         <div style="font-size:16px;margin-bottom:8px" data-i18n="noAsset">Nessun asset</div>
         <div style="font-size:13px">Clicca <strong style="color:var(--gold)">Modifica</strong> per aggiungere il primo asset.</div>
       </div>
-      
+
+      <!-- ═══ ANALISI SETTORIALE ════════════════════════════════════════════ -->
+      <div id="sectorAnalysisWrap" style="margin-top:32px;display:none">
+
+        <!-- Header -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:3px;height:20px;background:#C9A84C;border-radius:2px"></div>
+            <div>
+              <div style="font-family:'Playfair Display',serif;font-size:17px;color:#F0EDE6">Analisi Settoriale</div>
+              <div style="font-family:'DM Mono',monospace;font-size:9px;color:#4a4a45;letter-spacing:.1em;text-transform:uppercase;margin-top:2px">Concentrazione · Diversificazione · Suggerimenti</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+
+          <!-- Mappa settori -->
+          <div class="card" style="padding:20px 22px">
+            <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:#4a4a45;text-transform:uppercase;margin-bottom:14px">Esposizione per settore</div>
+            <div id="sectorBars"></div>
+          </div>
+
+          <!-- Diversificazione score -->
+          <div class="card" style="padding:20px 22px">
+            <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:#4a4a45;text-transform:uppercase;margin-bottom:14px">Score diversificazione</div>
+            <div style="display:flex;align-items:center;gap:20px;margin-bottom:16px">
+              <div style="position:relative;flex-shrink:0">
+                <canvas id="sectorDonut" width="90" height="90"></canvas>
+                <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+                  <span id="sectorScore" style="font-family:'DM Mono',monospace;font-size:20px;font-weight:700;color:#F0EDE6">—</span>
+                  <span style="font-family:'DM Mono',monospace;font-size:7px;color:#4a4a45;letter-spacing:.08em">/100</span>
+                </div>
+              </div>
+              <div id="sectorScoreMsg" style="font-family:'DM Mono',monospace;font-size:11px;color:#6a6a65;line-height:1.7"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="sectorRiskBreak"></div>
+          </div>
+
+        </div>
+
+        <!-- Suggerimenti AI-style -->
+        <div class="card" style="padding:20px 22px" id="sectorTipsCard">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:#4a4a45;text-transform:uppercase;margin-bottom:14px">💡 Suggerimenti per migliorare il portafoglio</div>
+          <div id="sectorTips" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
+        </div>
+
+      </div>
+
     </div>
     <!-- CALCOLATORE -->
     <div class="tab-content" id="tab-calcolatore">
@@ -1502,6 +1551,7 @@ function renderAll() {
   setTimeout(drawAllSparklines,50);
   setTimeout(drawDNA,80);
   renderPanorSummary();renderPanorMovers();
+  renderSectorAnalysis();
 }
 
 function drawAllSparklines() {
@@ -1976,7 +2026,7 @@ function switchTab(id, el) {
   const btn = document.getElementById('tab-btn-'+id);
   if (btn) btn.classList.add('active');
   // Se è una voce del dropdown Altro, evidenzia il bottone Altro
-  const altroCandidates = ['mappa','verdetti','storico'];
+  const altroCandidates = ['mappa','verdetti','storico','screener','obiettivo'];
   if (altroCandidates.includes(id)) {
     const altroBtn = document.getElementById('tab-btn-altro');
     if (altroBtn) altroBtn.classList.add('active');
@@ -4500,17 +4550,60 @@ async function loadScreenerPrices() {
   var status = document.getElementById('scrStatus');
   if (btn) { btn.textContent = '⏳ Aggiornamento...'; btn.disabled = true; }
 
-  // ── FASE 1: prezzo + 1D per TUTTI — batch da 15, niente storico ──────────
-  var BATCH = 15;
-  var done = 0;
-  var total = SCREENER_DB.length;
+  // ── Cache localStorage 15 min ────────────────────────────────────────────
+  var CACHE_KEY  = 'srm_scr_prices';
+  var CACHE_TTL  = 15 * 60 * 1000;
+  var now        = Date.now();
+  try {
+    var cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+    if (cached && (now - cached.ts) < CACHE_TTL) {
+      _screenerPrices = cached.data;
+      _screenerLoading = false;
+      if (btn) { btn.textContent = '⚡ Aggiorna'; btn.disabled = false; }
+      var ago = Math.round((now - cached.ts) / 60000);
+      if (status) status.textContent = Object.keys(_screenerPrices).length + ' prezzi · cache ' + ago + ' min fa';
+      renderScreenerList();
+      return;
+    }
+  } catch(e) {}
+
+  // ── Fetch fresco ─────────────────────────────────────────────────────────
+  var BATCH = 10;   // batch più piccolo = meno rate limiting
+  var DELAY = 300;  // ms tra batch = rispetta Yahoo rate limit
+  var done  = 0;
+  var failed = [];
+  var total  = SCREENER_DB.length;
 
   for (var i = 0; i < total; i += BATCH) {
     var batch = SCREENER_DB.slice(i, i + BATCH);
-    await Promise.allSettled(batch.map(async function(a) {
+    var results = await Promise.allSettled(batch.map(async function(a) {
       try {
         var r = await fetch(WORKER_URL + '/price?ticker=' + encodeURIComponent(a.t),
-          { signal: AbortSignal.timeout(5000) });
+          { signal: AbortSignal.timeout(6000) });
+        var d = await r.json();
+        if (d && d.price != null) {
+          if (!_screenerPrices[a.t]) _screenerPrices[a.t] = {};
+          _screenerPrices[a.t].price = d.price;
+          _screenerPrices[a.t].d1   = d.change || 0;
+          done++;
+        } else {
+          failed.push(a);
+        }
+      } catch(e) { failed.push(a); }
+    }));
+    if (status) status.textContent = done + ' / ' + total;
+    renderScreenerList();
+    // Delay tra batch per evitare rate limiting Yahoo
+    if (i + BATCH < total) await new Promise(function(r){ setTimeout(r, DELAY); });
+  }
+
+  // ── Retry per i falliti (una volta sola) ─────────────────────────────────
+  if (failed.length > 0) {
+    await new Promise(function(r){ setTimeout(r, 1000); });
+    await Promise.allSettled(failed.map(async function(a) {
+      try {
+        var r = await fetch(WORKER_URL + '/price?ticker=' + encodeURIComponent(a.t),
+          { signal: AbortSignal.timeout(8000) });
         var d = await r.json();
         if (d && d.price != null) {
           if (!_screenerPrices[a.t]) _screenerPrices[a.t] = {};
@@ -4520,21 +4613,23 @@ async function loadScreenerPrices() {
         }
       } catch(e) {}
     }));
-    if (status) status.textContent = done + ' / ' + total;
-    renderScreenerList();
   }
 
-  // Fase 1 completata
+  // ── Salva cache ──────────────────────────────────────────────────────────
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: now, data: _screenerPrices }));
+  } catch(e) {}
+
   _screenerLoading = false;
   if (btn) { btn.textContent = '⚡ Aggiorna'; btn.disabled = false; }
   if (status) status.textContent = done + ' prezzi · ' + _screenerFiltered.length + ' asset';
   renderScreenerList();
 
-  // ── FASE 2: storico 1W/1M/3M/1Y per i primi 40, silenzioso ──────────────
+  // ── Storico solo per asset VISIBILI (max 30) ─────────────────────────────
   setTimeout(async function() {
-    var hist = SCREENER_DB.slice(0, 40);
-    for (var j = 0; j < hist.length; j += 5) {
-      var hb = hist.slice(j, j + 5);
+    var visible = _screenerFiltered.slice(0, 30);
+    for (var j = 0; j < visible.length; j += 5) {
+      var hb = visible.slice(j, j + 5);
       await Promise.allSettled(hb.map(async function(a) {
         try {
           var r = await fetch(WORKER_URL + '/price?ticker=' + encodeURIComponent(a.t) + '&history=1',
@@ -4549,9 +4644,14 @@ async function loadScreenerPrices() {
         } catch(e) {}
       }));
       renderScreenerList();
-      await new Promise(function(r) { setTimeout(r, 200); });
+      await new Promise(function(r){ setTimeout(r, 400); });
     }
-  }, 500);
+    // Aggiorna cache con dati storici
+    try {
+      var c2 = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+      if (c2) { c2.data = _screenerPrices; localStorage.setItem(CACHE_KEY, JSON.stringify(c2)); }
+    } catch(e) {}
+  }, 1000);
 }
 
 function addToPortfolio(ticker, name) {
