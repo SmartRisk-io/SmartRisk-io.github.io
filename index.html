@@ -217,7 +217,7 @@ input[type=range].wi-range::-webkit-slider-thumb{-webkit-appearance:none;width:1
 .feed-desc{font-size:13px;line-height:1.5;}
 
 /* MARKET TICKER */
-.market-ticker{background:var(--surface);border-bottom:1px solid var(--border);overflow:hidden;height:36px;display:flex;align-items:center;position:relative;}
+.market-ticker{background:var(--surface);border-bottom:1px solid var(--border);border-top:1px solid var(--border);overflow:hidden;height:38px;display:flex;align-items:center;position:relative;width:100%;}
 .market-ticker::before{content:'';position:absolute;left:0;top:0;bottom:0;width:80px;background:linear-gradient(to right,var(--surface),transparent);z-index:2;pointer-events:none;}
 .market-ticker::after{content:'';position:absolute;right:0;top:0;bottom:0;width:80px;background:linear-gradient(to left,var(--surface),transparent);z-index:2;pointer-events:none;}
 .ticker-label{position:absolute;left:16px;z-index:3;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;color:var(--gold);text-transform:uppercase;font-weight:500;}
@@ -514,7 +514,7 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px">
         <div class="header-meta"><div>&#9899; SMARTRISK.IO</div><div id="headerDate" style="margin-top:3px"></div></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
-          <span id="autoRefreshIndicator" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-right:8px;letter-spacing:.05em" title="Ultimo aggiornamento automatico">Aggiornamento auto</span><button class="btn btn-blue" onclick="refreshPrices()" data-i18n="updatePrices">Aggiorna prezzi</button>
+          <span id="autoRefreshIndicator" style="display:none"></span><button class="btn btn-blue" onclick="refreshPrices()" data-i18n="updatePrices">Aggiorna prezzi</button>
           <button onclick="enableNotifications()" id="notifBtn" title="Attiva notifiche" class="btn btn-ghost" style="font-size:14px;padding:8px 12px">&#128277;</button>
           <button onclick="toggleLang()" id="langBtn" class="btn btn-ghost" style="font-size:12px;font-family:'DM Mono',monospace;padding:8px 12px">EN</button>
           <button class="btn btn-purple" onclick="runAIAnalysis()">Analisi AI</button>
@@ -2650,6 +2650,14 @@ function initTickerDOM() {
 function startTickerRefresh() {
   initTickerDOM();
   loadMarketTicker();
+  // Retry dopo 20s se i prezzi non sono arrivati
+  setTimeout(function() {
+    var first = document.getElementById('tk-sp500');
+    if (first && first.textContent === '···') {
+      console.log('[SmartRisk] Ticker retry...');
+      loadMarketTicker();
+    }
+  }, 20000);
   setInterval(loadMarketTicker, 5*60*1000);
 }
 
