@@ -489,11 +489,11 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
       <div id="loginError" style="color:var(--red);font-size:12px;text-align:left;margin:-2px 0 8px;display:none;font-family:'DM Mono',monospace;"></div>
       <button class="email-btn" onclick="doEmailLogin()">Accedi</button>
       <div style="display:flex;justify-content:space-between;margin-top:10px">
-        <button class="login-link" onclick="doEmailRegister()">✦ Crea account</button>
+        <button class="login-link" onclick="doEmailRegister()"> Crea account</button>
         <button class="login-link" onclick="doResetPwd()">Password dimenticata?</button>
       </div>
     </div>
-    <div class="login-privacy">🔒 Account privato · dati cifrati su cloud</div>
+    <div class="login-privacy">Account privato · dati cifrati su cloud</div>
   </div>
 </div>
 <!-- APP -->
@@ -513,7 +513,7 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px">
         <div class="header-meta"><div>&#9899; SMARTRISK.IO</div><div id="headerDate" style="margin-top:3px"></div></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
-          <span id="autoRefreshIndicator" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-right:8px;letter-spacing:.05em" title="Ultimo aggiornamento automatico">🔄 auto</span><button class="btn btn-blue" onclick="refreshPrices()" data-i18n="updatePrices">Aggiorna prezzi</button>
+          <span id="autoRefreshIndicator" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-right:8px;letter-spacing:.05em" title="Ultimo aggiornamento automatico">Aggiornamento auto</span><button class="btn btn-blue" onclick="refreshPrices()" data-i18n="updatePrices">Aggiorna prezzi</button>
           <button onclick="enableNotifications()" id="notifBtn" title="Attiva notifiche" class="btn btn-ghost" style="font-size:14px;padding:8px 12px">&#128277;</button>
           <button onclick="toggleLang()" id="langBtn" class="btn btn-ghost" style="font-size:12px;font-family:'DM Mono',monospace;padding:8px 12px">EN</button>
           <button class="btn btn-purple" onclick="runAIAnalysis()">Analisi AI</button>
@@ -548,7 +548,7 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
     <!-- TABS -->
     <div class="tabs" id="mainTabs">
       <button class="tab" id="tab-btn-portafoglio" onclick="switchTab('portafoglio',this)" data-tab="portafoglio">Portafoglio</button>
-      <button class="tab" id="tab-btn-obiettivo" onclick="switchTab('obiettivo',this)" data-tab="obiettivo">🎯 Piano</button>
+      <button class="tab" id="tab-btn-obiettivo" onclick="switchTab('obiettivo',this)" data-tab="obiettivo">Piano</button>
       <button class="tab" id="tab-btn-rischio" onclick="switchTab('rischio',this)" data-tab="rischio">Matrice Rischio</button>
       <button class="tab" id="tab-btn-strategia" onclick="switchTab('strategia',this)" data-tab="strategia">Strategia</button>
       <button class="tab" id="tab-btn-heatmap" onclick="switchTab('heatmap',this)" data-tab="heatmap">Heatmap</button>
@@ -558,11 +558,10 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
       <div class="tab-dropdown" id="altroDropdown">
         <button class="tab" id="tab-btn-altro" onclick="toggleAltro(event)">Altro &#9660;</button>
         <div class="tab-dropdown-menu" id="altroMenu">
-          <button onclick="event.stopPropagation();switchTab('mappa');closeAltro()">🗺 Mappa Geo</button>
-          <button onclick="event.stopPropagation();switchTab('verdetti');closeAltro()">⚖️ Verdetti</button>
-          <button onclick="event.stopPropagation();switchTab('storico');closeAltro()">📋 Storico</button>
-          <button onclick="event.stopPropagation();switchTab('screener');closeAltro()">🔍 Screener</button>
-          <button onclick="event.stopPropagation();switchTab('calcolatore');closeAltro()">🧮 Calcolatore</button>
+          <button onclick="event.stopPropagation();switchTab('mappa');closeAltro()">Mappa Geografica</button>
+          <button onclick="event.stopPropagation();switchTab('verdetti');closeAltro()">Verdetti</button>
+          <button onclick="event.stopPropagation();switchTab('storico');closeAltro()">Storico</button>
+          <button onclick="event.stopPropagation();switchTab('screener');closeAltro()">Screener</button>
         </div>
       </div>
     </div>
@@ -584,14 +583,14 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
         <!-- Categoria -->
         <select id="scrCat" onchange="filterScreener()" style="background:#1a1a1a;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:8px 12px;color:#F0EDE6;font-size:11px;font-family:DM Mono,monospace;cursor:pointer;letter-spacing:.03em">
           <option value="">Tutte le categorie</option>
-          <option value="azioni-usa">🇺🇸  Azioni USA</option>
-          <option value="azioni-europa">🇪🇺  Azioni Europa</option>
-          <option value="etf">📊  ETF</option>
-          <option value="crypto">₿  Crypto</option>
-          <option value="forex">💱  Forex</option>
-          <option value="materie-prime">🥇  Materie Prime</option>
-          <option value="obbligazioni">🏛  Obbligazioni</option>
-          <option value="indici">📈  Indici</option>
+          <option value="azioni-usa">Azioni USA</option>
+          <option value="azioni-europa">Azioni Europa</option>
+          <option value="etf">ETF</option>
+          <option value="crypto">Crypto</option>
+          <option value="forex">Forex</option>
+          <option value="materie-prime">Materie Prime</option>
+          <option value="obbligazioni">Obbligazioni</option>
+          <option value="indici">Indici</option>
         </select>
 
         <!-- Ordinamento -->
@@ -605,7 +604,7 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
         <!-- Aggiorna -->
         <button onclick="loadScreenerPrices()" id="scrBtn"
           style="background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:8px;padding:8px 16px;color:#C9A84C;font-size:11px;cursor:pointer;font-family:DM Mono,monospace;white-space:nowrap;letter-spacing:.05em;font-weight:600">
-          ⚡ Aggiorna prezzi
+          Aggiorna prezzi
         </button>
 
         <!-- Status -->
@@ -718,47 +717,14 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
 
         <!-- Suggerimenti AI-style -->
         <div class="card" style="padding:20px 22px" id="sectorTipsCard">
-          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:#4a4a45;text-transform:uppercase;margin-bottom:14px">💡 Suggerimenti per migliorare il portafoglio</div>
-          <div id="sectorTips" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:#4a4a45;text-transform:uppercase;margin-bottom:14px"> Suggerimenti per migliorare il portafoglio</div>
+          
         </div>
 
       </div>
 
     </div>
-    <!-- CALCOLATORE -->
-    <div class="tab-content" id="tab-calcolatore">
-      <div class="calc-card">
-        <div class="section-title">Calcolatore P&amp;L</div>
-        <div class="calc-grid">
-          <div class="cf"><label>Asset</label><select id="calcAsset" onchange="prefillCalc()"><option value="">&#8212; seleziona &#8212;</option></select></div>
-          <div class="cf"><label>Prezzo acquisto (&#8364;)</label><input type="number" id="calcBuy" placeholder="es. 120.00" step="0.01"></div>
-          <div class="cf"><label>Prezzo attuale (&#8364;)</label><input type="number" id="calcCurrent" placeholder="es. 135.00" step="0.01"></div>
-          <div class="cf"><label>Quantita'</label><input type="number" id="calcQty" placeholder="es. 10" step="0.001"></div>
-          <div class="cf"><label>Target (&#8364;)</label><input type="number" id="calcTarget" placeholder="opzionale" step="0.01"></div>
-          <div class="cf" style="display:flex;align-items:flex-end"><button class="btn btn-gold" style="width:100%;justify-content:center;padding:10px" onclick="calculate()">Calcola &#8594;</button></div>
-        </div>
-        <div class="calc-result" id="calcResult">
-          <div class="section-title" data-i18n="results">Risultati</div>
-          <div class="res-grid">
-            <div class="res-item"><div class="res-val" id="resInvested">&#8212;</div><div class="res-lbl" data-i18n="invested">Investito</div></div>
-            <div class="res-item"><div class="res-val" id="resValue">&#8212;</div><div class="res-lbl" data-i18n="currentValue">Valore attuale</div></div>
-            <div class="res-item"><div class="res-val" id="resPnl">&#8212;</div><div class="res-lbl">P&amp;L &#8364;</div></div>
-            <div class="res-item"><div class="res-val" id="resPct">&#8212;</div><div class="res-lbl">P&amp;L %</div></div>
-          </div>
-          <div style="margin-top:14px;padding:12px;background:var(--surface3);border-radius:6px;font-size:12px;color:var(--muted);line-height:1.7" id="resTarget"></div>
-        </div>
-      </div>
-      <div class="calc-card">
-        <div class="section-title" data-i18n="dcaSimulator">Simulatore DCA</div>
-        <div class="calc-grid">
-          <div class="cf"><label>Capitale iniziale (&#8364;)</label><input type="number" id="dcaInitial" value="0"></div>
-          <div class="cf"><label>Aggiunta mensile (&#8364;)</label><input type="number" id="dcaMonthly" value="100"></div>
-          <div class="cf"><label>Rendimento annuo (%)</label><input type="number" id="dcaRate" value="9" step="0.5"></div>
-        </div>
-        <button class="btn btn-gold" onclick="calcDCA()">Simula &#8594;</button>
-        <div class="calc-result" id="dcaResult" style="margin-top:14px"><canvas id="dcaChart" height="180"></canvas></div>
-      </div>
-    </div>
+    
     <!-- RISCHIO -->
     <div class="tab-content" id="tab-rischio">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px">
@@ -919,7 +885,7 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
             <button onclick="setGoalTarget(100000)" class="goal-preset">100k</button>
             <button onclick="setGoalTarget(250000)" class="goal-preset">250k</button>
             <button onclick="setGoalTarget(500000)" class="goal-preset">500k</button>
-            <button onclick="setGoalTarget(1000000)" class="goal-preset goal-preset-gold">1M 🎯</button>
+            <button onclick="setGoalTarget(1000000)" class="goal-preset goal-preset-gold">1M </button>
           </div>
         </div>
 
@@ -1010,17 +976,17 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
         <!-- 3 SCENARI -->
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
           <div class="card" style="padding:16px 18px">
-            <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;color:#5B8DB8;text-transform:uppercase;margin-bottom:8px">🐌 Conservativo</div>
+            <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;color:#5B8DB8;text-transform:uppercase;margin-bottom:8px">Conservativo</div>
             <div id="projConserv" style="font-family:'DM Mono',monospace;font-size:16px;font-weight:700;color:#F0EDE6;margin-bottom:4px">—</div>
             <div id="projConservRate" style="font-family:'DM Mono',monospace;font-size:9px;color:#4a4a45"></div>
           </div>
           <div class="card" style="padding:16px 18px;background:rgba(201,168,76,.04);border-color:rgba(201,168,76,.2)">
-            <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;color:#C9A84C;text-transform:uppercase;margin-bottom:8px">📊 Base</div>
+            <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;color:#C9A84C;text-transform:uppercase;margin-bottom:8px"> Base</div>
             <div id="projBase" style="font-family:'DM Mono',monospace;font-size:16px;font-weight:700;color:#F0EDE6;margin-bottom:4px">—</div>
             <div id="projBaseRate" style="font-family:'DM Mono',monospace;font-size:9px;color:#4a4a45"></div>
           </div>
           <div class="card" style="padding:16px 18px">
-            <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;color:#4CAF7E;text-transform:uppercase;margin-bottom:8px">🚀 Ottimista</div>
+            <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;color:#4CAF7E;text-transform:uppercase;margin-bottom:8px"> Ottimista</div>
             <div id="projOptim" style="font-family:'DM Mono',monospace;font-size:16px;font-weight:700;color:#F0EDE6;margin-bottom:4px">—</div>
             <div id="projOptimRate" style="font-family:'DM Mono',monospace;font-size:9px;color:#4a4a45"></div>
           </div>
@@ -1035,47 +1001,55 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
       </div>
     </div>
 
-    <!-- ═══ SEZIONE 1b: SUGGERIMENTI OBIETTIVO ══════════════════════════ -->
+    <!-- ═══ SUGGERIMENTI PERSONALIZZATI ════════════════════════════════════ -->
     <div style="margin-top:20px" id="goalTipsSection">
       <div class="card" style="padding:22px 24px">
-        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:#4a4a45;text-transform:uppercase;margin-bottom:16px">
-          💡 Come migliorare le tue probabilità di successo
-        </div>
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:#4a4a45;text-transform:uppercase;margin-bottom:16px">Come migliorare le probabilità di successo</div>
         <div id="goalTipsGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-          <div style="font-family:'DM Mono',monospace;font-size:11px;color:#383838;grid-column:1/-1;text-align:center;padding:16px">
-            Inserisci un obiettivo per ricevere suggerimenti personalizzati
-          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:11px;color:#383838;grid-column:1/-1;text-align:center;padding:16px">Inserisci un obiettivo per ricevere suggerimenti personalizzati</div>
         </div>
       </div>
     </div>
 
-    <!-- ═══ SEZIONE 2: SIMULATORE DI CRASH ══════════════════════════════ -->
+    <!-- ═══ STRESS TEST STORICO ═════════════════════════════════════════════ -->
     <div style="margin-top:32px">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
         <div style="width:3px;height:22px;background:#E05A5A;border-radius:2px"></div>
         <div>
           <div style="font-family:'Playfair Display',serif;font-size:18px;color:#F0EDE6">Stress Test Storico</div>
-          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#4a4a45;letter-spacing:.1em;margin-top:2px;text-transform:uppercase">Cosa succederebbe al tuo portafoglio nei peggiori crash della storia</div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#4a4a45;letter-spacing:.1em;margin-top:2px;text-transform:uppercase">Impatto dei principali crash storici sul capitale simulato</div>
         </div>
       </div>
+
+      <!-- Input manuale se non c'è portafoglio -->
+      <div class="card" style="padding:16px 22px;margin-bottom:14px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:#6a6a65;white-space:nowrap">Capitale simulato</div>
+        <div style="display:flex;align-items:center;background:#1a1a1a;border:1px solid rgba(255,255,255,.07);border-radius:7px;overflow:hidden">
+          <span style="padding:0 10px;color:#4a4a45;font-family:'DM Mono',monospace;font-size:12px;border-right:1px solid rgba(255,255,255,.05)">EUR</span>
+          <input type="number" id="crashCapital" placeholder="es. 50000" min="0" step="1000"
+            oninput="renderCrashTest()"
+            style="background:none;border:none;padding:8px 12px;color:#F0EDE6;font-family:'DM Mono',monospace;font-size:13px;outline:none;width:140px">
+        </div>
+        <div style="font-family:'DM Mono',monospace;font-size:9px;color:#383838">Inserisci un valore per simulare l'impatto su un capitale ipotetico, oppure aggiungi asset al portafoglio per usare il valore reale.</div>
+      </div>
+
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px" id="crashGrid">
-        <!-- popolato da renderCrashTest() -->
-        <div style="grid-column:1/-1;padding:40px;text-align:center;font-family:'DM Mono',monospace;font-size:11px;color:#383838">Aggiungi asset al portafoglio per vedere la simulazione crash</div>
+        <div style="grid-column:1/-1;padding:40px;text-align:center;font-family:'DM Mono',monospace;font-size:11px;color:#383838">Inserisci un capitale per visualizzare la simulazione</div>
       </div>
     </div>
 
-    <!-- ═══ SEZIONE 3: CONFRONTO BENCHMARK ══════════════════════════════ -->
+    <!-- ═══ CONFRONTO BENCHMARK ══════════════════════════════════════════════ -->
     <div style="margin-top:32px">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
         <div style="width:3px;height:22px;background:#4A90D9;border-radius:2px"></div>
         <div>
           <div style="font-family:'Playfair Display',serif;font-size:18px;color:#F0EDE6">Confronto Benchmark</div>
-          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#4a4a45;letter-spacing:.1em;margin-top:2px;text-transform:uppercase">Il tuo portafoglio vs S&amp;P 500 · MSCI World · Inflazione</div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#4a4a45;letter-spacing:.1em;margin-top:2px;text-transform:uppercase">Rendimento atteso vs indici di riferimento</div>
         </div>
       </div>
       <div class="card" style="padding:24px">
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px" id="benchmarkGrid">
-          <div style="text-align:center;padding:20px;color:#383838;font-family:'DM Mono',monospace;font-size:11px;grid-column:1/-1">Aggiungi rendimento annuo atteso al piano per vedere il confronto</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px" id="benchmarkGrid">
+          <div style="text-align:center;padding:20px;color:#383838;font-family:'DM Mono',monospace;font-size:11px;grid-column:1/-1">Imposta il rendimento annuo atteso nel piano per visualizzare il confronto</div>
         </div>
         <div style="height:160px;margin-top:20px;display:none" id="benchmarkChartWrap">
           <canvas id="benchmarkChart"></canvas>
@@ -1083,24 +1057,68 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
       </div>
     </div>
 
-    <!-- ═══ SEZIONE 4: RIBILANCIAMENTO ══════════════════════════════════ -->
+    <!-- ═══ PIANIFICATORE ALLOCAZIONE ════════════════════════════════════════ -->
     <div style="margin-top:32px;margin-bottom:40px">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
         <div style="width:3px;height:22px;background:#C9A84C;border-radius:2px"></div>
         <div>
-          <div style="font-family:'Playfair Display',serif;font-size:18px;color:#F0EDE6">Ribilanciamento Intelligente</div>
-          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#4a4a45;letter-spacing:.1em;margin-top:2px;text-transform:uppercase">Cosa vendere e cosa comprare per ottimizzare il portafoglio</div>
+          <div style="font-family:'Playfair Display',serif;font-size:18px;color:#F0EDE6">Pianificatore di Allocazione</div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:#4a4a45;letter-spacing:.1em;margin-top:2px;text-transform:uppercase">Distribuzione ottimale del capitale per profilo di rischio</div>
         </div>
       </div>
-      <div class="card" style="padding:24px" id="rebalanceCard">
-        <div id="rebalanceContent" style="font-family:'DM Mono',monospace;font-size:11px;color:#383838;text-align:center;padding:20px">
-          Aggiungi asset al portafoglio per ricevere suggerimenti di ribilanciamento
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+
+        <!-- Sliders allocazione -->
+        <div class="card" style="padding:22px 24px">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:#4a4a45;text-transform:uppercase;margin-bottom:18px">Imposta l'allocazione target</div>
+
+          <div style="margin-bottom:18px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <span style="font-family:'DM Mono',monospace;font-size:10px;color:#4A90D9;font-weight:600">Azionario</span>
+              <span id="allocEqVal" style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:#4A90D9">60%</span>
+            </div>
+            <input type="range" id="allocEq" min="0" max="100" value="60" step="5"
+              oninput="syncAlloc('eq')"
+              style="width:100%;accent-color:#4A90D9;cursor:pointer">
+          </div>
+
+          <div style="margin-bottom:18px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <span style="font-family:'DM Mono',monospace;font-size:10px;color:#5B8DB8;font-weight:600">Obbligazionario</span>
+              <span id="allocBdVal" style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:#5B8DB8">30%</span>
+            </div>
+            <input type="range" id="allocBd" min="0" max="100" value="30" step="5"
+              oninput="syncAlloc('bd')"
+              style="width:100%;accent-color:#5B8DB8;cursor:pointer">
+          </div>
+
+          <div style="margin-bottom:18px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <span style="font-family:'DM Mono',monospace;font-size:10px;color:#C9A84C;font-weight:600">Liquidita / Altro</span>
+              <span id="allocCsVal" style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:#C9A84C">10%</span>
+            </div>
+            <input type="range" id="allocCs" min="0" max="100" value="10" step="5"
+              oninput="syncAlloc('cs')"
+              style="width:100%;accent-color:#C9A84C;cursor:pointer">
+          </div>
+
+          <div id="allocWarning" style="font-family:'DM Mono',monospace;font-size:10px;color:#E05A5A;display:none;margin-top:4px">
+            La somma deve essere 100%. Attualmente: <span id="allocSum">100</span>%
+          </div>
         </div>
+
+        <!-- Output allocazione -->
+        <div class="card" style="padding:22px 24px">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:#4a4a45;text-transform:uppercase;margin-bottom:18px">Proiezione per profilo</div>
+          <div id="allocOutput"></div>
+        </div>
+
       </div>
     </div>
 
   </div>
 </div>
+
     <!-- STORICO -->
     <div class="tab-content" id="tab-storico">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
@@ -1132,25 +1150,25 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
       <div style="margin-bottom:20px">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
           <div><div class="section-title" style="margin:0">Segnali CFD</div><div style="font-size:12px;color:var(--muted);margin-top:4px">Analisi AI su strumenti CFD</div></div>
-          <button class="btn btn-blue" onclick="loadSegnali()">⚡ Genera segnali</button>
+          <button class="btn btn-blue" onclick="loadSegnali()"> Genera segnali</button>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
           <button class="cfd-cat active" onclick="setCfdCat('tutti',this)">Tutti</button>
-          <button class="cfd-cat" onclick="setCfdCat('indici',this)">📊 Indici</button>
-          <button class="cfd-cat" onclick="setCfdCat('azioni',this)">📈 Azioni</button>
-          <button class="cfd-cat" onclick="setCfdCat('forex',this)">💱 Forex</button>
-          <button class="cfd-cat" onclick="setCfdCat('materie',this)">🛢️ Materie prime</button>
+          <button class="cfd-cat" onclick="setCfdCat('indici',this)"> Indici</button>
+          <button class="cfd-cat" onclick="setCfdCat('azioni',this)"> Azioni</button>
+          <button class="cfd-cat" onclick="setCfdCat('forex',this)">Forex</button>
+          <button class="cfd-cat" onclick="setCfdCat('materie',this)">️ Materie prime</button>
           <button class="cfd-cat" onclick="setCfdCat('crypto',this)">₿ Crypto</button>
         </div>
         <div id="cfdStrumentiGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px"></div>
       </div>
       <div id="segnaliLoading" style="display:none;text-align:center;padding:48px">
-        <div style="font-size:40px;margin-bottom:12px">⚡</div>
+        <div style="font-size:40px;margin-bottom:12px"></div>
         <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:6px">Analisi CFD in corso...</div>
         <div style="font-size:12px;color:var(--muted)">Calcolo livelli tecnici e segnali operativi</div>
       </div>
       <div id="segnaliEmpty" style="text-align:center;padding:48px">
-        <div style="font-size:40px;margin-bottom:12px">📡</div>
+        <div style="font-size:40px;margin-bottom:12px"></div>
         <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px">Seleziona gli strumenti</div>
         <div style="font-size:13px;color:var(--muted)">Scegli almeno uno strumento e clicca Genera segnali.</div>
       </div>
@@ -1160,9 +1178,9 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
         <div class="section-title" style="margin-bottom:14px">Segnali operativi</div>
         <div id="segnaliGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px;margin-bottom:24px"></div>
         <div id="segnaliStrategia" style="margin-bottom:16px"></div>
-        <div style="padding:14px 16px;background:rgba(224,138,58,0.08);border:1px solid rgba(224,138,58,0.2);border-radius:8px;font-size:11px;color:var(--muted);line-height:1.7">⚠️ <strong style="color:var(--orange)">Disclaimer:</strong> I segnali sono generati da AI a scopo informativo. I CFD sono strumenti ad alto rischio.</div>
+        <div style="padding:14px 16px;background:rgba(224,138,58,0.08);border:1px solid rgba(224,138,58,0.2);border-radius:8px;font-size:11px;color:var(--muted);line-height:1.7"> <strong style="color:var(--orange)">Disclaimer:</strong> I segnali sono generati da AI a scopo informativo. I CFD sono strumenti ad alto rischio.</div>
         <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:10px;display:flex;justify-content:space-between;align-items:center">
-          <span id="segnaliCacheInfo" style="color:var(--green);display:none">⚡ Da cache — nessuna analisi consumata</span>
+          <span id="segnaliCacheInfo" style="color:var(--green);display:none"> Da cache — nessuna analisi consumata</span>
           <span id="segnaliDate"></span>
         </div>
       </div>
@@ -1691,7 +1709,7 @@ function renderSectors() {
 function renderRiskMatrix() {
   const el=document.getElementById('riskMatrixDyn'); if(!el)return;
   if(assets.length===0){
-    el.innerHTML='<div style="text-align:center;padding:48px;color:var(--muted)"><div style="font-size:40px;margin-bottom:12px">📊</div><div style="font-size:16px;margin-bottom:6px">Matrice vuota</div><div style="font-size:12px">Aggiungi asset dal tab Portafoglio</div></div>';
+    el.innerHTML='<div style="text-align:center;padding:48px;color:var(--muted)"><div style="font-size:40px;margin-bottom:12px"></div><div style="font-size:16px;margin-bottom:6px">Matrice vuota</div><div style="font-size:12px">Aggiungi asset dal tab Portafoglio</div></div>';
     return;
   }
   const cellOf=a=>{
@@ -1705,7 +1723,7 @@ function renderRiskMatrix() {
   const cc=[['mc-3','mc-4','mc-5','mc-5'],['mc-2','mc-3','mc-4','mc-5'],['mc-1','mc-2','mc-3','mc-4'],['mc-1','mc-1','mc-2','mc-3']];
   const rl=['Alta','Media','Bassa','Minima'];
   const xl=['Trascurabile','Limitato','Significativo','Critico'];
-  const rlIcons=['🔴','🟠','🟡','🟢'];
+  const rlIcons=['●','●','●','●'];
 
   // Matrice
   let html='<div class="matrix-grid">';
@@ -1754,29 +1772,29 @@ function renderRiskMatrix() {
   alertHtml+=`<div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px">
     <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:var(--muted);margin-bottom:12px">COMPOSIZIONE RISCHIO</div>
     <div style="display:flex;flex-direction:column;gap:10px">
-      <div><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--red)">🔴 Alto rischio</span><span style="font-weight:700;font-family:'DM Mono',monospace">${hiPct.toFixed(1)}%</span></div>${bar(hiPct,'var(--red)')}</div>
-      <div><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--orange)">🟠 Medio rischio</span><span style="font-weight:700;font-family:'DM Mono',monospace">${mePct.toFixed(1)}%</span></div>${bar(mePct,'var(--orange)')}</div>
-      <div><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--green)">🟢 Basso rischio</span><span style="font-weight:700;font-family:'DM Mono',monospace">${loPct.toFixed(1)}%</span></div>${bar(loPct,'var(--green)')}</div>
+      <div><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--red)">Alto rischio</span><span style="font-weight:700;font-family:'DM Mono',monospace">${hiPct.toFixed(1)}%</span></div>${bar(hiPct,'var(--red)')}</div>
+      <div><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--orange)">Medio rischio</span><span style="font-weight:700;font-family:'DM Mono',monospace">${mePct.toFixed(1)}%</span></div>${bar(mePct,'var(--orange)')}</div>
+      <div><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--green)">Basso rischio</span><span style="font-weight:700;font-family:'DM Mono',monospace">${loPct.toFixed(1)}%</span></div>${bar(loPct,'var(--green)')}</div>
     </div>
   </div>`;
 
   // Alert principale
   if(hiPct>40){
-    alertHtml+=`<div class="alert-card ac-red"><div style="font-size:22px">⚠️</div><div><div class="ac-title" style="color:var(--red)">Rischio speculativo elevato</div><div class="ac-text">${hiPct.toFixed(0)}% in asset ad alto rischio: ${hi.map(a=>a.ticker).join(', ')}. Considera stop-loss o ribilanciamento.</div></div></div>`;
+    alertHtml+=`<div class="alert-card ac-red"><div style="font-size:22px"></div><div><div class="ac-title" style="color:var(--red)">Rischio speculativo elevato</div><div class="ac-text">${hiPct.toFixed(0)}% in asset ad alto rischio: ${hi.map(a=>a.ticker).join(', ')}. Considera stop-loss o ribilanciamento.</div></div></div>`;
   } else if(hiPct>25){
-    alertHtml+=`<div class="alert-card" style="border-color:var(--orange)"><div style="font-size:22px">🔶</div><div><div class="ac-title" style="color:var(--orange)">Attenzione: rischio medio-alto</div><div class="ac-text">${hiPct.toFixed(0)}% speculativo. Monitorare: ${hi.map(a=>a.ticker).join(', ')}.</div></div></div>`;
+    alertHtml+=`<div class="alert-card" style="border-color:var(--orange)"><div style="font-size:22px"></div><div><div class="ac-title" style="color:var(--orange)">Attenzione: rischio medio-alto</div><div class="ac-text">${hiPct.toFixed(0)}% speculativo. Monitorare: ${hi.map(a=>a.ticker).join(', ')}.</div></div></div>`;
   } else {
-    alertHtml+=`<div class="alert-card ac-green"><div style="font-size:22px">✅</div><div><div class="ac-title" style="color:var(--green)">Rischio controllato</div><div class="ac-text">Solo ${hiPct.toFixed(0)}% in asset speculativi. Struttura difensiva solida.</div></div></div>`;
+    alertHtml+=`<div class="alert-card ac-green"><div style="font-size:22px">✓</div><div><div class="ac-title" style="color:var(--green)">Rischio controllato</div><div class="ac-text">Solo ${hiPct.toFixed(0)}% in asset speculativi. Struttura difensiva solida.</div></div></div>`;
   }
 
   // Top gainer e loser
   if(gainers.length>0){
     const g=gainers[0]; const gPct=((g.currentPrice-g.buyPrice)/g.buyPrice*100);
-    alertHtml+=`<div style="background:rgba(76,175,126,.08);border:1px solid rgba(76,175,126,.2);border-radius:10px;padding:12px 14px;margin-top:10px;display:flex;justify-content:space-between;align-items:center"><div style="font-size:12px"><div style="color:var(--green);font-weight:700;margin-bottom:2px">🏆 Best performer</div><div style="color:var(--muted)">${g.name||g.ticker}</div></div><div style="font-family:'DM Mono',monospace;font-size:16px;font-weight:700;color:var(--green)">+${gPct.toFixed(1)}%</div></div>`;
+    alertHtml+=`<div style="background:rgba(76,175,126,.08);border:1px solid rgba(76,175,126,.2);border-radius:10px;padding:12px 14px;margin-top:10px;display:flex;justify-content:space-between;align-items:center"><div style="font-size:12px"><div style="color:var(--green);font-weight:700;margin-bottom:2px">Best performer</div><div style="color:var(--muted)">${g.name||g.ticker}</div></div><div style="font-family:'DM Mono',monospace;font-size:16px;font-weight:700;color:var(--green)">+${gPct.toFixed(1)}%</div></div>`;
   }
   if(losers.length>0){
     const l=losers[0]; const lPct=((l.currentPrice-l.buyPrice)/l.buyPrice*100);
-    alertHtml+=`<div style="background:rgba(224,90,90,.08);border:1px solid rgba(224,90,90,.2);border-radius:10px;padding:12px 14px;margin-top:8px;display:flex;justify-content:space-between;align-items:center"><div style="font-size:12px"><div style="color:var(--red);font-weight:700;margin-bottom:2px">📉 Worst performer</div><div style="color:var(--muted)">${l.name||l.ticker}</div></div><div style="font-family:'DM Mono',monospace;font-size:16px;font-weight:700;color:var(--red)">${lPct.toFixed(1)}%</div></div>`;
+    alertHtml+=`<div style="background:rgba(224,90,90,.08);border:1px solid rgba(224,90,90,.2);border-radius:10px;padding:12px 14px;margin-top:8px;display:flex;justify-content:space-between;align-items:center"><div style="font-size:12px"><div style="color:var(--red);font-weight:700;margin-bottom:2px"> Worst performer</div><div style="color:var(--muted)">${l.name||l.ticker}</div></div><div style="font-family:'DM Mono',monospace;font-size:16px;font-weight:700;color:var(--red)">${lPct.toFixed(1)}%</div></div>`;
   }
 
   ae.innerHTML=alertHtml;
@@ -1810,17 +1828,17 @@ function renderStrategia() {
   // Tips dinamici
   const tips=[];
   if(numAssets===0){
-    tips.push({i:'🚀',color:'var(--blue)',tag:'AZIONE',tt:'Inizia ora',d:'Aggiungi il primo asset dal tab Portafoglio. Un buon punto di partenza è un ETF globale come VWCE o VUAA che replica 3.500+ aziende.'});
+    tips.push({i:'',color:'var(--blue)',tag:'AZIONE',tt:'Inizia ora',d:'Aggiungi il primo asset dal tab Portafoglio. Un buon punto di partenza è un ETF globale come VWCE o VUAA che replica 3.500+ aziende.'});
   } else {
-    if(hiPct>40)tips.push({i:'⚠️',color:'var(--red)',tag:'RISCHIO',tt:'Esposizione speculativa alta: '+hiPct.toFixed(0)+'%',d:'Oltre il 40% in asset ad alto rischio. Considera di alleggerire le posizioni più speculative e ribilanciare verso ETF difensivi.'});
-    else if(hiPct>25)tips.push({i:'🔶',color:'var(--orange)',tag:'ATTENZIONE',tt:'Rischio elevato: '+hiPct.toFixed(0)+'%',d:'Tra il 25-40% in asset speculativi. Monitorare attentamente. Valuta un ETF obbligazionario come buffer.'});
-    if(loPct<30&&numAssets>2)tips.push({i:'🛡️',color:'var(--orange)',tag:'DIFESA',tt:'Base difensiva debole: '+loPct.toFixed(0)+'%',d:'Meno del 30% in asset stabili. Gli ETF globali (VWCE, VUAA) o obbligazionari dovrebbero pesare almeno il 40% del portafoglio.'});
-    else if(loPct>=40&&hiPct<=25)tips.push({i:'✅',color:'var(--green)',tag:'OK',tt:'Struttura equilibrata',d:'Buona base difensiva ('+loPct.toFixed(0)+'%) con esposizione speculativa contenuta ('+hiPct.toFixed(0)+'%). Continua a monitorare trimestralmente.'});
-    if(numAssets<4)tips.push({i:'📊',color:'var(--blue)',tag:'DIVERSIFICA',tt:'Portafoglio concentrato ('+numAssets+' asset)',d:'Con meno di 4 asset il rischio idiosincratico è elevato. Aggiungi almeno 2-3 strumenti in settori diversi.'});
-    if(pnlAssets.length>0&&pnlPct<-10)tips.push({i:'📉',color:'var(--red)',tag:'DRAWDOWN',tt:'Perdita complessiva: '+pnlPct.toFixed(1)+'%',d:'Il portafoglio è in perdita significativa. Evita di vendere in preda alla paura — valuta il DCA per abbassare il prezzo medio di carico.'});
-    else if(pnlAssets.length>0&&pnlPct>20)tips.push({i:'💰',color:'var(--green)',tag:'PROFIT',tt:'Guadagno complessivo: +'+pnlPct.toFixed(1)+'%',d:'Ottima performance. Considera di prendere profitto parziale su asset in gain >30% per ridurre il rischio asimmetrico.'});
-    tips.push({i:'🔄',color:'var(--muted)',tag:'ROUTINE',tt:'Ribilanciamento trimestrale',d:'Ogni 3 mesi controlla la tab Verdetti. Se un asset supera il 25% del totale, valuta di alleggerire.'});
-    tips.push({i:'🤖',color:'var(--purple)',tag:'AI',tt:'Analisi AI del portafoglio',d:'Usa la tab Analisi AI per una valutazione automatica del rischio, rendimento atteso e suggerimenti operativi personalizzati.'});
+    if(hiPct>40)tips.push({i:'',color:'var(--red)',tag:'RISCHIO',tt:'Esposizione speculativa alta: '+hiPct.toFixed(0)+'%',d:'Oltre il 40% in asset ad alto rischio. Considera di alleggerire le posizioni più speculative e ribilanciare verso ETF difensivi.'});
+    else if(hiPct>25)tips.push({i:'',color:'var(--orange)',tag:'ATTENZIONE',tt:'Rischio elevato: '+hiPct.toFixed(0)+'%',d:'Tra il 25-40% in asset speculativi. Monitorare attentamente. Valuta un ETF obbligazionario come buffer.'});
+    if(loPct<30&&numAssets>2)tips.push({i:'',color:'var(--orange)',tag:'DIFESA',tt:'Base difensiva debole: '+loPct.toFixed(0)+'%',d:'Meno del 30% in asset stabili. Gli ETF globali (VWCE, VUAA) o obbligazionari dovrebbero pesare almeno il 40% del portafoglio.'});
+    else if(loPct>=40&&hiPct<=25)tips.push({i:'✓',color:'var(--green)',tag:'OK',tt:'Struttura equilibrata',d:'Buona base difensiva ('+loPct.toFixed(0)+'%) con esposizione speculativa contenuta ('+hiPct.toFixed(0)+'%). Continua a monitorare trimestralmente.'});
+    if(numAssets<4)tips.push({i:'',color:'var(--blue)',tag:'DIVERSIFICA',tt:'Portafoglio concentrato ('+numAssets+' asset)',d:'Con meno di 4 asset il rischio idiosincratico è elevato. Aggiungi almeno 2-3 strumenti in settori diversi.'});
+    if(pnlAssets.length>0&&pnlPct<-10)tips.push({i:'',color:'var(--red)',tag:'DRAWDOWN',tt:'Perdita complessiva: '+pnlPct.toFixed(1)+'%',d:'Il portafoglio è in perdita significativa. Evita di vendere in preda alla paura — valuta il DCA per abbassare il prezzo medio di carico.'});
+    else if(pnlAssets.length>0&&pnlPct>20)tips.push({i:'',color:'var(--green)',tag:'PROFIT',tt:'Guadagno complessivo: +'+pnlPct.toFixed(1)+'%',d:'Ottima performance. Considera di prendere profitto parziale su asset in gain >30% per ridurre il rischio asimmetrico.'});
+    tips.push({i:'',color:'var(--muted)',tag:'ROUTINE',tt:'Ribilanciamento trimestrale',d:'Ogni 3 mesi controlla la tab Verdetti. Se un asset supera il 25% del totale, valuta di alleggerire.'});
+    tips.push({i:'',color:'var(--purple)',tag:'AI',tt:'Analisi AI del portafoglio',d:'Usa la tab Analisi AI per una valutazione automatica del rischio, rendimento atteso e suggerimenti operativi personalizzati.'});
   }
 
   // Header con score
@@ -1880,7 +1898,7 @@ function renderVerdetti() {
     else if(a.risk==='medium'&&pct<15){vv='◎ Ok';c='v-ok';}
     else if(a.risk==='medium'){vv='⚠ Peso alto';c='v-caution';}
     else if(a.risk==='high'&&pct<10){vv='⚠ Speculativo';c='v-caution';}
-    else{vv='⚡ Riduci';c='v-reduce';}
+    else{vv=' Riduci';c='v-reduce';}
     let pnlStr='';
     if(a.currentPrice>0&&a.buyPrice>0&&a.qty>0){const p=(a.currentPrice-a.buyPrice)*a.qty;pnlStr=' · <span style="color:'+(p>=0?'var(--green)':'var(--red)')+'">'+(p>=0?'+':'')+Math.abs(p).toLocaleString('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0})+'</span>';}
     return '<div class="verdict-row"><span class="v-ticker" style="color:'+a.color+'">'+a.ticker+'</span><span class="v-desc">'+a.name+' · '+pct.toFixed(1)+'%'+pnlStr+'</span><span class="vbadge '+c+'">'+vv+'</span></div>';
@@ -1937,10 +1955,10 @@ function computeAnalysis() {
   const label=score>=80?'Eccellente':score>=65?'Buono':score>=50?'Discreto':score>=35?'Da migliorare':'Rischioso';
   const summary=score>=80?'Portafoglio ben strutturato con '+assets.length+' asset. Base difensiva del '+loPct.toFixed(0)+'%.':score>=50?'Portafoglio equilibrato. Esposizione rischio ('+hiPct.toFixed(0)+'%) va monitorata.':'Portafoglio ad alto rischio. Ribilanciamento consigliato.';
   const recs=[];
-  if(hiPct>35)recs.push({type:'warning',icon:'🎰',title:'Esposizione speculativa ('+hiPct.toFixed(0)+'%)',text:'Oltre un terzo in asset ad alto rischio.'});
-  if(!aa.some(a=>a.sector.includes('ETF')&&a.risk==='low'))recs.push({type:'buy',icon:'🛡️',title:'Aggiungi ETF difensivo',text:'VWCE.DE o VUAA.DE offrono diversificazione globale.'});
+  if(hiPct>35)recs.push({type:'warning',icon:'',title:'Esposizione speculativa ('+hiPct.toFixed(0)+'%)',text:'Oltre un terzo in asset ad alto rischio.'});
+  if(!aa.some(a=>a.sector.includes('ETF')&&a.risk==='low'))recs.push({type:'buy',icon:'',title:'Aggiungi ETF difensivo',text:'VWCE.DE o VUAA.DE offrono diversificazione globale.'});
   const wRet=aa.reduce((s,a)=>s+(a.ret*a.pct/100),0);
-  recs.push({type:'hold',icon:'📊',title:'Rendimento atteso: ~'+wRet.toFixed(1)+'%/anno',text:'Su 10 anni il capitale potrebbe crescere di circa '+((Math.pow(1+wRet/100,10)-1)*100).toFixed(0)+'%.'});
+  recs.push({type:'hold',icon:'',title:'Rendimento atteso: ~'+wRet.toFixed(1)+'%/anno',text:'Su 10 anni il capitale potrebbe crescere di circa '+((Math.pow(1+wRet/100,10)-1)*100).toFixed(0)+'%.'});
   return {score,label,summary,assets:aa,recommendations:recs.slice(0,5)};
 }
 
@@ -1951,7 +1969,7 @@ function renderAIResults(res) {
   document.getElementById('aiScoreBox').innerHTML=
     '<div style="text-align:center;min-width:90px"><div class="ai-score-num" style="color:'+c+'">'+sc+'</div><div style="font-family:DM Mono,monospace;font-size:9px;color:var(--muted);letter-spacing:.1em">'+t('score')+'</div><div style="font-size:13px;font-weight:600;color:'+c+';margin-top:4px">'+res.label+'</div></div>'
     +'<div style="flex:1;min-width:200px"><div class="ai-score-bar"><div class="ai-score-fill" style="width:'+sc+'%;background:'+c+'"></div></div><div style="font-size:13px;line-height:1.7;color:var(--muted)">'+res.summary+'</div></div>';
-  const si={bullish:'📈',neutral:'➡️',bearish:'📉'};
+  const si={bullish:'↑',neutral:'→',bearish:'↓'};
   const ac={mantieni:'var(--blue)',aumenta:'var(--green)',riduci:'var(--orange)',vendi:'var(--red)'};
   const al={mantieni:'Mantieni',aumenta:'Aumenta',riduci:'Riduci',vendi:'Vendi'};
   document.getElementById('aiAssetCards').innerHTML=res.assets.map(a=>
@@ -1986,7 +2004,7 @@ async function runAIAnalysis() {
     if(data.error==='RATE_LIMIT'){
       document.getElementById('aiLoading').style.display='none';
       document.getElementById('aiEmpty').style.display='block';
-      document.getElementById('aiEmpty').innerHTML='<div style="font-size:40px;margin-bottom:12px">⏳</div><div style="font-family:Playfair Display,serif;font-size:20px;font-weight:700;margin-bottom:8px;color:var(--gold)">'+t('dailyLimitReached')+'</div><div style="font-size:13px;color:var(--muted)">Hai usato le 3 analisi gratuite di oggi. Si azzera a mezzanotte.</div>';
+      document.getElementById('aiEmpty').innerHTML='<div style="font-size:40px;margin-bottom:12px"></div><div style="font-family:Playfair Display,serif;font-size:20px;font-weight:700;margin-bottom:8px;color:var(--gold)">'+t('dailyLimitReached')+'</div><div style="font-size:13px;color:var(--muted)">Hai usato le 3 analisi gratuite di oggi. Si azzera a mezzanotte.</div>';
       return;
     }
     if(data.error)throw new Error(data.error);
@@ -2117,7 +2135,7 @@ async function loadMarketNews() {
     if(data.error==='RATE_LIMIT'){
       document.getElementById('newsLoading').style.display='none';
       document.getElementById('newsEmpty').style.display='block';
-      document.getElementById('newsEmpty').innerHTML='<div style="font-size:40px;margin-bottom:12px">⏳</div><div style="font-family:Playfair Display,serif;font-size:20px;font-weight:700;margin-bottom:8px;color:var(--gold)">'+t('dailyLimitReached')+'</div><div style="font-size:13px;color:var(--muted)">Hai usato le 3 analisi gratuite di oggi.</div>';
+      document.getElementById('newsEmpty').innerHTML='<div style="font-size:40px;margin-bottom:12px"></div><div style="font-family:Playfair Display,serif;font-size:20px;font-weight:700;margin-bottom:8px;color:var(--gold)">'+t('dailyLimitReached')+'</div><div style="font-size:13px;color:var(--muted)">Hai usato le 3 analisi gratuite di oggi.</div>';
       return;
     }
     if(data.error)throw new Error(data.error);
@@ -2134,42 +2152,42 @@ async function loadMarketNews() {
   } catch(e) {
     document.getElementById('newsLoading').style.display='none';
     document.getElementById('newsEmpty').style.display='block';
-    document.getElementById('newsEmpty').innerHTML='<div style="font-size:40px;margin-bottom:12px">⚠️</div><div style="font-size:16px;margin-bottom:8px">'+t('loadError')+'</div><div style="font-size:13px;color:var(--muted);margin-bottom:20px">'+e.message+'</div><button onclick="loadMarketNews()" class="btn btn-blue" style="padding:12px 28px;justify-content:center">'+t('retry')+'</button>';
+    document.getElementById('newsEmpty').innerHTML='<div style="font-size:40px;margin-bottom:12px"></div><div style="font-size:16px;margin-bottom:8px">'+t('loadError')+'</div><div style="font-size:13px;color:var(--muted);margin-bottom:20px">'+e.message+'</div><button onclick="loadMarketNews()" class="btn btn-blue" style="padding:12px 28px;justify-content:center">'+t('retry')+'</button>';
   }
 }
 
 // ─── SEGNALI (unica definizione) ──────────────────────────────────────────────
 // ─── CFD INSTRUMENTS ─────────────────────────────────────────────────────────
 const CFD_INSTRUMENTS = [
-  {id:'sp500',ticker:'S&P 500',name:'S&P 500',cat:'indici',emoji:'🇺🇸'},
-  {id:'nasdaq',ticker:'NASDAQ',name:'Nasdaq 100',cat:'indici',emoji:'💻'},
-  {id:'dax',ticker:'DAX',name:'DAX 40',cat:'indici',emoji:'🇩🇪'},
-  {id:'ftse',ticker:'FTSE 100',name:'FTSE 100',cat:'indici',emoji:'🇬🇧'},
-  {id:'nikkei',ticker:'Nikkei',name:'Nikkei 225',cat:'indici',emoji:'🇯🇵'},
-  {id:'dow',ticker:'Dow Jones',name:'Dow Jones 30',cat:'indici',emoji:'📊'},
-  {id:'aapl',ticker:'AAPL',name:'Apple',cat:'azioni',emoji:'🍎'},
-  {id:'nvda',ticker:'NVDA',name:'NVIDIA',cat:'azioni',emoji:'🤖'},
-  {id:'tsla',ticker:'TSLA',name:'Tesla',cat:'azioni',emoji:'⚡'},
+  {id:'sp500',ticker:'S&P 500',name:'S&P 500',cat:'indici',emoji:''},
+  {id:'nasdaq',ticker:'NASDAQ',name:'Nasdaq 100',cat:'indici',emoji:''},
+  {id:'dax',ticker:'DAX',name:'DAX 40',cat:'indici',emoji:''},
+  {id:'ftse',ticker:'FTSE 100',name:'FTSE 100',cat:'indici',emoji:''},
+  {id:'nikkei',ticker:'Nikkei',name:'Nikkei 225',cat:'indici',emoji:''},
+  {id:'dow',ticker:'Dow Jones',name:'Dow Jones 30',cat:'indici',emoji:''},
+  {id:'aapl',ticker:'AAPL',name:'Apple',cat:'azioni',emoji:''},
+  {id:'nvda',ticker:'NVDA',name:'NVIDIA',cat:'azioni',emoji:''},
+  {id:'tsla',ticker:'TSLA',name:'Tesla',cat:'azioni',emoji:''},
   {id:'msft',ticker:'MSFT',name:'Microsoft',cat:'azioni',emoji:'🪟'},
-  {id:'meta',ticker:'META',name:'Meta',cat:'azioni',emoji:'👁️'},
-  {id:'amzn',ticker:'AMZN',name:'Amazon',cat:'azioni',emoji:'📦'},
-  {id:'googl',ticker:'GOOGL',name:'Alphabet',cat:'azioni',emoji:'🔍'},
-  {id:'asml',ticker:'ASML',name:'ASML',cat:'azioni',emoji:'🇪🇺'},
-  {id:'pltr',ticker:'PLTR',name:'Palantir',cat:'azioni',emoji:'🛡️'},
-  {id:'eurusd',ticker:'EUR/USD',name:'Euro vs Dollaro',cat:'forex',emoji:'💶'},
-  {id:'gbpusd',ticker:'GBP/USD',name:'Sterlina vs USD',cat:'forex',emoji:'💷'},
+  {id:'meta',ticker:'META',name:'Meta',cat:'azioni',emoji:'️'},
+  {id:'amzn',ticker:'AMZN',name:'Amazon',cat:'azioni',emoji:''},
+  {id:'googl',ticker:'GOOGL',name:'Alphabet',cat:'azioni',emoji:''},
+  {id:'asml',ticker:'ASML',name:'ASML',cat:'azioni',emoji:''},
+  {id:'pltr',ticker:'PLTR',name:'Palantir',cat:'azioni',emoji:''},
+  {id:'eurusd',ticker:'EUR/USD',name:'Euro vs Dollaro',cat:'forex',emoji:''},
+  {id:'gbpusd',ticker:'GBP/USD',name:'Sterlina vs USD',cat:'forex',emoji:''},
   {id:'usdjpy',ticker:'USD/JPY',name:'Dollaro vs Yen',cat:'forex',emoji:'¥'},
-  {id:'usdchf',ticker:'USD/CHF',name:'Dollaro vs Franco',cat:'forex',emoji:'🇨🇭'},
-  {id:'audusd',ticker:'AUD/USD',name:'AUD vs USD',cat:'forex',emoji:'🦘'},
-  {id:'gold',ticker:'Oro',name:'Gold XAU/USD',cat:'materie',emoji:'🥇'},
-  {id:'silver',ticker:'Argento',name:'Silver XAG/USD',cat:'materie',emoji:'🥈'},
-  {id:'oil_wti',ticker:'WTI',name:'Petrolio WTI',cat:'materie',emoji:'🛢️'},
-  {id:'oil_brent',ticker:'Brent',name:'Petrolio Brent',cat:'materie',emoji:'🛢️'},
-  {id:'natgas',ticker:'Gas Nat.',name:'Natural Gas',cat:'materie',emoji:'🔥'},
+  {id:'usdchf',ticker:'USD/CHF',name:'Dollaro vs Franco',cat:'forex',emoji:''},
+  {id:'audusd',ticker:'AUD/USD',name:'AUD vs USD',cat:'forex',emoji:''},
+  {id:'gold',ticker:'Oro',name:'Gold XAU/USD',cat:'materie',emoji:''},
+  {id:'silver',ticker:'Argento',name:'Silver XAG/USD',cat:'materie',emoji:''},
+  {id:'oil_wti',ticker:'WTI',name:'Petrolio WTI',cat:'materie',emoji:'️'},
+  {id:'oil_brent',ticker:'Brent',name:'Petrolio Brent',cat:'materie',emoji:'️'},
+  {id:'natgas',ticker:'Gas Nat.',name:'Natural Gas',cat:'materie',emoji:''},
   {id:'btc',ticker:'BTC/USD',name:'Bitcoin',cat:'crypto',emoji:'₿'},
   {id:'eth',ticker:'ETH/USD',name:'Ethereum',cat:'crypto',emoji:'⟠'},
   {id:'sol',ticker:'SOL/USD',name:'Solana',cat:'crypto',emoji:'☀️'},
-  {id:'xrp',ticker:'XRP/USD',name:'Ripple',cat:'crypto',emoji:'💧'},
+  {id:'xrp',ticker:'XRP/USD',name:'Ripple',cat:'crypto',emoji:''},
 ];
 let _cfdSelectedIds = new Set(['sp500','nasdaq','gold','btc','eurusd']);
 let _cfdCurrentCat  = 'tutti';
@@ -2228,7 +2246,7 @@ async function loadSegnali() {
     if(data.error==='RATE_LIMIT'){
       document.getElementById('segnaliLoading').style.display='none';
       document.getElementById('segnaliEmpty').style.display='block';
-      document.getElementById('segnaliEmpty').innerHTML='<div style="font-size:40px;margin-bottom:12px">⏳</div><div style="font-family:Playfair Display,serif;font-size:20px;font-weight:700;margin-bottom:8px;color:var(--gold)">Limite giornaliero raggiunto</div><div style="font-size:13px;color:var(--muted)">Si azzera a mezzanotte. Hai ancora 10 analisi domani.</div>';
+      document.getElementById('segnaliEmpty').innerHTML='<div style="font-size:40px;margin-bottom:12px"></div><div style="font-family:Playfair Display,serif;font-size:20px;font-weight:700;margin-bottom:8px;color:var(--gold)">Limite giornaliero raggiunto</div><div style="font-size:13px;color:var(--muted)">Si azzera a mezzanotte. Hai ancora 10 analisi domani.</div>';
       return;
     }
     if(data.error) throw new Error(data.error);
@@ -2239,7 +2257,7 @@ async function loadSegnali() {
   } catch(e) {
     document.getElementById('segnaliLoading').style.display='none';
     document.getElementById('segnaliEmpty').style.display='block';
-    document.getElementById('segnaliEmpty').innerHTML=`<div style="font-size:40px;margin-bottom:12px">⚠️</div><div style="font-size:16px;margin-bottom:8px">Errore</div><div style="font-size:13px;color:var(--muted);margin-bottom:20px">${e.message}</div><button onclick="loadSegnali()" class="btn btn-blue" style="padding:12px 28px;justify-content:center">Riprova</button>`;
+    document.getElementById('segnaliEmpty').innerHTML=`<div style="font-size:40px;margin-bottom:12px"></div><div style="font-size:16px;margin-bottom:8px">Errore</div><div style="font-size:13px;color:var(--muted);margin-bottom:20px">${e.message}</div><button onclick="loadSegnali()" class="btn btn-blue" style="padding:12px 28px;justify-content:center">Riprova</button>`;
   }
 }
 
@@ -2249,26 +2267,26 @@ function _renderSegnaliResult(data, fromCache, cacheAge) {
   document.getElementById('segnaliContent').style.display='block';
   // Cache info
   const ci = document.getElementById('segnaliCacheInfo');
-  if(ci){ if(fromCache&&cacheAge){ci.textContent=`⚡ Da cache (${cacheAge}) — nessuna analisi consumata`;ci.style.display='inline';}else{ci.style.display='none';} }
+  if(ci){ if(fromCache&&cacheAge){ci.textContent=` Da cache (${cacheAge}) — nessuna analisi consumata`;ci.style.display='inline';}else{ci.style.display='none';} }
   const normSegnale = s => ({ticker:s.ticker||'???',nome:s.nome||'',categoria:s.categoria||'altro',azione:(s.azione||'attendi').toLowerCase(),forza:(s.forza||'moderato').toLowerCase(),motivazione:s.motivazione||'—',entryZone:s.entryZone||null,targetPrice:s.targetPrice||null,stopLoss:s.stopLoss||null,riskReward:s.riskReward||null,timeframe:s.timeframe||'swing',momentum:(s.momentum||'neutro').toLowerCase(),volatilita:(s.volatilita||'media').toLowerCase(),confidenza:(s.confidenza||'media').toLowerCase(),levaConsigliata:s.levaConsigliata||null,noteRischio:s.noteRischio||null});
   const segnali=(data.segnali||[]).map(normSegnale);
   const alerts=data.alerts||[];
   const sommario=data.sommario||null;
   const mktEl=document.getElementById('segnaliMktSummary');
-  if(mktEl&&sommario){const sColor=sommario.sentimentMercato==='rialzista'?'var(--green)':sommario.sentimentMercato==='ribassista'?'var(--red)':'var(--gold)';const sIcon=sommario.sentimentMercato==='rialzista'?'📈':sommario.sentimentMercato==='ribassista'?'📉':'↔️';mktEl.innerHTML=`<div style="background:var(--surface2);border-radius:10px;padding:14px 18px;border:1px solid var(--border);display:flex;gap:16px;align-items:center;margin-bottom:20px"><div style="font-size:32px;flex-shrink:0">${sIcon}</div><div><div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:${sColor};margin-bottom:4px">SENTIMENT: ${(sommario.sentimentMercato||'').toUpperCase()}</div><div style="font-size:13px;color:#C0BDB8;line-height:1.6">${sommario.testoBreve||''}</div></div></div>`;}
+  if(mktEl&&sommario){const sColor=sommario.sentimentMercato==='rialzista'?'var(--green)':sommario.sentimentMercato==='ribassista'?'var(--red)':'var(--gold)';const sIcon=sommario.sentimentMercato==='rialzista'?'':sommario.sentimentMercato==='ribassista'?'':'↔️';mktEl.innerHTML=`<div style="background:var(--surface2);border-radius:10px;padding:14px 18px;border:1px solid var(--border);display:flex;gap:16px;align-items:center;margin-bottom:20px"><div style="font-size:32px;flex-shrink:0">${sIcon}</div><div><div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:${sColor};margin-bottom:4px">SENTIMENT: ${(sommario.sentimentMercato||'').toUpperCase()}</div><div style="font-size:13px;color:#C0BDB8;line-height:1.6">${sommario.testoBreve||''}</div></div></div>`;}
   else if(mktEl) mktEl.innerHTML='';
   const alertsEl=document.getElementById('segnaliAlerts');
-  if(alerts.length>0){const colors={danger:'var(--red)',warning:'#F59E0B',success:'var(--green)',info:'var(--blue)'};alertsEl.innerHTML=alerts.map(a=>`<div style="border:1px solid ${colors[a.type]||'var(--gold)'};border-radius:10px;padding:12px 16px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start"><div style="font-size:20px;flex-shrink:0">${a.icon||'⚠️'}</div><div><div style="font-size:14px;font-weight:600;margin-bottom:3px;color:${colors[a.type]||'var(--gold)'}">${a.title||''}</div><div style="font-size:12px;color:var(--muted);line-height:1.5">${a.text||''}</div></div></div>`).join('');}else alertsEl.innerHTML='';
+  if(alerts.length>0){const colors={danger:'var(--red)',warning:'#F59E0B',success:'var(--green)',info:'var(--blue)'};alertsEl.innerHTML=alerts.map(a=>`<div style="border:1px solid ${colors[a.type]||'var(--gold)'};border-radius:10px;padding:12px 16px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start"><div style="font-size:20px;flex-shrink:0">${a.icon||''}</div><div><div style="font-size:14px;font-weight:600;margin-bottom:3px;color:${colors[a.type]||'var(--gold)'}">${a.title||''}</div><div style="font-size:12px;color:var(--muted);line-height:1.5">${a.text||''}</div></div></div>`).join('');}else alertsEl.innerHTML='';
   const grid=document.getElementById('segnaliGrid');
   const aColors={long:'var(--green)',short:'var(--red)',attendi:'var(--muted)'};
   const aLabels={long:'▲ LONG',short:'▼ SHORT',attendi:'◆ ATTENDI'};
-  const tfL={intraday:'⚡ Intraday',swing:'🔄 Swing',posizionale:'📅 Posizionale'};
+  const tfL={intraday:' Intraday',swing:' Swing',posizionale:' Posizionale'};
   const forzaC={forte:'var(--green)',moderato:'var(--gold)',debole:'var(--muted)'};
   const confC=c=>c.includes('alta')?'var(--green)':c.includes('bassa')?'var(--red)':'var(--gold)';
   const momC={rialzista:'var(--green)',ribassista:'var(--red)',neutro:'var(--muted)'};
   const momI={rialzista:'↑',ribassista:'↓',neutro:'→'};
   const volC={alta:'var(--red)',media:'var(--gold)',bassa:'var(--green)'};
-  grid.innerHTML=segnali.map(s=>{const cc=aColors[s.azione]||'var(--gold)';const textOn=s.azione==='long'?'#0D0C0A':s.azione==='short'?'#fff':'var(--text)';return `<div style="background:var(--surface2);border-radius:12px;border:1px solid var(--border);border-top:3px solid ${cc};padding:18px;display:flex;flex-direction:column;gap:12px"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><div><div style="font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--gold)">${s.ticker}</div><div style="font-size:11px;color:var(--muted)">${s.nome}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0"><div style="background:${cc};color:${textOn};padding:5px 14px;border-radius:20px;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.06em">${aLabels[s.azione]||s.azione.toUpperCase()}</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:${forzaC[s.forza]||'var(--gold)'}">FORZA: ${s.forza.toUpperCase()}</div></div></div><div style="font-size:12px;color:#C0BDB8;line-height:1.75">${s.motivazione}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">${s.entryZone?`<div style="background:rgba(74,144,217,.1);border:1px solid rgba(74,144,217,.25);border-radius:6px;padding:8px;text-align:center"><div style="font-size:9px;color:var(--muted);letter-spacing:.07em;margin-bottom:3px">ENTRY</div><div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--blue);font-weight:700">${s.entryZone}</div></div>`:''} ${s.targetPrice?`<div style="background:rgba(76,175,126,.1);border:1px solid rgba(76,175,126,.25);border-radius:6px;padding:8px;text-align:center"><div style="font-size:9px;color:var(--muted);letter-spacing:.07em;margin-bottom:3px">TARGET</div><div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--green);font-weight:700">${s.targetPrice}</div></div>`:''} ${s.stopLoss?`<div style="background:rgba(224,90,90,.1);border:1px solid rgba(224,90,90,.25);border-radius:6px;padding:8px;text-align:center"><div style="font-size:9px;color:var(--muted);letter-spacing:.07em;margin-bottom:3px">STOP LOSS</div><div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--red);font-weight:700">${s.stopLoss}</div></div>`:''} ${s.riskReward?`<div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:6px;padding:8px;text-align:center"><div style="font-size:9px;color:var(--muted);letter-spacing:.07em;margin-bottom:3px">RISK/REWARD</div><div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);font-weight:700">${s.riskReward}</div></div>`:''}</div>${(s.levaConsigliata||s.noteRischio)?`<div style="background:rgba(224,90,90,.05);border:1px solid rgba(224,90,90,.15);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)">${s.levaConsigliata?`<span style="font-family:'DM Mono',monospace;color:var(--orange)">⚡ Leva max: ${s.levaConsigliata}</span>`:''} ${s.noteRischio?`<div style="margin-top:${s.levaConsigliata?'5':'0'}px">${s.noteRischio}</div>`:''}</div>`:''}<div style="display:flex;flex-wrap:wrap;gap:6px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05)"><span style="font-family:'DM Mono',monospace;font-size:9px;background:var(--surface3);padding:3px 7px;border-radius:4px;color:var(--muted)">${tfL[s.timeframe]||s.timeframe}</span><span style="font-family:'DM Mono',monospace;font-size:9px;background:var(--surface3);padding:3px 7px;border-radius:4px;color:${momC[s.momentum]||'var(--muted)'}">MOM ${momI[s.momentum]||'→'} ${s.momentum.toUpperCase()}</span><span style="font-family:'DM Mono',monospace;font-size:9px;background:var(--surface3);padding:3px 7px;border-radius:4px;color:${volC[s.volatilita]||'var(--gold)'}">VOL ${s.volatilita.toUpperCase()}</span><span style="font-family:'DM Mono',monospace;font-size:9px;background:var(--surface3);padding:3px 7px;border-radius:4px;color:${confC(s.confidenza)}">CONF ${s.confidenza.toUpperCase()}</span></div></div>`;}).join('');
+  grid.innerHTML=segnali.map(s=>{const cc=aColors[s.azione]||'var(--gold)';const textOn=s.azione==='long'?'#0D0C0A':s.azione==='short'?'#fff':'var(--text)';return `<div style="background:var(--surface2);border-radius:12px;border:1px solid var(--border);border-top:3px solid ${cc};padding:18px;display:flex;flex-direction:column;gap:12px"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><div><div style="font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--gold)">${s.ticker}</div><div style="font-size:11px;color:var(--muted)">${s.nome}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0"><div style="background:${cc};color:${textOn};padding:5px 14px;border-radius:20px;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.06em">${aLabels[s.azione]||s.azione.toUpperCase()}</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:${forzaC[s.forza]||'var(--gold)'}">FORZA: ${s.forza.toUpperCase()}</div></div></div><div style="font-size:12px;color:#C0BDB8;line-height:1.75">${s.motivazione}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">${s.entryZone?`<div style="background:rgba(74,144,217,.1);border:1px solid rgba(74,144,217,.25);border-radius:6px;padding:8px;text-align:center"><div style="font-size:9px;color:var(--muted);letter-spacing:.07em;margin-bottom:3px">ENTRY</div><div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--blue);font-weight:700">${s.entryZone}</div></div>`:''} ${s.targetPrice?`<div style="background:rgba(76,175,126,.1);border:1px solid rgba(76,175,126,.25);border-radius:6px;padding:8px;text-align:center"><div style="font-size:9px;color:var(--muted);letter-spacing:.07em;margin-bottom:3px">TARGET</div><div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--green);font-weight:700">${s.targetPrice}</div></div>`:''} ${s.stopLoss?`<div style="background:rgba(224,90,90,.1);border:1px solid rgba(224,90,90,.25);border-radius:6px;padding:8px;text-align:center"><div style="font-size:9px;color:var(--muted);letter-spacing:.07em;margin-bottom:3px">STOP LOSS</div><div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--red);font-weight:700">${s.stopLoss}</div></div>`:''} ${s.riskReward?`<div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:6px;padding:8px;text-align:center"><div style="font-size:9px;color:var(--muted);letter-spacing:.07em;margin-bottom:3px">RISK/REWARD</div><div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);font-weight:700">${s.riskReward}</div></div>`:''}</div>${(s.levaConsigliata||s.noteRischio)?`<div style="background:rgba(224,90,90,.05);border:1px solid rgba(224,90,90,.15);border-radius:6px;padding:8px;font-size:11px;color:var(--muted)">${s.levaConsigliata?`<span style="font-family:'DM Mono',monospace;color:var(--orange)"> Leva max: ${s.levaConsigliata}</span>`:''} ${s.noteRischio?`<div style="margin-top:${s.levaConsigliata?'5':'0'}px">${s.noteRischio}</div>`:''}</div>`:''}<div style="display:flex;flex-wrap:wrap;gap:6px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05)"><span style="font-family:'DM Mono',monospace;font-size:9px;background:var(--surface3);padding:3px 7px;border-radius:4px;color:var(--muted)">${tfL[s.timeframe]||s.timeframe}</span><span style="font-family:'DM Mono',monospace;font-size:9px;background:var(--surface3);padding:3px 7px;border-radius:4px;color:${momC[s.momentum]||'var(--muted)'}">MOM ${momI[s.momentum]||'→'} ${s.momentum.toUpperCase()}</span><span style="font-family:'DM Mono',monospace;font-size:9px;background:var(--surface3);padding:3px 7px;border-radius:4px;color:${volC[s.volatilita]||'var(--gold)'}">VOL ${s.volatilita.toUpperCase()}</span><span style="font-family:'DM Mono',monospace;font-size:9px;background:var(--surface3);padding:3px 7px;border-radius:4px;color:${confC(s.confidenza)}">CONF ${s.confidenza.toUpperCase()}</span></div></div>`;}).join('');
   if(data.strategia) document.getElementById('segnaliStrategia').innerHTML=`<div class="card"><div class="section-title">Strategia cross-strumento</div><div style="font-size:13px;color:#C0BDB8;line-height:1.8">${data.strategia}</div></div>`;
   document.getElementById('segnaliDate').textContent='Aggiornato: '+new Date().toLocaleString('it-IT');
 }
@@ -2313,12 +2331,12 @@ function checkPriceAlerts(){
   if(Notification.permission!=='granted')return;
   assets.forEach(a=>{
     const lp=livePrices[a.id];if(!lp)return;
-    if(Math.abs(lp.change)>=NOTIF_THRESHOLD_DAY){const d=lp.change>=0?'🚀':'⚠️';sendNotif(d+' '+a.ticker+' '+(lp.change>=0?'+':'')+lp.change.toFixed(1)+'% oggi',a.name+' ha avuto una variazione significativa.');}
+    if(Math.abs(lp.change)>=NOTIF_THRESHOLD_DAY){const d=lp.change>=0?'':'';sendNotif(d+' '+a.ticker+' '+(lp.change>=0?'+':'')+lp.change.toFixed(1)+'% oggi',a.name+' ha avuto una variazione significativa.');}
     if(a.buyPrice>0&&a.currentPrice>0){
       const fb=((a.currentPrice-a.buyPrice)/a.buyPrice)*100;
       const last=parseFloat(localStorage.getItem('srm_alert_'+a.id)||'0');
       const nl=Math.floor(Math.abs(fb)/NOTIF_THRESHOLD_BUY)*NOTIF_THRESHOLD_BUY;
-      if(nl>=NOTIF_THRESHOLD_BUY&&nl!==last){localStorage.setItem('srm_alert_'+a.id,nl);const d=fb>=0?'🎯':'📉';sendNotif(d+' '+a.ticker+' '+(fb>=0?'+':'')+fb.toFixed(1)+'% dal tuo acquisto',a.name);}
+      if(nl>=NOTIF_THRESHOLD_BUY&&nl!==last){localStorage.setItem('srm_alert_'+a.id,nl);const d=fb>=0?'':'';sendNotif(d+' '+a.ticker+' '+(fb>=0?'+':'')+fb.toFixed(1)+'% dal tuo acquisto',a.name);}
     }
   });
 }
@@ -2332,7 +2350,7 @@ async function enableNotifications(){
 function updateNotifBtn(){
   const btn=document.getElementById('notifBtn');if(!btn)return;
   const on=Notification.permission==='granted';
-  btn.textContent=on?'🔔':'🔕';btn.title=on?'Notifiche attive':'Attiva notifiche';
+  btn.textContent=on?'':'';btn.title=on?'Notifiche attive':'Attiva notifiche';
   btn.style.color=on?'var(--gold)':'var(--muted)';
 }
 
@@ -2375,7 +2393,7 @@ function renderStorico(){
     const idx=closedPositions.length-1-i;
     const pc=p.pnl>=0?'var(--green)':'var(--red)';
     const pp=p.invested>0?((p.pnl/p.invested)*100).toFixed(2):'0.00';
-    return '<tr><td><strong style="color:var(--gold)">'+p.ticker+'</strong><div style="font-size:11px;color:var(--muted)">'+(p.name||'')+'</div></td><td>€'+(p.invested||0).toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td>€'+(p.buyPrice||0).toFixed(2)+'</td><td>€'+(p.closePrice||0).toFixed(2)+'</td><td style="color:'+pc+';font-family:DM Mono,monospace;font-weight:700">'+fmtPnl(p.pnl)+'<div style="font-size:11px">'+pp+'%</div></td><td style="font-size:12px;color:var(--muted)">'+(p.closeDate||'---')+'</td><td><button onclick="deleteStorico('+idx+')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px">🗑</button></td></tr>';
+    return '<tr><td><strong style="color:var(--gold)">'+p.ticker+'</strong><div style="font-size:11px;color:var(--muted)">'+(p.name||'')+'</div></td><td>€'+(p.invested||0).toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td>€'+(p.buyPrice||0).toFixed(2)+'</td><td>€'+(p.closePrice||0).toFixed(2)+'</td><td style="color:'+pc+';font-family:DM Mono,monospace;font-weight:700">'+fmtPnl(p.pnl)+'<div style="font-size:11px">'+pp+'%</div></td><td style="font-size:12px;color:var(--muted)">'+(p.closeDate||'---')+'</td><td><button onclick="deleteStorico('+idx+')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px"></button></td></tr>';
   }).join('');
 }
 function deleteStorico(idx){if(!confirm('Eliminare?'))return;closedPositions.splice(idx,1);saveStorico();renderStorico();}
@@ -2420,114 +2438,114 @@ function confirmClosePosition(){
 // ─── MARKET TICKER ────────────────────────────────────────────────────────────
 const TICKER_SYMBOLS = [
   // ── Indici USA ──────────────────────────────────────────────────
-  {id:'sp500',    yahoo:'^GSPC',     label:'S&P 500',       fmt:'points', icon:'📊'},
-  {id:'nasdaq',   yahoo:'^IXIC',     label:'NASDAQ',        fmt:'points', icon:'💻'},
-  {id:'dji',      yahoo:'^DJI',      label:'DOW JONES',     fmt:'points', icon:'🏦'},
-  {id:'russell',  yahoo:'^RUT',      label:'RUSSELL 2000',  fmt:'points', icon:'📈'},
-  {id:'sp400',    yahoo:'^MID',      label:'S&P 400 MID',   fmt:'points', icon:'📊'},
-  {id:'vix',      yahoo:'^VIX',      label:'VIX',           fmt:'points', icon:'⚡'},
+  {id:'sp500',    yahoo:'^GSPC',     label:'S&P 500',       fmt:'points', icon:''},
+  {id:'nasdaq',   yahoo:'^IXIC',     label:'NASDAQ',        fmt:'points', icon:''},
+  {id:'dji',      yahoo:'^DJI',      label:'DOW JONES',     fmt:'points', icon:''},
+  {id:'russell',  yahoo:'^RUT',      label:'RUSSELL 2000',  fmt:'points', icon:''},
+  {id:'sp400',    yahoo:'^MID',      label:'S&P 400 MID',   fmt:'points', icon:''},
+  {id:'vix',      yahoo:'^VIX',      label:'VIX',           fmt:'points', icon:''},
   {id:'sp500eq',  yahoo:'RSP',       label:'S&P EQ WEIGHT', fmt:'usd',    icon:'⚖️'},
   // ── Indici Europa ───────────────────────────────────────────────
-  {id:'ftse',     yahoo:'^FTSE',     label:'FTSE 100',      fmt:'points', icon:'🇬🇧'},
-  {id:'dax',      yahoo:'^GDAXI',    label:'DAX',           fmt:'points', icon:'🇩🇪'},
-  {id:'cac',      yahoo:'^FCHI',     label:'CAC 40',        fmt:'points', icon:'🇫🇷'},
-  {id:'mib',      yahoo:'FTSEMIB.MI',label:'FTSE MIB',      fmt:'points', icon:'🇮🇹'},
-  {id:'stoxx',    yahoo:'^STOXX50E', label:'EURO STOXX 50', fmt:'points', icon:'🇪🇺'},
-  {id:'stoxx600', yahoo:'^STOXX',    label:'STOXX 600',     fmt:'points', icon:'🇪🇺'},
-  {id:'ibex',     yahoo:'^IBEX',     label:'IBEX 35',       fmt:'points', icon:'🇪🇸'},
-  {id:'aex',      yahoo:'^AEX',      label:'AEX',           fmt:'points', icon:'🇳🇱'},
-  {id:'smi',      yahoo:'^SSMI',     label:'SMI',           fmt:'points', icon:'🇨🇭'},
-  {id:'omx',      yahoo:'^OMXS30',   label:'OMX 30',        fmt:'points', icon:'🇸🇪'},
+  {id:'ftse',     yahoo:'^FTSE',     label:'FTSE 100',      fmt:'points', icon:''},
+  {id:'dax',      yahoo:'^GDAXI',    label:'DAX',           fmt:'points', icon:''},
+  {id:'cac',      yahoo:'^FCHI',     label:'CAC 40',        fmt:'points', icon:''},
+  {id:'mib',      yahoo:'FTSEMIB.MI',label:'FTSE MIB',      fmt:'points', icon:''},
+  {id:'stoxx',    yahoo:'^STOXX50E', label:'EURO STOXX 50', fmt:'points', icon:''},
+  {id:'stoxx600', yahoo:'^STOXX',    label:'STOXX 600',     fmt:'points', icon:''},
+  {id:'ibex',     yahoo:'^IBEX',     label:'IBEX 35',       fmt:'points', icon:''},
+  {id:'aex',      yahoo:'^AEX',      label:'AEX',           fmt:'points', icon:''},
+  {id:'smi',      yahoo:'^SSMI',     label:'SMI',           fmt:'points', icon:''},
+  {id:'omx',      yahoo:'^OMXS30',   label:'OMX 30',        fmt:'points', icon:''},
   // ── Indici Asia/Pacifico ────────────────────────────────────────
-  {id:'nikkei',   yahoo:'^N225',     label:'NIKKEI 225',    fmt:'points', icon:'🇯🇵'},
-  {id:'topix',    yahoo:'^TOPX',     label:'TOPIX',         fmt:'points', icon:'🇯🇵'},
-  {id:'hsi',      yahoo:'^HSI',      label:'HANG SENG',     fmt:'points', icon:'🇭🇰'},
-  {id:'csi300',   yahoo:'000300.SS', label:'CSI 300',       fmt:'points', icon:'🇨🇳'},
-  {id:'asx',      yahoo:'^AXJO',     label:'ASX 200',       fmt:'points', icon:'🇦🇺'},
-  {id:'kospi',    yahoo:'^KS11',     label:'KOSPI',         fmt:'points', icon:'🇰🇷'},
-  {id:'sensex',   yahoo:'^BSESN',    label:'SENSEX',        fmt:'points', icon:'🇮🇳'},
-  {id:'tsx',      yahoo:'^GSPTSE',   label:'TSX',           fmt:'points', icon:'🇨🇦'},
+  {id:'nikkei',   yahoo:'^N225',     label:'NIKKEI 225',    fmt:'points', icon:''},
+  {id:'topix',    yahoo:'^TOPX',     label:'TOPIX',         fmt:'points', icon:''},
+  {id:'hsi',      yahoo:'^HSI',      label:'HANG SENG',     fmt:'points', icon:''},
+  {id:'csi300',   yahoo:'000300.SS', label:'CSI 300',       fmt:'points', icon:''},
+  {id:'asx',      yahoo:'^AXJO',     label:'ASX 200',       fmt:'points', icon:''},
+  {id:'kospi',    yahoo:'^KS11',     label:'KOSPI',         fmt:'points', icon:''},
+  {id:'sensex',   yahoo:'^BSESN',    label:'SENSEX',        fmt:'points', icon:''},
+  {id:'tsx',      yahoo:'^GSPTSE',   label:'TSX',           fmt:'points', icon:''},
   // ── ETF Azionari ────────────────────────────────────────────────
-  {id:'spy',      yahoo:'SPY',       label:'SPY',           fmt:'usd',    icon:'🏛'},
-  {id:'qqq',      yahoo:'QQQ',       label:'QQQ',           fmt:'usd',    icon:'💡'},
-  {id:'vti',      yahoo:'VTI',       label:'VTI',           fmt:'usd',    icon:'🌍'},
-  {id:'voo',      yahoo:'VOO',       label:'VOO',           fmt:'usd',    icon:'🗽'},
-  {id:'vuaa',     yahoo:'VUAA.L',    label:'VUAA',          fmt:'usd',    icon:'🌐'},
-  {id:'iwda',     yahoo:'IWDA.AS',   label:'IWDA',          fmt:'usd',    icon:'🌏'},
-  {id:'cspx',     yahoo:'CSPX.L',    label:'CSPX',          fmt:'usd',    icon:'📋'},
-  {id:'vwra',     yahoo:'VWRA.L',    label:'VWRA',          fmt:'usd',    icon:'🌎'},
-  {id:'eimi',     yahoo:'EIMI.L',    label:'EIMI EM',       fmt:'usd',    icon:'🌏'},
-  {id:'arkk',     yahoo:'ARKK',      label:'ARKK',          fmt:'usd',    icon:'🚀'},
+  {id:'spy',      yahoo:'SPY',       label:'SPY',           fmt:'usd',    icon:''},
+  {id:'qqq',      yahoo:'QQQ',       label:'QQQ',           fmt:'usd',    icon:''},
+  {id:'vti',      yahoo:'VTI',       label:'VTI',           fmt:'usd',    icon:''},
+  {id:'voo',      yahoo:'VOO',       label:'VOO',           fmt:'usd',    icon:''},
+  {id:'vuaa',     yahoo:'VUAA.L',    label:'VUAA',          fmt:'usd',    icon:''},
+  {id:'iwda',     yahoo:'IWDA.AS',   label:'IWDA',          fmt:'usd',    icon:''},
+  {id:'cspx',     yahoo:'CSPX.L',    label:'CSPX',          fmt:'usd',    icon:''},
+  {id:'vwra',     yahoo:'VWRA.L',    label:'VWRA',          fmt:'usd',    icon:''},
+  {id:'eimi',     yahoo:'EIMI.L',    label:'EIMI EM',       fmt:'usd',    icon:''},
+  {id:'arkk',     yahoo:'ARKK',      label:'ARKK',          fmt:'usd',    icon:''},
   // ── ETF Settoriali ──────────────────────────────────────────────
-  {id:'xlk',      yahoo:'XLK',       label:'XLK TECH',      fmt:'usd',    icon:'🔬'},
-  {id:'xle',      yahoo:'XLE',       label:'XLE ENERGY',    fmt:'usd',    icon:'⚡'},
-  {id:'xlf',      yahoo:'XLF',       label:'XLF FINANCE',   fmt:'usd',    icon:'💰'},
-  {id:'xlv',      yahoo:'XLV',       label:'XLV HEALTH',    fmt:'usd',    icon:'🏥'},
-  {id:'xly',      yahoo:'XLY',       label:'XLY CONSUMER',  fmt:'usd',    icon:'🛒'},
-  {id:'xli',      yahoo:'XLI',       label:'XLI INDUSTRI',  fmt:'usd',    icon:'🏭'},
-  {id:'smh',      yahoo:'SMH',       label:'SMH SEMI',      fmt:'usd',    icon:'💾'},
-  {id:'gld',      yahoo:'GLD',       label:'GLD ETF',       fmt:'usd',    icon:'🥇'},
-  {id:'tip',      yahoo:'TIP',       label:'TIP INFLAZ',    fmt:'usd',    icon:'📊'},
+  {id:'xlk',      yahoo:'XLK',       label:'XLK TECH',      fmt:'usd',    icon:''},
+  {id:'xle',      yahoo:'XLE',       label:'XLE ENERGY',    fmt:'usd',    icon:''},
+  {id:'xlf',      yahoo:'XLF',       label:'XLF FINANCE',   fmt:'usd',    icon:''},
+  {id:'xlv',      yahoo:'XLV',       label:'XLV HEALTH',    fmt:'usd',    icon:''},
+  {id:'xly',      yahoo:'XLY',       label:'XLY CONSUMER',  fmt:'usd',    icon:''},
+  {id:'xli',      yahoo:'XLI',       label:'XLI INDUSTRI',  fmt:'usd',    icon:''},
+  {id:'smh',      yahoo:'SMH',       label:'SMH SEMI',      fmt:'usd',    icon:''},
+  {id:'gld',      yahoo:'GLD',       label:'GLD ETF',       fmt:'usd',    icon:''},
+  {id:'tip',      yahoo:'TIP',       label:'TIP INFLAZ',    fmt:'usd',    icon:''},
   // ── Azioni USA ──────────────────────────────────────────────────
-  {id:'aapl',     yahoo:'AAPL',      label:'AAPL',          fmt:'usd',    icon:'🍎'},
+  {id:'aapl',     yahoo:'AAPL',      label:'AAPL',          fmt:'usd',    icon:''},
   {id:'msft',     yahoo:'MSFT',      label:'MSFT',          fmt:'usd',    icon:'🪟'},
-  {id:'nvda',     yahoo:'NVDA',      label:'NVDA',          fmt:'usd',    icon:'🟩'},
-  {id:'googl',    yahoo:'GOOGL',     label:'GOOGL',         fmt:'usd',    icon:'🔍'},
-  {id:'amzn',     yahoo:'AMZN',      label:'AMZN',          fmt:'usd',    icon:'📦'},
-  {id:'meta',     yahoo:'META',      label:'META',          fmt:'usd',    icon:'👓'},
-  {id:'tsla',     yahoo:'TSLA',      label:'TSLA',          fmt:'usd',    icon:'🚗'},
-  {id:'berkb',    yahoo:'BRK-B',     label:'BRK-B',         fmt:'usd',    icon:'🏦'},
-  {id:'jpm',      yahoo:'JPM',       label:'JPM',           fmt:'usd',    icon:'💳'},
-  {id:'v',        yahoo:'V',         label:'VISA',          fmt:'usd',    icon:'💳'},
-  {id:'xom',      yahoo:'XOM',       label:'EXXON',         fmt:'usd',    icon:'🛢'},
-  {id:'unh',      yahoo:'UNH',       label:'UNITEDHLTH',    fmt:'usd',    icon:'🏥'},
-  {id:'wmt',      yahoo:'WMT',       label:'WALMART',       fmt:'usd',    icon:'🛒'},
-  {id:'ma',       yahoo:'MA',        label:'MASTERCARD',    fmt:'usd',    icon:'💳'},
-  {id:'hd',       yahoo:'HD',        label:'HOME DEPOT',    fmt:'usd',    icon:'🏠'},
-  {id:'pg',       yahoo:'PG',        label:'PROCTER',       fmt:'usd',    icon:'🧴'},
-  {id:'ko',       yahoo:'KO',        label:'COCA-COLA',     fmt:'usd',    icon:'🥤'},
-  {id:'jnj',      yahoo:'JNJ',       label:'J&J',           fmt:'usd',    icon:'💊'},
+  {id:'nvda',     yahoo:'NVDA',      label:'NVDA',          fmt:'usd',    icon:''},
+  {id:'googl',    yahoo:'GOOGL',     label:'GOOGL',         fmt:'usd',    icon:''},
+  {id:'amzn',     yahoo:'AMZN',      label:'AMZN',          fmt:'usd',    icon:''},
+  {id:'meta',     yahoo:'META',      label:'META',          fmt:'usd',    icon:''},
+  {id:'tsla',     yahoo:'TSLA',      label:'TSLA',          fmt:'usd',    icon:''},
+  {id:'berkb',    yahoo:'BRK-B',     label:'BRK-B',         fmt:'usd',    icon:''},
+  {id:'jpm',      yahoo:'JPM',       label:'JPM',           fmt:'usd',    icon:''},
+  {id:'v',        yahoo:'V',         label:'VISA',          fmt:'usd',    icon:''},
+  {id:'xom',      yahoo:'XOM',       label:'EXXON',         fmt:'usd',    icon:''},
+  {id:'unh',      yahoo:'UNH',       label:'UNITEDHLTH',    fmt:'usd',    icon:''},
+  {id:'wmt',      yahoo:'WMT',       label:'WALMART',       fmt:'usd',    icon:''},
+  {id:'ma',       yahoo:'MA',        label:'MASTERCARD',    fmt:'usd',    icon:''},
+  {id:'hd',       yahoo:'HD',        label:'HOME DEPOT',    fmt:'usd',    icon:''},
+  {id:'pg',       yahoo:'PG',        label:'PROCTER',       fmt:'usd',    icon:''},
+  {id:'ko',       yahoo:'KO',        label:'COCA-COLA',     fmt:'usd',    icon:''},
+  {id:'jnj',      yahoo:'JNJ',       label:'J&J',           fmt:'usd',    icon:''},
   {id:'crm',      yahoo:'CRM',       label:'SALESFORCE',    fmt:'usd',    icon:'☁️'},
   // ── Azioni Europa ───────────────────────────────────────────────
-  {id:'asml',     yahoo:'ASML',      label:'ASML',          fmt:'usd',    icon:'🔭'},
-  {id:'lvmh',     yahoo:'MC.PA',     label:'LVMH',          fmt:'eur',    icon:'👜'},
+  {id:'asml',     yahoo:'ASML',      label:'ASML',          fmt:'usd',    icon:''},
+  {id:'lvmh',     yahoo:'MC.PA',     label:'LVMH',          fmt:'eur',    icon:''},
   {id:'nestle',   yahoo:'NESN.SW',   label:'NESTLÉ',        fmt:'eur',    icon:'☕'},
-  {id:'novartis', yahoo:'NVS',       label:'NOVARTIS',      fmt:'usd',    icon:'💊'},
-  {id:'totalenrg',yahoo:'TTE.PA',    label:'TOTALENERGIES', fmt:'eur',    icon:'⚡'},
+  {id:'novartis', yahoo:'NVS',       label:'NOVARTIS',      fmt:'usd',    icon:''},
+  {id:'totalenrg',yahoo:'TTE.PA',    label:'TOTALENERGIES', fmt:'eur',    icon:''},
   {id:'siemens',  yahoo:'SIE.DE',    label:'SIEMENS',       fmt:'eur',    icon:'⚙️'},
-  {id:'sap',      yahoo:'SAP',       label:'SAP',           fmt:'usd',    icon:'💻'},
-  {id:'ferrari',  yahoo:'RACE',      label:'FERRARI',       fmt:'usd',    icon:'🏎'},
-  {id:'enel',     yahoo:'ENEL.MI',   label:'ENEL',          fmt:'eur',    icon:'⚡'},
-  {id:'eni',      yahoo:'ENI.MI',    label:'ENI',           fmt:'eur',    icon:'🛢'},
+  {id:'sap',      yahoo:'SAP',       label:'SAP',           fmt:'usd',    icon:''},
+  {id:'ferrari',  yahoo:'RACE',      label:'FERRARI',       fmt:'usd',    icon:''},
+  {id:'enel',     yahoo:'ENEL.MI',   label:'ENEL',          fmt:'eur',    icon:''},
+  {id:'eni',      yahoo:'ENI.MI',    label:'ENI',           fmt:'eur',    icon:''},
   // ── Forex ────────────────────────────────────────────────────────
-  {id:'eurusd',   yahoo:'EURUSD=X',  label:'EUR/USD',       fmt:'fx',     icon:'💱'},
-  {id:'gbpusd',   yahoo:'GBPUSD=X',  label:'GBP/USD',       fmt:'fx',     icon:'💱'},
-  {id:'usdjpy',   yahoo:'USDJPY=X',  label:'USD/JPY',       fmt:'fx',     icon:'💱'},
-  {id:'usdchf',   yahoo:'USDCHF=X',  label:'USD/CHF',       fmt:'fx',     icon:'💱'},
-  {id:'usdcny',   yahoo:'USDCNY=X',  label:'USD/CNY',       fmt:'fx',     icon:'💱'},
-  {id:'audusd',   yahoo:'AUDUSD=X',  label:'AUD/USD',       fmt:'fx',     icon:'💱'},
-  {id:'usdcad',   yahoo:'USDCAD=X',  label:'USD/CAD',       fmt:'fx',     icon:'💱'},
-  {id:'eurgbp',   yahoo:'EURGBP=X',  label:'EUR/GBP',       fmt:'fx',     icon:'💱'},
+  {id:'eurusd',   yahoo:'EURUSD=X',  label:'EUR/USD',       fmt:'fx',     icon:''},
+  {id:'gbpusd',   yahoo:'GBPUSD=X',  label:'GBP/USD',       fmt:'fx',     icon:''},
+  {id:'usdjpy',   yahoo:'USDJPY=X',  label:'USD/JPY',       fmt:'fx',     icon:''},
+  {id:'usdchf',   yahoo:'USDCHF=X',  label:'USD/CHF',       fmt:'fx',     icon:''},
+  {id:'usdcny',   yahoo:'USDCNY=X',  label:'USD/CNY',       fmt:'fx',     icon:''},
+  {id:'audusd',   yahoo:'AUDUSD=X',  label:'AUD/USD',       fmt:'fx',     icon:''},
+  {id:'usdcad',   yahoo:'USDCAD=X',  label:'USD/CAD',       fmt:'fx',     icon:''},
+  {id:'eurgbp',   yahoo:'EURGBP=X',  label:'EUR/GBP',       fmt:'fx',     icon:''},
   // ── Crypto ───────────────────────────────────────────────────────
   {id:'btcusd',   yahoo:'BTC-USD',   label:'BTC',           fmt:'usd',    icon:'₿'},
   {id:'ethusd',   yahoo:'ETH-USD',   label:'ETH',           fmt:'usd',    icon:'⟠'},
   {id:'solusd',   yahoo:'SOL-USD',   label:'SOL',           fmt:'usd',    icon:'☀️'},
-  {id:'xrpusd',   yahoo:'XRP-USD',   label:'XRP',           fmt:'usd',    icon:'💧'},
+  {id:'xrpusd',   yahoo:'XRP-USD',   label:'XRP',           fmt:'usd',    icon:''},
   // ── Materie prime ────────────────────────────────────────────────
-  {id:'gold',     yahoo:'GC=F',      label:'ORO',           fmt:'usd',    icon:'🥇'},
-  {id:'silver',   yahoo:'SI=F',      label:'ARGENTO',       fmt:'usd',    icon:'🥈'},
+  {id:'gold',     yahoo:'GC=F',      label:'ORO',           fmt:'usd',    icon:''},
+  {id:'silver',   yahoo:'SI=F',      label:'ARGENTO',       fmt:'usd',    icon:''},
   {id:'platinum', yahoo:'PL=F',      label:'PLATINO',       fmt:'usd',    icon:'⬜'},
-  {id:'oil',      yahoo:'CL=F',      label:'WTI',           fmt:'usd',    icon:'🛢'},
-  {id:'brent',    yahoo:'BZ=F',      label:'BRENT',         fmt:'usd',    icon:'🛢'},
-  {id:'natgas',   yahoo:'NG=F',      label:'GAS NAT.',      fmt:'usd',    icon:'🔥'},
-  {id:'copper',   yahoo:'HG=F',      label:'RAME',          fmt:'usd',    icon:'🔶'},
-  {id:'wheat',    yahoo:'ZW=F',      label:'GRANO',         fmt:'usd',    icon:'🌾'},
+  {id:'oil',      yahoo:'CL=F',      label:'WTI',           fmt:'usd',    icon:''},
+  {id:'brent',    yahoo:'BZ=F',      label:'BRENT',         fmt:'usd',    icon:''},
+  {id:'natgas',   yahoo:'NG=F',      label:'GAS NAT.',      fmt:'usd',    icon:''},
+  {id:'copper',   yahoo:'HG=F',      label:'RAME',          fmt:'usd',    icon:''},
+  {id:'wheat',    yahoo:'ZW=F',      label:'GRANO',         fmt:'usd',    icon:''},
   // ── Obbligazioni ─────────────────────────────────────────────────
-  {id:'tnx',      yahoo:'^TNX',      label:'US 10Y',        fmt:'pct',    icon:'🏛'},
-  {id:'tyx',      yahoo:'^TYX',      label:'US 30Y',        fmt:'pct',    icon:'🏛'},
-  {id:'fvx',      yahoo:'^FVX',      label:'US 5Y',         fmt:'pct',    icon:'🏛'},
-  {id:'eur10y',   yahoo:'DE10Y=X',   label:'BUND 10Y',      fmt:'pct',    icon:'🇩🇪'},
-  {id:'btp10y',   yahoo:'IT10Y=X',   label:'BTP 10Y',       fmt:'pct',    icon:'🇮🇹'},
+  {id:'tnx',      yahoo:'^TNX',      label:'US 10Y',        fmt:'pct',    icon:''},
+  {id:'tyx',      yahoo:'^TYX',      label:'US 30Y',        fmt:'pct',    icon:''},
+  {id:'fvx',      yahoo:'^FVX',      label:'US 5Y',         fmt:'pct',    icon:''},
+  {id:'eur10y',   yahoo:'DE10Y=X',   label:'BUND 10Y',      fmt:'pct',    icon:''},
+  {id:'btp10y',   yahoo:'IT10Y=X',   label:'BTP 10Y',       fmt:'pct',    icon:''},
 ];
 
 function setTicker(id, val, chg, fmt) {
@@ -2553,7 +2571,7 @@ function setTicker(id, val, chg, fmt) {
 function setFearGreed(value) {
   const label = value<=25?'Paura Estrema':value<=45?'Paura':value<=55?'Neutrale':value<=75?'Avidità':'Avidità Estrema';
   const cls = value<=25?'fg-extreme-fear':value<=45?'fg-fear':value<=55?'fg-neutral':value<=75?'fg-greed':'fg-extreme-greed';
-  const emoji = value<=25?'😱':value<=45?'😨':value<=55?'😐':value<=75?'😏':'🤑';
+  const emoji = value<=25?'':value<=45?'':value<=55?'':value<=75?'':'';
   ['','b'].forEach(suffix => {
     const valEl = document.getElementById('tk-fg'+suffix);
     const lblEl = document.getElementById('tk-fg-label'+suffix);
@@ -2604,7 +2622,7 @@ function initTickerDOM() {
   var html = '';
   // Prima copia
   TICKER_SYMBOLS.forEach(function(sym) {
-    var icon = sym.icon || '📊';
+    var icon = sym.icon || '';
     html += '<div class="ticker-item">'
       + '<span class="ti-icon">' + icon + '</span>'
       + '<span class="ti-name">' + sym.label + '</span>'
@@ -2614,7 +2632,7 @@ function initTickerDOM() {
   });
   // Seconda copia per loop seamless
   TICKER_SYMBOLS.forEach(function(sym) {
-    var icon = sym.icon || '📊';
+    var icon = sym.icon || '';
     html += '<div class="ticker-item">'
       + '<span class="ti-icon">' + icon + '</span>'
       + '<span class="ti-name">' + sym.label + '</span>'
@@ -2831,7 +2849,7 @@ async function loadMorningBrief() {
     if (!anchor) return;
 
     const dateStr = new Date().toLocaleDateString('it-IT', {weekday:'long', day:'numeric', month:'long'});
-    const fonteHtml = fonte ? `<div style="font-family:monospace;font-size:10px;color:#8A8580;margin-bottom:6px">📰 ${fonte}</div>` : '';
+    const fonteHtml = fonte ? `<div style="font-family:monospace;font-size:10px;color:#8A8580;margin-bottom:6px"> ${fonte}</div>` : '';
     const pillsHtml = (pills||[]).map(p =>
       `<span style="display:inline-block;padding:3px 10px;border-radius:20px;border:1px solid ${p.color};color:${p.color};font-size:11px;margin:2px">${p.label}</span>`
     ).join('');
@@ -2986,7 +3004,7 @@ const GEO_COLORS = {
 };
 
 const GEO_FLAGS = {
-  USA:'🇺🇸', Europa:'🇪🇺', Giappone:'🇯🇵', Taiwan:'🇹🇼', EmergingMarkets:'🌏', Altro:'🌐'
+  USA:'', Europa:'', Giappone:'', Taiwan:'', EmergingMarkets:'', Altro:''
 };
 
 // SVG world map paths (simplified key regions)
@@ -3038,7 +3056,7 @@ function renderGeoMap() {
   const legend=document.getElementById('geoLegend'),wrap=document.getElementById('geoMapWrap'),svgEl=document.getElementById('worldMapSvg');
   if(!wrap||!svgEl||!legend)return;
   const exp=computeGeoExposure(),tot=assets.reduce((s,a)=>s+a.invested,0);
-  legend.innerHTML=Object.entries(exp).filter(([,v])=>v>0.1).map(([region,pct])=>{const color=GEO_COLORS[region]||'#8A8580',flag=GEO_FLAGS[region]||'🌐',val=tot*pct/100,label=region==='EmergingMarkets'?'Emergenti':region;return `<div class="geo-leg-item" style="border-color:${color}"><div class="geo-leg-left"><span class="geo-leg-flag">${flag}</span><div><div class="geo-leg-name">${label}</div><div class="geo-leg-val">€${val.toLocaleString('it-IT',{maximumFractionDigits:0})}</div></div></div><span class="geo-leg-pct" style="color:${color}">${pct.toFixed(1)}%</span></div>`;}).join('')||'<div style="color:var(--muted);font-size:13px">Aggiungi asset</div>';
+  legend.innerHTML=Object.entries(exp).filter(([,v])=>v>0.1).map(([region,pct])=>{const color=GEO_COLORS[region]||'#8A8580',flag=GEO_FLAGS[region]||'',val=tot*pct/100,label=region==='EmergingMarkets'?'Emergenti':region;return `<div class="geo-leg-item" style="border-color:${color}"><div class="geo-leg-left"><span class="geo-leg-flag">${flag}</span><div><div class="geo-leg-name">${label}</div><div class="geo-leg-val">€${val.toLocaleString('it-IT',{maximumFractionDigits:0})}</div></div></div><span class="geo-leg-pct" style="color:${color}">${pct.toFixed(1)}%</span></div>`;}).join('')||'<div style="color:var(--muted);font-size:13px">Aggiungi asset</div>';
   if(!window.d3||!window.topojson){wrap.querySelector('svg').innerHTML='';return;}
   const COUNTRY_REGION={};
   ['USA','CAN','MEX'].forEach(c=>COUNTRY_REGION[c]='USA');
@@ -3058,7 +3076,7 @@ function renderGeoMap() {
     const countries=topojson.feature(world,world.objects.countries);
     svg.selectAll('.country').data(countries.features).enter().append('path').attr('class','country').attr('d',path)
       .attr('fill',d=>{const a3=N2A[+d.id],region=a3?(COUNTRY_REGION[a3]||'Altro'):'Altro',pct=exp[region]||0;if(pct<0.5)return '#1c1c1c';return d3.interpolate('#1c1c1c',GEO_COLORS[region]||'#8A8580')(Math.min(0.9,0.2+pct/100*1.4));})
-      .on('mousemove',(event,d)=>{const a3=N2A[+d.id],region=a3?(COUNTRY_REGION[a3]||'Altro'):'Altro',pct=exp[region]||0;if(pct<0.1){tooltip.style.display='none';return;}const flag=GEO_FLAGS[region]||'🌐',color=GEO_COLORS[region]||'#8A8580',label=region==='EmergingMarkets'?'Emergenti':region,val=(tot*pct/100).toLocaleString('it-IT',{maximumFractionDigits:0});tooltip.innerHTML=`<div style="font-size:18px;margin-bottom:4px">${flag}</div><div style="font-weight:700;color:${color};margin-bottom:2px">${label}</div><div style="font-size:16px;font-weight:700">${pct.toFixed(1)}%</div><div style="font-size:10px;color:#8A8580">€${val}</div>`;tooltip.style.display='block';const rect=wrap.getBoundingClientRect();let x=event.clientX-rect.left+12,y=event.clientY-rect.top-10;if(x+160>W)x-=170;if(y+100>H)y-=110;tooltip.style.left=x+'px';tooltip.style.top=y+'px';})
+      .on('mousemove',(event,d)=>{const a3=N2A[+d.id],region=a3?(COUNTRY_REGION[a3]||'Altro'):'Altro',pct=exp[region]||0;if(pct<0.1){tooltip.style.display='none';return;}const flag=GEO_FLAGS[region]||'',color=GEO_COLORS[region]||'#8A8580',label=region==='EmergingMarkets'?'Emergenti':region,val=(tot*pct/100).toLocaleString('it-IT',{maximumFractionDigits:0});tooltip.innerHTML=`<div style="font-size:18px;margin-bottom:4px">${flag}</div><div style="font-weight:700;color:${color};margin-bottom:2px">${label}</div><div style="font-size:16px;font-weight:700">${pct.toFixed(1)}%</div><div style="font-size:10px;color:#8A8580">€${val}</div>`;tooltip.style.display='block';const rect=wrap.getBoundingClientRect();let x=event.clientX-rect.left+12,y=event.clientY-rect.top-10;if(x+160>W)x-=170;if(y+100>H)y-=110;tooltip.style.left=x+'px';tooltip.style.top=y+'px';})
       .on('mouseleave',()=>{tooltip.style.display='none';});
     svg.append('path').datum(topojson.mesh(world,world.objects.countries,(a,b)=>a!==b)).attr('fill','none').attr('stroke','#111').attr('stroke-width','.3').attr('d',path);
   }).catch(()=>{});
@@ -3314,38 +3332,38 @@ function _renderGoalPlan(current, monthly, annRet, target, baseYears, pct) {
   html += '<div style="display:flex;flex-direction:column;gap:8px">';
 
   if (monthly < monthlyNeeded * 0.8) {
-    html += _planRow('🎯', 'Aumenta il versamento',
+    html += _planRow('', 'Aumenta il versamento',
       'Versare ' + fmt(monthlyNeeded) + '/mese renderebbe l\'obiettivo altamente probabile. '
       + 'Attualmente versi ' + fmt(monthly) + '/mese (' + fmt(monthlyNeeded - monthly) + ' di gap).',
       '#C9A84C');
   } else if (pct >= 75) {
-    html += _planRow('✅', 'Sei sulla buona strada',
+    html += _planRow('✓', 'Sei sulla buona strada',
       'Il tuo piano attuale è solido. Mantieni il versamento di ' + fmt(monthly) + '/mese e ribilancia annualmente.',
       '#4CAF7E');
   }
 
   if (baseYears && baseYears > 15) {
-    html += _planRow('📅', 'Considera un orizzonte più lungo',
+    html += _planRow('', 'Considera un orizzonte più lungo',
       'Con ' + Math.round(baseYears) + ' anni all\'obiettivo, hai tempo per tollerare più rischio e aumentare il rendimento atteso.',
       '#5B8DB8');
   }
 
   const milestone25 = target * 0.25;
   if (current < milestone25) {
-    html += _planRow('🏁', 'Prossima pietra miliare',
+    html += _planRow('', 'Prossima pietra miliare',
       'Prima milestone: ' + fmt(milestone25) + ' (25% dell\'obiettivo). '
       + 'Ti mancano ' + fmt(milestone25 - current) + '.',
       '#9B59B6');
   } else if (current < target * 0.5) {
-    html += _planRow('🏁', 'Prossima pietra miliare',
+    html += _planRow('', 'Prossima pietra miliare',
       'Sei oltre il 25%! Prossima milestone: ' + fmt(target*0.5) + ' (50%). Ti mancano ' + fmt(target*0.5 - current) + '.',
       '#9B59B6');
   } else if (current < target * 0.75) {
-    html += _planRow('🏁', 'Quasi a metà strada!',
+    html += _planRow('', 'Quasi a metà strada!',
       'Prossima milestone: ' + fmt(target*0.75) + ' (75%). Ti mancano ' + fmt(target*0.75 - current) + '.',
       '#9B59B6');
   } else {
-    html += _planRow('🏁', 'Sei nell\'ultimo miglio!',
+    html += _planRow('', 'Sei nell\'ultimo miglio!',
       'Sei oltre il 75% dell\'obiettivo. Mancano solo ' + fmt(target - current) + ' al traguardo.',
       '#4CAF7E');
   }
@@ -3388,7 +3406,7 @@ function renderGoalTips(current, monthly, annRet, target, baseYears, mc) {
     var pctDiff = Math.round(monthlyPlus200.prob) - pct;
     var yearsDiff = yearsM && yearsM200 ? Math.round((yearsM - yearsM200) * 10) / 10 : null;
     tips.push({
-      icon: '📈',
+      icon: '',
       col: '#4CAF7E',
       title: '+200€/mese',
       body: pctDiff > 0
@@ -3405,7 +3423,7 @@ function renderGoalTips(current, monthly, annRet, target, baseYears, mc) {
     var pctDiff2 = Math.round(monthlyPlus500.prob) - pct;
     var yearsDiff2 = yearsM && yearsM500 ? Math.round((yearsM - yearsM500) * 10) / 10 : null;
     tips.push({
-      icon: '🚀',
+      icon: '',
       col: '#C9A84C',
       title: '+500€/mese',
       body: pctDiff2 > 0
@@ -3421,7 +3439,7 @@ function renderGoalTips(current, monthly, annRet, target, baseYears, mc) {
   var pctDiffR1 = Math.round(retPlus1.prob) - pct;
   var yearsDiffR1 = yearsM && yearsR1 ? Math.round((yearsM - yearsR1) * 10) / 10 : null;
   tips.push({
-    icon: '📊',
+    icon: '',
     col: '#4A90D9',
     title: '+1% rendimento annuo',
     body: pctDiffR1 > 0
@@ -3438,7 +3456,7 @@ function renderGoalTips(current, monthly, annRet, target, baseYears, mc) {
     var mcExt = runMonteCarlo(current, monthly, annRet, target, Math.ceil(baseYears + extraYears), 5000);
     var pctDiffExt = Math.round(mcExt.prob) - pct;
     tips.push({
-      icon: '⏳',
+      icon: '',
       col: '#9B59B6',
       title: '+' + extraYears + ' anni orizzonte',
       body: pctDiffExt > 0 ? '+' + pctDiffExt + '% probabilità' : 'Più tempo = meno pressione',
@@ -3453,7 +3471,7 @@ function renderGoalTips(current, monthly, annRet, target, baseYears, mc) {
     var targetR = Math.round(target * 0.8 / 1000) * 1000;
     var mcR = runMonteCarlo(current, monthly, annRet, targetR, Math.ceil(baseYears || 20), 5000);
     tips.push({
-      icon: '🎯',
+      icon: '',
       col: '#E08A3A',
       title: 'Obiettivo ridotto a ' + fmtK(targetR),
       body: Math.round(mcR.prob) + '% probabilità (da ' + pct + '%)',
@@ -3484,9 +3502,11 @@ function renderCrashTest() {
   var grid = document.getElementById('crashGrid');
   if (!grid) return;
 
-  var total = assets.reduce(function(s,a){ return s + a.invested; }, 0);
-  if (total <= 0 || assets.length === 0) {
-    grid.innerHTML = '<div style="grid-column:1/-1;padding:40px;text-align:center;font-family:DM Mono,monospace;font-size:11px;color:#383838">Aggiungi asset al portafoglio per vedere la simulazione crash</div>';
+  var portfolioTotal = assets ? assets.reduce(function(s,a){ return s + a.invested; }, 0) : 0;
+  var manualCapital = parseFloat(document.getElementById('crashCapital')?.value) || 0;
+  var total = portfolioTotal > 0 ? portfolioTotal : manualCapital;
+  if (total <= 0) {
+    grid.innerHTML = '<div style="grid-column:1/-1;padding:40px;text-align:center;font-family:DM Mono,monospace;font-size:11px;color:#383838">Inserisci un capitale nel campo sopra per visualizzare la simulazione</div>';
     return;
   }
 
@@ -3509,7 +3529,7 @@ function renderCrashTest() {
       id: 'gfc2008',
       nome: 'Crisi Finanziaria 2008',
       periodo: 'Ott 2007 – Mar 2009',
-      icon: '🏦',
+      icon: '',
       colore: '#E05A5A',
       drawdown: { az: -0.56, obb: 0.05, cry: 0 },   // obb +5% fly-to-quality
       durata: 17,   // mesi per recupero S&P
@@ -3519,7 +3539,7 @@ function renderCrashTest() {
       id: 'covid2020',
       nome: 'Crash COVID-19',
       periodo: 'Feb – Mar 2020',
-      icon: '🦠',
+      icon: '',
       colore: '#E08A3A',
       drawdown: { az: -0.34, obb: 0.03, cry: -0.50 },
       durata: 5,
@@ -3529,7 +3549,7 @@ function renderCrashTest() {
       id: 'dotcom2000',
       nome: 'Bolla Dot-Com',
       periodo: 'Mar 2000 – Ott 2002',
-      icon: '💻',
+      icon: '',
       colore: '#9B59B6',
       drawdown: { az: -0.49, obb: 0.10, cry: 0 },
       durata: 56,
@@ -3539,7 +3559,7 @@ function renderCrashTest() {
       id: 'inflation2022',
       nome: 'Bear Market 2022',
       periodo: 'Gen – Dic 2022',
-      icon: '📈',
+      icon: '',
       colore: '#C9A84C',
       drawdown: { az: -0.19, obb: -0.13, cry: -0.65 },
       durata: 21,
@@ -3597,10 +3617,10 @@ function renderBenchmark() {
   var current = assets.reduce(function(s,a){ return s + a.invested; }, 0);
 
   var benchmarks = [
-    { nome:'Il tuo portafoglio', rate: annRet,  colore:'#C9A84C', icon:'💼' },
-    { nome:'S&P 500',           rate: 10.5, colore:'#4A90D9', icon:'🇺🇸' },
-    { nome:'MSCI World',        rate: 9.2,  colore:'#4CAF7E', icon:'🌍' },
-    { nome:'Inflazione EU',     rate: 2.5,  colore:'#E05A5A', icon:'📉' },
+    { nome:'Il tuo portafoglio', rate: annRet,  colore:'#C9A84C', icon:'' },
+    { nome:'S&P 500',           rate: 10.5, colore:'#4A90D9', icon:'' },
+    { nome:'MSCI World',        rate: 9.2,  colore:'#4CAF7E', icon:'' },
+    { nome:'Inflazione EU',     rate: 2.5,  colore:'#E05A5A', icon:'' },
   ];
 
   var years = 10;
@@ -3722,7 +3742,7 @@ function renderRebalance() {
   var isBalanced = actions.length === 0 && concentrated.length === 0;
   if (isBalanced) {
     html += '<div style="display:flex;align-items:center;gap:10px;padding:16px;background:rgba(76,175,126,.07);border:1px solid rgba(76,175,126,.15);border-radius:10px;margin-bottom:16px">'
-      + '<span style="font-size:18px">✅</span>'
+      + '<span style="font-size:18px">✓</span>'
       + '<div style="font-family:DM Mono,monospace;font-size:11px;color:#4CAF7E;font-weight:600">Portafoglio bilanciato — nessuna azione necessaria</div>'
     + '</div>';
   }
@@ -3734,7 +3754,7 @@ function renderRebalance() {
     actions.forEach(function(act) {
       var isBuy = act.diff > 0;
       var col = isBuy ? '#4CAF7E' : '#E05A5A';
-      var icon = isBuy ? '⬆️' : '⬇️';
+      var icon = isBuy ? '↑' : '↓';
       var verb = isBuy ? 'AUMENTA' : 'RIDUCI';
       html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#111;border-radius:8px;margin-bottom:6px;border-left:3px solid ' + col + '">'
         + '<div>'
@@ -3753,7 +3773,7 @@ function renderRebalance() {
   // Warning concentrazione
   if (concentrated.length > 0) {
     html += '<div style="padding:12px 16px;background:rgba(224,138,58,.07);border:1px solid rgba(224,138,58,.2);border-radius:8px;margin-bottom:16px">'
-      + '<div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:#E08A3A;text-transform:uppercase;margin-bottom:8px">⚠️  Concentrazione elevata</div>';
+      + '<div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:#E08A3A;text-transform:uppercase;margin-bottom:8px">  Concentrazione elevata</div>';
     concentrated.forEach(function(a) {
       html += '<div style="font-family:DM Mono,monospace;font-size:10px;color:#8A8580;margin-bottom:3px">'
         + '<strong style="color:#E08A3A">' + a.ticker + '</strong> pesa il '
@@ -3784,6 +3804,123 @@ function renderRebalance() {
 
   el.innerHTML = html;
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PIANIFICATORE ALLOCAZIONE
+// ═══════════════════════════════════════════════════════════════════════════
+function syncAlloc(changed) {
+  var eq = parseInt(document.getElementById('allocEq')?.value || 60);
+  var bd = parseInt(document.getElementById('allocBd')?.value || 30);
+  var cs = parseInt(document.getElementById('allocCs')?.value || 10);
+  var sum = eq + bd + cs;
+
+  // Mantieni somma a 100 aggiustando gli altri due
+  if (sum !== 100) {
+    var diff = 100 - sum;
+    if (changed === 'eq') {
+      // Distribuisci la differenza tra bd e cs
+      var adj = Math.round(diff / 2);
+      bd = Math.max(0, Math.min(100, bd + adj));
+      cs = Math.max(0, Math.min(100, 100 - eq - bd));
+    } else if (changed === 'bd') {
+      var adj = Math.round(diff / 2);
+      eq = Math.max(0, Math.min(100, eq + adj));
+      cs = Math.max(0, Math.min(100, 100 - eq - bd));
+    } else {
+      var adj = Math.round(diff / 2);
+      eq = Math.max(0, Math.min(100, eq + adj));
+      bd = Math.max(0, Math.min(100, 100 - eq - cs));
+    }
+    sum = eq + bd + cs;
+  }
+
+  var eqEl = document.getElementById('allocEq');
+  var bdEl = document.getElementById('allocBd');
+  var csEl = document.getElementById('allocCs');
+  if (eqEl) eqEl.value = eq;
+  if (bdEl) bdEl.value = bd;
+  if (csEl) csEl.value = cs;
+
+  var eqV = document.getElementById('allocEqVal');
+  var bdV = document.getElementById('allocBdVal');
+  var csV = document.getElementById('allocCsVal');
+  if (eqV) eqV.textContent = eq + '%';
+  if (bdV) bdV.textContent = bd + '%';
+  if (csV) csV.textContent = cs + '%';
+
+  var warn = document.getElementById('allocWarning');
+  var sumEl = document.getElementById('allocSum');
+  if (warn) warn.style.display = (sum !== 100) ? 'block' : 'none';
+  if (sumEl) sumEl.textContent = sum;
+
+  renderAllocOutput(eq, bd, cs);
+}
+
+function renderAllocOutput(eq, bd, cs) {
+  var el = document.getElementById('allocOutput');
+  if (!el) return;
+
+  var annRet  = parseFloat(document.getElementById('goalReturn')?.value) || 9;
+  var monthly = parseFloat(document.getElementById('goalMonthly')?.value) || 0;
+  var capital = parseFloat(document.getElementById('goalTarget')?.value) || 0;
+  var current = assets && assets.length > 0
+    ? assets.reduce(function(s,a){ return s + a.invested; }, 0)
+    : (parseFloat(document.getElementById('crashCapital')?.value) || 10000);
+
+  // Rendimento atteso ponderato dall'allocazione
+  var rEq = 10.5; // azionario storico S&P
+  var rBd = 4.0;  // obbligazionario
+  var rCs = 1.5;  // liquidita
+
+  var blendedRet = (eq/100)*rEq + (bd/100)*rBd + (cs/100)*rCs;
+  var years = 10;
+  var finalVal10 = current * Math.pow(1 + blendedRet/100, years)
+    + (monthly * 12) * ((Math.pow(1 + blendedRet/100, years) - 1) / (blendedRet/100 || 0.001));
+  var finalVal20 = current * Math.pow(1 + blendedRet/100, 20)
+    + (monthly * 12) * ((Math.pow(1 + blendedRet/100, 20) - 1) / (blendedRet/100 || 0.001));
+
+  // Volatilità stimata
+  var vol = (eq/100)*16 + (bd/100)*5 + (cs/100)*0.5;
+
+  // Profilo
+  var profile = eq > 70 ? 'Aggressivo' : eq > 40 ? 'Moderato' : 'Conservativo';
+  var profileCol = eq > 70 ? '#E05A5A' : eq > 40 ? '#C9A84C' : '#5B8DB8';
+
+  // Max drawdown stimato
+  var maxDD = (eq/100)*38 + (bd/100)*12 + (cs/100)*2;
+
+  el.innerHTML = '<div style="margin-bottom:16px">'
+    + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
+      + '<span style="font-family:DM Mono,monospace;font-size:10px;color:#6a6a65">Profilo di rischio</span>'
+      + '<span style="font-family:DM Mono,monospace;font-size:12px;font-weight:700;color:' + profileCol + '">' + profile + '</span>'
+    + '</div>'
+    + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
+      + '<span style="font-family:DM Mono,monospace;font-size:10px;color:#6a6a65">Rendimento atteso</span>'
+      + '<span style="font-family:DM Mono,monospace;font-size:13px;font-weight:700;color:#4CAF7E">+' + blendedRet.toFixed(2) + '% / anno</span>'
+    + '</div>'
+    + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
+      + '<span style="font-family:DM Mono,monospace;font-size:10px;color:#6a6a65">Volatilita stimata</span>'
+      + '<span style="font-family:DM Mono,monospace;font-size:12px;color:#C9A84C">+/- ' + vol.toFixed(1) + '% / anno</span>'
+    + '</div>'
+    + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">'
+      + '<span style="font-family:DM Mono,monospace;font-size:10px;color:#6a6a65">Max drawdown storico</span>'
+      + '<span style="font-family:DM Mono,monospace;font-size:12px;color:#E05A5A">-' + maxDD.toFixed(0) + '%</span>'
+    + '</div>'
+  + '</div>'
+
+  + '<div style="background:#0a0a0a;border-radius:8px;padding:14px">'
+    + '<div style="font-family:DM Mono,monospace;font-size:8px;letter-spacing:.1em;color:#383838;text-transform:uppercase;margin-bottom:10px">Proiezione capitale</div>'
+    + '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">'
+      + '<span style="font-family:DM Mono,monospace;font-size:9px;color:#484840">In 10 anni</span>'
+      + '<span style="font-family:DM Mono,monospace;font-size:15px;font-weight:700;color:#D4CFCA">EUR ' + Math.round(finalVal10).toLocaleString('it-IT') + '</span>'
+    + '</div>'
+    + '<div style="display:flex;justify-content:space-between;align-items:baseline">'
+      + '<span style="font-family:DM Mono,monospace;font-size:9px;color:#484840">In 20 anni</span>'
+      + '<span style="font-family:DM Mono,monospace;font-size:15px;font-weight:700;color:#C9A84C">EUR ' + Math.round(finalVal20).toLocaleString('it-IT') + '</span>'
+    + '</div>'
+  + '</div>';
+}
+
 
 
 function _planRow(icon, title, text, col) {
@@ -4163,7 +4300,7 @@ function updateAutoRefreshIndicator() {
   var el = document.getElementById('autoRefreshIndicator');
   if (!el || !_lastPriceUpdate) return;
   var t = _lastPriceUpdate.toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit'});
-  el.textContent = '🔄 ' + t;
+  el.textContent = ' ' + t;
   el.style.color = 'var(--green)';
   // Torna al colore muted dopo 3s
   setTimeout(function() { if(el) el.style.color = 'var(--muted)'; }, 3000);
@@ -4477,29 +4614,29 @@ var CAT_ICONS_SVG = {
     "^IBEX":    '<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#AA151B"/><text x="16" y="21" text-anchor="middle" font-size="8" fill="#F1BF00" font-family="Arial">IBEX</text></svg>',
   },
   "forex": {
-    "EURUSD=X":"🇪🇺→🇺🇸","GBPUSD=X":"🇬🇧→🇺🇸","USDJPY=X":"🇺🇸→🇯🇵",
-    "USDCHF=X":"🇺🇸→🇨🇭","AUDUSD=X":"🇦🇺→🇺🇸","USDCAD=X":"🇺🇸→🇨🇦",
-    "NZDUSD=X":"🇳🇿→🇺🇸","EURGBP=X":"🇪🇺→🇬🇧","EURJPY=X":"🇪🇺→🇯🇵",
-    "EURCHF=X":"🇪🇺→🇨🇭","GBPJPY=X":"🇬🇧→🇯🇵","USDCNY=X":"🇺🇸→🇨🇳",
-    "USDINR=X":"🇺🇸→🇮🇳","USDBRL=X":"🇺🇸→🇧🇷","USDMXN=X":"🇺🇸→🇲🇽",
+    "EURUSD=X":"→","GBPUSD=X":"→","USDJPY=X":"→",
+    "USDCHF=X":"→","AUDUSD=X":"→","USDCAD=X":"→",
+    "NZDUSD=X":"→","EURGBP=X":"→","EURJPY=X":"→",
+    "EURCHF=X":"→","GBPJPY=X":"→","USDCNY=X":"→",
+    "USDINR=X":"→","USDBRL=X":"→","USDMXN=X":"→",
   },
   "materie-prime": {
-    "GC=F":"🥇","SI=F":"🥈","PL=F":"⬜","HG=F":"🔶",
-    "CL=F":"🛢","BZ=F":"🛢","NG=F":"🔥","ZC=F":"🌽",
-    "ZW=F":"🌾","ZS=F":"🫘","KC=F":"☕","CC=F":"🍫",
+    "GC=F":"","SI=F":"","PL=F":"⬜","HG=F":"",
+    "CL=F":"","BZ=F":"","NG=F":"","ZC=F":"",
+    "ZW=F":"","ZS=F":"🫘","KC=F":"☕","CC=F":"",
   },
   "obbligazioni": {
-    "^TNX":"🏛","^TYX":"🏛","^FVX":"🏛","^IRX":"🏛",
-    "DE10Y=X":"🇩🇪","IT10Y=X":"🇮🇹","FR10Y=X":"🇫🇷","GB10Y=X":"🇬🇧",
+    "^TNX":"","^TYX":"","^FVX":"","^IRX":"",
+    "DE10Y=X":"","IT10Y=X":"","FR10Y=X":"","GB10Y=X":"",
   },
   "etf": {
-    "SPY":"📊","QQQ":"💡","VOO":"🏛","VTI":"🌍","IVV":"📋",
-    "RSP":"⚖️","VEA":"🌏","EFA":"🌐","VWO":"🌱","EEM":"🌱",
-    "VUAA.L":"🇪🇺","VWRA.L":"🌎","IWDA.AS":"🌍","CSPX.L":"📊",
-    "EIMI.L":"🌏","VHYL.L":"💰","VIG":"💰","SCHD":"💰",
-    "ARKK":"🚀","BOTZ":"🤖","ICLN":"☀️","XLK":"💻",
-    "XLE":"⚡","XLF":"💰","XLV":"🏥","XLI":"🏭","SMH":"💾",
-    "GLD":"🥇","SLV":"🥈","TIP":"📊","AGG":"🏦","TLT":"🏛","HYG":"📈",
+    "SPY":"","QQQ":"","VOO":"","VTI":"","IVV":"",
+    "RSP":"⚖️","VEA":"","EFA":"","VWO":"","EEM":"",
+    "VUAA.L":"","VWRA.L":"","IWDA.AS":"","CSPX.L":"",
+    "EIMI.L":"","VHYL.L":"","VIG":"","SCHD":"",
+    "ARKK":"","BOTZ":"","ICLN":"☀️","XLK":"",
+    "XLE":"","XLF":"","XLV":"","XLI":"","SMH":"",
+    "GLD":"","SLV":"","TIP":"","AGG":"","TLT":"","HYG":"",
   }
 };
 
@@ -4549,9 +4686,9 @@ function initScreener() {
   // Mostra subito placeholder mentre carica
   var list = document.getElementById('screenerList');
   if (list) list.innerHTML = '<div style="text-align:center;padding:60px 20px;color:#8A8580;font-family:DM Mono,monospace;font-size:12px">'
-    + '<div style="font-size:24px;margin-bottom:12px">📊</div>'
+    + '<div style="font-size:24px;margin-bottom:12px"></div>'
     + SCREENER_DB.length + ' asset disponibili<br>'
-    + '<span style="color:#5a5550;font-size:11px">Premi ⚡ Aggiorna per caricare i prezzi</span>'
+    + '<span style="color:#5a5550;font-size:11px">Premi Aggiorna per caricare i prezzi</span>'
     + '</div>';
   renderScreenerList();
   loadScreenerPrices();
@@ -4685,7 +4822,7 @@ async function loadScreenerPrices() {
 
   var btn    = document.getElementById('scrBtn');
   var status = document.getElementById('scrStatus');
-  if (btn) { btn.textContent = '⏳ Aggiornamento...'; btn.disabled = true; }
+  if (btn) { btn.textContent = 'Caricamento...'; btn.disabled = true; }
 
   // ── Cache localStorage 15 min ────────────────────────────────────────────
   var CACHE_KEY = 'srm_scr_prices';
@@ -4696,7 +4833,7 @@ async function loadScreenerPrices() {
     if (cached && (now - cached.ts) < CACHE_TTL) {
       _screenerPrices = cached.data;
       _screenerLoading = false;
-      if (btn) { btn.textContent = '⚡ Aggiorna'; btn.disabled = false; }
+      if (btn) { btn.textContent = 'Aggiorna'; btn.disabled = false; }
       var ago = Math.round((now - cached.ts) / 60000);
       if (status) status.textContent = Object.keys(_screenerPrices).length + ' prezzi · ' + ago + 'min fa';
       renderScreenerList();
@@ -4730,7 +4867,7 @@ async function loadScreenerPrices() {
   }
 
   _screenerLoading = false;
-  if (btn) { btn.textContent = '⚡ Aggiorna'; btn.disabled = false; }
+  if (btn) { btn.textContent = 'Aggiorna'; btn.disabled = false; }
   if (status) status.textContent = done + ' prezzi caricati';
   renderScreenerList();
 
@@ -4776,9 +4913,9 @@ function addToPortfolio(ticker, name) {
 
 <!-- ALTRO MENU (body-level per evitare overflow clipping) -->
 <div id="altroMenu" style="display:none;position:fixed;background:var(--surface2);border:1px solid var(--border);border-radius:12px;min-width:180px;overflow:hidden;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,.7)">
-  <button onclick="switchTab('mappa');closeAltro()" style="display:flex;align-items:center;gap:10px;width:100%;padding:13px 18px;background:none;border:none;border-bottom:1px solid var(--border);color:var(--text);text-align:left;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;transition:background .15s" onmouseover="this.style.background='rgba(201,168,76,.1)';this.style.color='var(--gold)'" onmouseout="this.style.background='none';this.style.color='var(--text)'">🗺 Mappa Geo</button>
-  <button onclick="switchTab('verdetti');closeAltro()" style="display:flex;align-items:center;gap:10px;width:100%;padding:13px 18px;background:none;border:none;border-bottom:1px solid var(--border);color:var(--text);text-align:left;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;transition:background .15s" onmouseover="this.style.background='rgba(201,168,76,.1)';this.style.color='var(--gold)'" onmouseout="this.style.background='none';this.style.color='var(--text)'">⚖️ Verdetti</button>
-  <button onclick="switchTab('storico');closeAltro()" style="display:flex;align-items:center;gap:10px;width:100%;padding:13px 18px;background:none;border:none;color:var(--text);text-align:left;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;transition:background .15s" onmouseover="this.style.background='rgba(201,168,76,.1)';this.style.color='var(--gold)'" onmouseout="this.style.background='none';this.style.color='var(--text)'">📋 Storico</button>
+  <button onclick="switchTab('mappa');closeAltro()" style="display:flex;align-items:center;gap:10px;width:100%;padding:13px 18px;background:none;border:none;border-bottom:1px solid var(--border);color:var(--text);text-align:left;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;transition:background .15s" onmouseover="this.style.background='rgba(201,168,76,.1)';this.style.color='var(--gold)'" onmouseout="this.style.background='none';this.style.color='var(--text)'">Mappa Geografica</button>
+  <button onclick="switchTab('verdetti');closeAltro()" style="display:flex;align-items:center;gap:10px;width:100%;padding:13px 18px;background:none;border:none;border-bottom:1px solid var(--border);color:var(--text);text-align:left;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;transition:background .15s" onmouseover="this.style.background='rgba(201,168,76,.1)';this.style.color='var(--gold)'" onmouseout="this.style.background='none';this.style.color='var(--text)'">Verdetti</button>
+  <button onclick="switchTab('storico');closeAltro()" style="display:flex;align-items:center;gap:10px;width:100%;padding:13px 18px;background:none;border:none;color:var(--text);text-align:left;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;transition:background .15s" onmouseover="this.style.background='rgba(201,168,76,.1)';this.style.color='var(--gold)'" onmouseout="this.style.background='none';this.style.color='var(--text)'">Storico</button>
 </div>
 
 <!-- ═══ ASSET DETAIL PANEL (Bloomberg style) ═══════════════════════════ -->
@@ -4816,21 +4953,21 @@ function addToPortfolio(ticker, name) {
 
     <!-- Posizione -->
     <div style="background:#141414;border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:14px">
-      <div style="font-size:10px;letter-spacing:.1em;color:#8A8580;text-transform:uppercase;margin-bottom:12px">📊 Posizione</div>
+      <div style="font-size:10px;letter-spacing:.1em;color:#8A8580;text-transform:uppercase;margin-bottom:12px"> Posizione</div>
       <div id="apPosition" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"></div>
     </div>
 
     <!-- Livelli tecnici -->
     <div style="background:#141414;border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:14px">
-      <div style="font-size:10px;letter-spacing:.1em;color:#8A8580;text-transform:uppercase;margin-bottom:12px">📐 Livelli Tecnici</div>
+      <div style="font-size:10px;letter-spacing:.1em;color:#8A8580;text-transform:uppercase;margin-bottom:12px"> Livelli Tecnici</div>
       <div id="apLevels" style="display:flex;flex-direction:column;gap:6px"></div>
     </div>
 
     <!-- Azioni rapide -->
     <div style="display:flex;gap:8px">
-      <button id="apEditBtn" style="flex:1;padding:10px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:8px;color:#C9A84C;cursor:pointer;font-size:12px;font-family:inherit">✏️ Modifica</button>
-      <button id="apAiBtn" style="flex:1;padding:10px;background:rgba(74,144,217,.1);border:1px solid rgba(74,144,217,.3);border-radius:8px;color:#4A90D9;cursor:pointer;font-size:12px;font-family:inherit">🤖 Analisi AI</button>
-      <button id="apDeleteBtn" style="padding:10px 14px;background:rgba(224,90,90,.08);border:1px solid rgba(224,90,90,.2);border-radius:8px;color:#E05A5A;cursor:pointer;font-size:14px;font-family:inherit">🗑</button>
+      <button id="apEditBtn" style="flex:1;padding:10px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:8px;color:#C9A84C;cursor:pointer;font-size:12px;font-family:inherit">️ Modifica</button>
+      <button id="apAiBtn" style="flex:1;padding:10px;background:rgba(74,144,217,.1);border:1px solid rgba(74,144,217,.3);border-radius:8px;color:#4A90D9;cursor:pointer;font-size:12px;font-family:inherit"> Analisi AI</button>
+      <button id="apDeleteBtn" style="padding:10px 14px;background:rgba(224,90,90,.08);border:1px solid rgba(224,90,90,.2);border-radius:8px;color:#E05A5A;cursor:pointer;font-size:14px;font-family:inherit"></button>
     </div>
 
     <!-- AI Analysis result -->
