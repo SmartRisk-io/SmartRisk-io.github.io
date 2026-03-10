@@ -2068,7 +2068,7 @@ function switchTab(id, el) {
   if (id==='rischio')   renderRiskMatrix();
   if (id==='panoramica') renderPanoramica();
   if (id==='mappa')     setTimeout(renderGeoMap, 50);
-  if (id==='obiettivo') loadGoal();
+  if (id==='obiettivo') { loadGoal(); renderBenchmark(); renderCrashTest(); renderAllocOutput(60,30,10); }
   if (id==='storico')   renderStorico();
   if (id==='screener')  initScreener();
   if (id==='verdetti')  renderVerdetti();
@@ -3119,6 +3119,13 @@ function loadGoal() {
     if (rv) rv.textContent = parseFloat(g.ret || 9).toFixed(1) + '%';
   } catch(e) {}
   renderGoal();
+  renderBenchmark();
+  renderCrashTest();
+  renderAllocOutput(
+    parseInt(document.getElementById('allocEq')?.value||60),
+    parseInt(document.getElementById('allocBd')?.value||30),
+    parseInt(document.getElementById('allocCs')?.value||10)
+  );
 }
 
 // ── Monte Carlo ─────────────────────────────────────────────────────────────
@@ -3614,13 +3621,15 @@ function renderBenchmark() {
   var annRet  = parseFloat(document.getElementById('goalReturn')?.value) || 9;
   var target  = parseFloat(document.getElementById('goalTarget')?.value) || 0;
   var monthly = parseFloat(document.getElementById('goalMonthly')?.value) || 0;
-  var current = assets.reduce(function(s,a){ return s + a.invested; }, 0);
+  var current = assets && assets.length > 0
+    ? assets.reduce(function(s,a){ return s + a.invested; }, 0)
+    : (parseFloat(document.getElementById('crashCapital')?.value) || 10000);
 
   var benchmarks = [
-    { nome:'Il tuo portafoglio', rate: annRet,  colore:'#C9A84C', icon:'' },
-    { nome:'S&P 500',           rate: 10.5, colore:'#4A90D9', icon:'' },
-    { nome:'MSCI World',        rate: 9.2,  colore:'#4CAF7E', icon:'' },
-    { nome:'Inflazione EU',     rate: 2.5,  colore:'#E05A5A', icon:'' },
+    { nome:'Portafoglio (rendimento atteso)', rate: annRet,  colore:'#C9A84C' },
+    { nome:'S&P 500 (storico)',               rate: 10.5,    colore:'#4A90D9' },
+    { nome:'MSCI World (storico)',             rate: 9.2,     colore:'#4CAF7E' },
+    { nome:'Inflazione EU (media 20Y)',        rate: 2.5,     colore:'#E05A5A' },
   ];
 
   var years = 10;
@@ -3628,27 +3637,26 @@ function renderBenchmark() {
     years = Math.min(40, Math.max(5, Math.ceil(yearsToGoal(current, monthly, annRet, target) || 10)));
   }
 
+  grid.style.gridTemplateColumns = 'repeat(4,1fr)';
   grid.innerHTML = benchmarks.map(function(b) {
-    var finalVal = current * Math.pow(1 + b.rate/100, years) + monthly * 12 * ((Math.pow(1 + b.rate/100, years) - 1) / (b.rate/100));
-    var isYou = b.nome === 'Il tuo portafoglio';
-    var spRate = 10.5;
-    var diff = b.rate - spRate;
-    var diffStr = diff >= 0 ? '+' + diff.toFixed(1) + '% vs S&P' : diff.toFixed(1) + '% vs S&P';
-    var diffCol = diff >= 0 ? '#4CAF7E' : '#E05A5A';
+    var finalVal = current * Math.pow(1 + b.rate/100, years)
+      + (monthly > 0 ? monthly * 12 * ((Math.pow(1 + b.rate/100, years) - 1) / (b.rate/100)) : 0);
+    var isYou = b.colore === '#C9A84C';
+    var spFinal = current * Math.pow(1 + 10.5/100, years)
+      + (monthly > 0 ? monthly * 12 * ((Math.pow(1 + 10.5/100, years) - 1) / 0.105) : 0);
+    var diffVsSP = finalVal - spFinal;
+    var diffPct  = spFinal > 0 ? (diffVsSP / spFinal * 100) : 0;
 
-    return '<div class="card" style="padding:18px 20px' + (isYou ? ';background:rgba(201,168,76,.04);border-color:rgba(201,168,76,.2)' : '') + '">'
-      + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">'
-        + '<span style="font-size:16px">' + b.icon + '</span>'
-        + '<div>'
-          + '<div style="font-family:DM Mono,monospace;font-size:11px;font-weight:700;color:#D4CFCA">' + b.nome + '</div>'
-          + '<div style="font-family:DM Mono,monospace;font-size:10px;color:' + b.colore + '">' + b.rate + '% annuo</div>'
-        + '</div>'
-      + '</div>'
-      + '<div style="font-family:DM Mono,monospace;font-size:18px;font-weight:700;color:' + b.colore + ';margin-bottom:4px">'
-        + '€ ' + fmtK(finalVal)
-      + '</div>'
-      + '<div style="font-family:DM Mono,monospace;font-size:9px;color:#484840">in ' + years + ' anni</div>'
-      + (!isYou && b.nome !== 'Inflazione EU' ? '<div style="font-family:DM Mono,monospace;font-size:9px;color:' + diffCol + ';margin-top:6px">' + diffStr + '</div>' : '')
+    return '<div style="padding:18px 20px;background:' + (isYou ? 'rgba(201,168,76,.04)' : '#111') + ';border:1px solid ' + (isYou ? 'rgba(201,168,76,.2)' : 'rgba(255,255,255,.05)') + ';border-radius:10px">'
+      + '<div style="font-family:DM Mono,monospace;font-size:9px;color:#484840;letter-spacing:.08em;margin-bottom:8px;text-transform:uppercase">' + b.nome + '</div>'
+      + '<div style="font-family:DM Mono,monospace;font-size:11px;font-weight:700;color:' + b.colore + ';margin-bottom:4px">' + b.rate.toFixed(1) + '% / anno</div>'
+      + '<div style="font-family:DM Mono,monospace;font-size:17px;font-weight:700;color:#D4CFCA;margin-bottom:4px">EUR ' + fmtK(finalVal) + '</div>'
+      + '<div style="font-family:DM Mono,monospace;font-size:9px;color:#383838">in ' + years + ' anni</div>'
+      + (b.colore !== '#C9A84C' && b.colore !== '#E05A5A'
+        ? '<div style="font-family:DM Mono,monospace;font-size:9px;color:' + (diffVsSP >= 0 ? '#4CAF7E' : '#E05A5A') + ';margin-top:6px">'
+            + (diffVsSP >= 0 ? '+' : '') + diffPct.toFixed(1) + '% vs benchmark'
+          + '</div>'
+        : '')
     + '</div>';
   }).join('');
 
