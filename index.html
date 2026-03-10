@@ -548,7 +548,7 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
     <!-- TABS -->
     <div class="tabs" id="mainTabs">
       <button class="tab" id="tab-btn-portafoglio" onclick="switchTab('portafoglio',this)" data-tab="portafoglio">Portafoglio</button>
-      <button class="tab" id="tab-btn-calcolatore" onclick="switchTab('calcolatore',this)" data-tab="calcolatore">Calcolatore</button>
+      <button class="tab" id="tab-btn-obiettivo" onclick="switchTab('obiettivo',this)" data-tab="obiettivo">🎯 Piano</button>
       <button class="tab" id="tab-btn-rischio" onclick="switchTab('rischio',this)" data-tab="rischio">Matrice Rischio</button>
       <button class="tab" id="tab-btn-strategia" onclick="switchTab('strategia',this)" data-tab="strategia">Strategia</button>
       <button class="tab" id="tab-btn-heatmap" onclick="switchTab('heatmap',this)" data-tab="heatmap">Heatmap</button>
@@ -562,7 +562,7 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
           <button onclick="event.stopPropagation();switchTab('verdetti');closeAltro()">⚖️ Verdetti</button>
           <button onclick="event.stopPropagation();switchTab('storico');closeAltro()">📋 Storico</button>
           <button onclick="event.stopPropagation();switchTab('screener');closeAltro()">🔍 Screener</button>
-          <button onclick="event.stopPropagation();switchTab('obiettivo');closeAltro()">🎯 Piano Finanziario</button>
+          <button onclick="event.stopPropagation();switchTab('calcolatore');closeAltro()">🧮 Calcolatore</button>
         </div>
       </div>
     </div>
@@ -1032,6 +1032,20 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
           <div id="goalPlanContent" style="font-family:'DM Mono',monospace;font-size:11px;color:#8A8580;line-height:1.9"></div>
         </div>
 
+      </div>
+    </div>
+
+    <!-- ═══ SEZIONE 1b: SUGGERIMENTI OBIETTIVO ══════════════════════════ -->
+    <div style="margin-top:20px" id="goalTipsSection">
+      <div class="card" style="padding:22px 24px">
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:#4a4a45;text-transform:uppercase;margin-bottom:16px">
+          💡 Come migliorare le tue probabilità di successo
+        </div>
+        <div id="goalTipsGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div style="font-family:'DM Mono',monospace;font-size:11px;color:#383838;grid-column:1/-1;text-align:center;padding:16px">
+            Inserisci un obiettivo per ricevere suggerimenti personalizzati
+          </div>
+        </div>
       </div>
     </div>
 
@@ -2026,7 +2040,7 @@ function switchTab(id, el) {
   const btn = document.getElementById('tab-btn-'+id);
   if (btn) btn.classList.add('active');
   // Se è una voce del dropdown Altro, evidenzia il bottone Altro
-  const altroCandidates = ['mappa','verdetti','storico','screener','obiettivo'];
+  const altroCandidates = ['mappa','verdetti','storico','screener'];
   if (altroCandidates.includes(id)) {
     const altroBtn = document.getElementById('tab-btn-altro');
     if (altroBtn) altroBtn.classList.add('active');
@@ -3340,6 +3354,129 @@ function _renderGoalPlan(current, monthly, annRet, target, baseYears, pct) {
   content.innerHTML = html;
 }
 
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SUGGERIMENTI PERSONALIZZATI OBIETTIVO
+// ═══════════════════════════════════════════════════════════════════════════
+function renderGoalTips(current, monthly, annRet, target, baseYears, mc) {
+  var el = document.getElementById('goalTipsGrid');
+  var sec = document.getElementById('goalTipsSection');
+  if (!el) return;
+  if (!target || target <= 0) {
+    sec && (sec.style.display = 'none');
+    return;
+  }
+  sec && (sec.style.display = 'block');
+
+  var pct = mc ? Math.round(mc.prob) : 0;
+  var tips = [];
+  var gap  = target - current;
+
+  // Calcola impatti
+  var monthlyPlus200 = runMonteCarlo(current, monthly + 200, annRet, target, Math.ceil(baseYears || 20), 5000);
+  var monthlyPlus500 = runMonteCarlo(current, monthly + 500, annRet, target, Math.ceil(baseYears || 20), 5000);
+  var retPlus1       = runMonteCarlo(current, monthly, annRet + 1, target, Math.ceil(baseYears || 20), 5000);
+  var retPlus2       = runMonteCarlo(current, monthly, annRet + 2, target, Math.ceil(baseYears || 20), 5000);
+
+  var yearsM = yearsToGoal(current, monthly, annRet, target);
+  var yearsM200 = yearsToGoal(current, monthly + 200, annRet, target);
+  var yearsM500 = yearsToGoal(current, monthly + 500, annRet, target);
+  var yearsR1   = yearsToGoal(current, monthly, annRet + 1, target);
+
+  // Suggerimento 1: aumenta versamento di 200€
+  if (monthly > 0 || true) {
+    var pctDiff = Math.round(monthlyPlus200.prob) - pct;
+    var yearsDiff = yearsM && yearsM200 ? Math.round((yearsM - yearsM200) * 10) / 10 : null;
+    tips.push({
+      icon: '📈',
+      col: '#4CAF7E',
+      title: '+200€/mese',
+      body: pctDiff > 0
+        ? '+' + pctDiff + '% probabilità' + (yearsDiff ? ' · ' + yearsDiff + ' anni prima' : '')
+        : yearsDiff ? yearsDiff + ' anni prima' : 'Migliora il piano',
+      detail: 'Versando ' + (monthly + 200) + '€/mese invece di ' + (monthly || 0) + '€, arrivi all\'obiettivo con maggiore certezza.',
+      impact: pctDiff > 0 ? '+' + pctDiff + '%' : '↑',
+      impactCol: '#4CAF7E'
+    });
+  }
+
+  // Suggerimento 2: aumenta versamento di 500€
+  if (monthly >= 0) {
+    var pctDiff2 = Math.round(monthlyPlus500.prob) - pct;
+    var yearsDiff2 = yearsM && yearsM500 ? Math.round((yearsM - yearsM500) * 10) / 10 : null;
+    tips.push({
+      icon: '🚀',
+      col: '#C9A84C',
+      title: '+500€/mese',
+      body: pctDiff2 > 0
+        ? '+' + pctDiff2 + '% probabilità' + (yearsDiff2 ? ' · ' + yearsDiff2 + ' anni prima' : '')
+        : yearsDiff2 ? yearsDiff2 + ' anni prima' : 'Impatto significativo',
+      detail: 'Con ' + (monthly + 500) + '€/mese raggiungi l\'obiettivo molto prima riducendo il rischio di mancarlo.',
+      impact: pctDiff2 > 0 ? '+' + pctDiff2 + '%' : '↑↑',
+      impactCol: '#C9A84C'
+    });
+  }
+
+  // Suggerimento 3: aumenta rendimento +1%
+  var pctDiffR1 = Math.round(retPlus1.prob) - pct;
+  var yearsDiffR1 = yearsM && yearsR1 ? Math.round((yearsM - yearsR1) * 10) / 10 : null;
+  tips.push({
+    icon: '📊',
+    col: '#4A90D9',
+    title: '+1% rendimento annuo',
+    body: pctDiffR1 > 0
+      ? '+' + pctDiffR1 + '% probabilità' + (yearsDiffR1 ? ' · ' + yearsDiffR1 + ' anni prima' : '')
+      : yearsDiffR1 ? yearsDiffR1 + ' anni prima' : 'Migliora la strategia',
+    detail: 'Passare da ' + annRet + '% a ' + (annRet + 1) + '% annuo (es. ETF azionario vs bond) può fare la differenza nel lungo periodo.',
+    impact: pctDiffR1 > 0 ? '+' + pctDiffR1 + '%' : '↑',
+    impactCol: '#4A90D9'
+  });
+
+  // Suggerimento 4: allarga orizzonte temporale
+  if (pct < 75 && baseYears) {
+    var extraYears = 3;
+    var mcExt = runMonteCarlo(current, monthly, annRet, target, Math.ceil(baseYears + extraYears), 5000);
+    var pctDiffExt = Math.round(mcExt.prob) - pct;
+    tips.push({
+      icon: '⏳',
+      col: '#9B59B6',
+      title: '+' + extraYears + ' anni orizzonte',
+      body: pctDiffExt > 0 ? '+' + pctDiffExt + '% probabilità' : 'Più tempo = meno pressione',
+      detail: 'Estendere l\'orizzonte di ' + extraYears + ' anni al ' + Math.round(baseYears + extraYears) + ' riduce la pressione e aumenta la probabilità di successo.',
+      impact: pctDiffExt > 0 ? '+' + pctDiffExt + '%' : '↑',
+      impactCol: '#9B59B6'
+    });
+  }
+
+  // Suggerimento 5: abbassa il target se probabilità molto bassa
+  if (pct < 30 && target > 0) {
+    var targetR = Math.round(target * 0.8 / 1000) * 1000;
+    var mcR = runMonteCarlo(current, monthly, annRet, targetR, Math.ceil(baseYears || 20), 5000);
+    tips.push({
+      icon: '🎯',
+      col: '#E08A3A',
+      title: 'Obiettivo ridotto a ' + fmtK(targetR),
+      body: Math.round(mcR.prob) + '% probabilità (da ' + pct + '%)',
+      detail: 'Un obiettivo più realistico di ' + fmtK(targetR) + ' (80% del target) è raggiungibile con probabilità molto più alta.',
+      impact: Math.round(mcR.prob) + '%',
+      impactCol: '#E08A3A'
+    });
+  }
+
+  el.innerHTML = tips.map(function(t) {
+    return '<div style="background:#111;border:1px solid rgba(255,255,255,.05);border-radius:10px;padding:14px 16px;border-top:2px solid ' + t.col + '">'
+      + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
+        + '<div style="display:flex;align-items:center;gap:7px">'
+          + '<span style="font-size:15px">' + t.icon + '</span>'
+          + '<span style="font-family:DM Mono,monospace;font-size:11px;font-weight:700;color:#D4CFCA">' + t.title + '</span>'
+        + '</div>'
+        + '<span style="font-family:DM Mono,monospace;font-size:12px;font-weight:700;color:' + t.impactCol + '">' + t.impact + '</span>'
+      + '</div>'
+      + '<div style="font-family:DM Mono,monospace;font-size:10px;color:' + t.col + ';font-weight:600;margin-bottom:5px">' + t.body + '</div>'
+      + '<div style="font-family:DM Mono,monospace;font-size:10px;color:#484840;line-height:1.6">' + t.detail + '</div>'
+    + '</div>';
+  }).join('');
+}
 // ═══════════════════════════════════════════════════════════════════════════
 // STRESS TEST CRASH STORICO
 // ═══════════════════════════════════════════════════════════════════════════
@@ -4551,9 +4688,9 @@ async function loadScreenerPrices() {
   if (btn) { btn.textContent = '⏳ Aggiornamento...'; btn.disabled = true; }
 
   // ── Cache localStorage 15 min ────────────────────────────────────────────
-  var CACHE_KEY  = 'srm_scr_prices';
-  var CACHE_TTL  = 15 * 60 * 1000;
-  var now        = Date.now();
+  var CACHE_KEY = 'srm_scr_prices';
+  var CACHE_TTL = 15 * 60 * 1000;
+  var now       = Date.now();
   try {
     var cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
     if (cached && (now - cached.ts) < CACHE_TTL) {
@@ -4561,22 +4698,20 @@ async function loadScreenerPrices() {
       _screenerLoading = false;
       if (btn) { btn.textContent = '⚡ Aggiorna'; btn.disabled = false; }
       var ago = Math.round((now - cached.ts) / 60000);
-      if (status) status.textContent = Object.keys(_screenerPrices).length + ' prezzi · cache ' + ago + ' min fa';
+      if (status) status.textContent = Object.keys(_screenerPrices).length + ' prezzi · ' + ago + 'min fa';
       renderScreenerList();
       return;
     }
   } catch(e) {}
 
-  // ── Fetch fresco ─────────────────────────────────────────────────────────
-  var BATCH = 10;   // batch più piccolo = meno rate limiting
-  var DELAY = 300;  // ms tra batch = rispetta Yahoo rate limit
-  var done  = 0;
-  var failed = [];
-  var total  = SCREENER_DB.length;
+  // ── FASE 1: prezzo + 1D per tutti ────────────────────────────────────────
+  var BATCH = 10;
+  var DELAY = 350;
+  var done = 0, total = SCREENER_DB.length;
 
   for (var i = 0; i < total; i += BATCH) {
     var batch = SCREENER_DB.slice(i, i + BATCH);
-    var results = await Promise.allSettled(batch.map(async function(a) {
+    await Promise.allSettled(batch.map(async function(a) {
       try {
         var r = await fetch(WORKER_URL + '/price?ticker=' + encodeURIComponent(a.t),
           { signal: AbortSignal.timeout(6000) });
@@ -4586,72 +4721,50 @@ async function loadScreenerPrices() {
           _screenerPrices[a.t].price = d.price;
           _screenerPrices[a.t].d1   = d.change || 0;
           done++;
-        } else {
-          failed.push(a);
-        }
-      } catch(e) { failed.push(a); }
-    }));
-    if (status) status.textContent = done + ' / ' + total;
-    renderScreenerList();
-    // Delay tra batch per evitare rate limiting Yahoo
-    if (i + BATCH < total) await new Promise(function(r){ setTimeout(r, DELAY); });
-  }
-
-  // ── Retry per i falliti (una volta sola) ─────────────────────────────────
-  if (failed.length > 0) {
-    await new Promise(function(r){ setTimeout(r, 1000); });
-    await Promise.allSettled(failed.map(async function(a) {
-      try {
-        var r = await fetch(WORKER_URL + '/price?ticker=' + encodeURIComponent(a.t),
-          { signal: AbortSignal.timeout(8000) });
-        var d = await r.json();
-        if (d && d.price != null) {
-          if (!_screenerPrices[a.t]) _screenerPrices[a.t] = {};
-          _screenerPrices[a.t].price = d.price;
-          _screenerPrices[a.t].d1   = d.change || 0;
-          done++;
         }
       } catch(e) {}
     }));
+    if (status) status.textContent = done + ' / ' + total;
+    renderScreenerList();
+    if (i + BATCH < total) await new Promise(function(r){ setTimeout(r, DELAY); });
   }
-
-  // ── Salva cache ──────────────────────────────────────────────────────────
-  try {
-    localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: now, data: _screenerPrices }));
-  } catch(e) {}
 
   _screenerLoading = false;
   if (btn) { btn.textContent = '⚡ Aggiorna'; btn.disabled = false; }
-  if (status) status.textContent = done + ' prezzi · ' + _screenerFiltered.length + ' asset';
+  if (status) status.textContent = done + ' prezzi caricati';
   renderScreenerList();
 
-  // ── Storico solo per asset VISIBILI (max 30) ─────────────────────────────
+  // ── FASE 2: storico 1W/1M/3M/1Y per TUTTI — batch 3, delay 600ms ─────────
   setTimeout(async function() {
-    var visible = _screenerFiltered.slice(0, 30);
-    for (var j = 0; j < visible.length; j += 5) {
-      var hb = visible.slice(j, j + 5);
+    var all = SCREENER_DB.slice(); // tutti, non solo i primi N
+    for (var j = 0; j < all.length; j += 3) {
+      // Skip se già ha dati storici
+      var hb = all.slice(j, j + 3).filter(function(a) {
+        return !(_screenerPrices[a.t] && _screenerPrices[a.t].d5 != null);
+      });
+      if (hb.length === 0) continue;
       await Promise.allSettled(hb.map(async function(a) {
         try {
           var r = await fetch(WORKER_URL + '/price?ticker=' + encodeURIComponent(a.t) + '&history=1',
-            { signal: AbortSignal.timeout(10000) });
+            { signal: AbortSignal.timeout(12000) });
           var d = await r.json();
           if (d && d.price != null && _screenerPrices[a.t]) {
-            _screenerPrices[a.t].d5   = d.week    || null;
-            _screenerPrices[a.t].d30  = d.month   || null;
-            _screenerPrices[a.t].d90  = d.quarter || null;
-            _screenerPrices[a.t].d365 = d.year    || null;
+            _screenerPrices[a.t].d5   = d.week    != null ? d.week    : null;
+            _screenerPrices[a.t].d30  = d.month   != null ? d.month   : null;
+            _screenerPrices[a.t].d90  = d.quarter != null ? d.quarter : null;
+            _screenerPrices[a.t].d365 = d.year    != null ? d.year    : null;
           }
         } catch(e) {}
       }));
       renderScreenerList();
-      await new Promise(function(r){ setTimeout(r, 400); });
+      await new Promise(function(r){ setTimeout(r, 600); });
     }
-    // Aggiorna cache con dati storici
+    // Salva cache completa
     try {
-      var c2 = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
-      if (c2) { c2.data = _screenerPrices; localStorage.setItem(CACHE_KEY, JSON.stringify(c2)); }
+      localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: now, data: _screenerPrices }));
     } catch(e) {}
-  }, 1000);
+    if (status) status.textContent = done + ' prezzi · completo';
+  }, 800);
 }
 
 function addToPortfolio(ticker, name) {
