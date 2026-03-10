@@ -538,6 +538,191 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
   .goal-preset:hover { background: rgba(255,255,255,.08); color: #F0EDE6; }
   .goal-preset-gold { background: rgba(201,168,76,.08) !important; border-color: rgba(201,168,76,.25) !important; color: #C9A84C !important; }
   .goal-preset-gold:hover { background: rgba(201,168,76,.15) !important; }
+
+/* ══ SCREENER ════════════════════════════════════════════════════════════ */
+.scr-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.scr-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface2);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 7px;
+  padding: 7px 12px;
+  min-width: 180px;
+  max-width: 260px;
+}
+.scr-input {
+  background: none;
+  border: none;
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  width: 100%;
+  outline: none;
+  letter-spacing: .02em;
+}
+.scr-input::placeholder { color: #3a3835; }
+.scr-cats {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.scr-cat-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 20px;
+  padding: 5px 11px;
+  color: #5a5550;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .05em;
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.scr-cat-btn:hover { border-color: rgba(201,168,76,.3); color: #9a8860; }
+.scr-cat-btn.active {
+  background: rgba(201,168,76,.12);
+  border-color: rgba(201,168,76,.4);
+  color: var(--gold);
+}
+.scr-select {
+  background: var(--surface2);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 7px;
+  padding: 7px 10px;
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  cursor: pointer;
+  letter-spacing: .03em;
+  outline: none;
+}
+.scr-refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(201,168,76,.08);
+  border: 1px solid rgba(201,168,76,.25);
+  border-radius: 7px;
+  padding: 7px 14px;
+  color: var(--gold);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: .05em;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.scr-refresh-btn:hover { background: rgba(201,168,76,.15); }
+.scr-status {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: #383530;
+  letter-spacing: .06em;
+  white-space: nowrap;
+}
+.scr-header-row {
+  display: grid;
+  grid-template-columns: 44px 1fr 110px 72px 72px 72px 72px 72px;
+  padding: 8px 20px;
+  background: #0a0a0a;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+.scr-header-row > div {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .1em;
+  color: #303030;
+  text-transform: uppercase;
+}
+.scr-row {
+  display: grid;
+  grid-template-columns: 44px 1fr 110px 72px 72px 72px 72px 72px;
+  align-items: center;
+  padding: 9px 20px;
+  border-bottom: 1px solid rgba(255,255,255,.025);
+  transition: background .12s;
+  cursor: default;
+}
+.scr-row:hover { background: rgba(201,168,76,.04) !important; }
+.scr-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  object-fit: contain;
+  background: var(--surface2);
+}
+.scr-ticker {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: #E0DCD4;
+  letter-spacing: .05em;
+}
+.scr-name {
+  font-size: 10px;
+  color: #383530;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: .01em;
+  margin-top: 2px;
+}
+.scr-badge {
+  font-size: 8px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  font-family: 'DM Mono', monospace;
+  white-space: nowrap;
+  margin-left: 7px;
+  vertical-align: middle;
+}
+.scr-price {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: #C8C4BE;
+  text-align: right;
+  letter-spacing: .02em;
+}
+.scr-chg {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: .02em;
+  padding: 3px 6px;
+  border-radius: 4px;
+  display: inline-block;
+  min-width: 52px;
+}
+.scr-chg.up   { color: #3DB86A; background: rgba(61,184,106,.08); }
+.scr-chg.dn   { color: #D94F4F; background: rgba(217,79,79,.08); }
+.scr-chg.null { color: #2a2825; }
+.scr-skeleton {
+  height: 10px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #141414 25%, #1a1a1a 50%, #141414 75%);
+  background-size: 200% 100%;
+  animation: scr-shimmer 1.4s infinite;
+}
+@keyframes scr-shimmer { to { background-position: -200% 0; } }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
@@ -641,64 +826,64 @@ tr.asset-row:hover{background:rgba(201,168,76,.05)}
     </div>
     
     <!-- SCREENER ══════════════════════════════════════════════════════════ -->
-    <div class="tab-content" id="tab-screener" style="display:none;padding:0;min-height:500px;flex-direction:column">
+    <div id="tab-screener" style="display:none;padding:0;min-height:500px;flex-direction:column">
 
-      <!-- ═══ TOOLBAR ═══════════════════════════════════════════════════════ -->
-      <div style="padding:14px 24px;background:#111;border-bottom:1px solid rgba(201,168,76,.12);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <!-- ── TOOLBAR ──────────────────────────────────────────────────────── -->
+      <div class="scr-toolbar">
 
         <!-- Ricerca -->
-        <div style="display:flex;align-items:center;gap:8px;background:#1a1a1a;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:8px 14px;flex:1;min-width:200px;max-width:320px">
+        <div class="scr-search-wrap">
           <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="5.5" cy="5.5" r="4.5" stroke="#5a5550" stroke-width="1.5"/><path d="M9 9l2.5 2.5" stroke="#5a5550" stroke-width="1.5" stroke-linecap="round"/></svg>
-          <input id="scrSearch" type="text" placeholder="Cerca ticker, nome..."
-            style="background:none;border:none;color:#F0EDE6;font-family:DM Mono,monospace;font-size:12px;width:100%;outline:none;letter-spacing:.02em"
-            oninput="filterScreener()">
+          <input id="scrSearch" type="text" placeholder="Cerca ticker o nome..." class="scr-input" oninput="filterScreener()">
         </div>
 
-        <!-- Categoria -->
-        <select id="scrCat" onchange="filterScreener()" style="background:#1a1a1a;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:8px 12px;color:#F0EDE6;font-size:11px;font-family:DM Mono,monospace;cursor:pointer;letter-spacing:.03em">
-          <option value="">Tutte le categorie</option>
-          <option value="azioni-usa">Azioni USA</option>
-          <option value="azioni-europa">Azioni Europa</option>
-          <option value="etf">ETF</option>
-          <option value="crypto">Crypto</option>
-          <option value="forex">Forex</option>
-          <option value="materie-prime">Materie Prime</option>
-          <option value="obbligazioni">Obbligazioni</option>
-          <option value="indici">Indici</option>
-        </select>
+        <!-- Filtri categoria (pill buttons) -->
+        <div class="scr-cats" id="scrCatBtns">
+          <button class="scr-cat-btn active" data-cat="" onclick="scrSetCat(this,'')">Tutto</button>
+          <button class="scr-cat-btn" data-cat="azioni-usa" onclick="scrSetCat(this,'azioni-usa')">Azioni USA</button>
+          <button class="scr-cat-btn" data-cat="azioni-europa" onclick="scrSetCat(this,'azioni-europa')">Europa</button>
+          <button class="scr-cat-btn" data-cat="etf" onclick="scrSetCat(this,'etf')">ETF</button>
+          <button class="scr-cat-btn" data-cat="crypto" onclick="scrSetCat(this,'crypto')">Crypto</button>
+          <button class="scr-cat-btn" data-cat="forex" onclick="scrSetCat(this,'forex')">Forex</button>
+          <button class="scr-cat-btn" data-cat="materie-prime" onclick="scrSetCat(this,'materie-prime')">Commodities</button>
+          <button class="scr-cat-btn" data-cat="indici" onclick="scrSetCat(this,'indici')">Indici</button>
+          <button class="scr-cat-btn" data-cat="obbligazioni" onclick="scrSetCat(this,'obbligazioni')">Bond</button>
+        </div>
 
-        <!-- Ordinamento -->
-        <select id="scrSort" onchange="sortScreener()" style="background:#1a1a1a;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:8px 12px;color:#F0EDE6;font-size:11px;font-family:DM Mono,monospace;cursor:pointer;letter-spacing:.03em">
+        <div style="flex:1"></div>
+
+        <!-- Sort -->
+        <select id="scrSort" onchange="sortScreener()" class="scr-select">
           <option value="name">A → Z</option>
-          <option value="change-desc">Migliori oggi ↓</option>
-          <option value="change-asc">Peggiori oggi ↑</option>
-          <option value="price-desc">Prezzo ↓</option>
+          <option value="change-desc">Migliori oggi</option>
+          <option value="change-asc">Peggiori oggi</option>
+          <option value="price-desc">Prezzo alto</option>
         </select>
 
         <!-- Aggiorna -->
-        <button onclick="loadScreenerPrices()" id="scrBtn"
-          style="background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:8px;padding:8px 16px;color:#C9A84C;font-size:11px;cursor:pointer;font-family:DM Mono,monospace;white-space:nowrap;letter-spacing:.05em;font-weight:600">
-          Aggiorna prezzi
+        <button onclick="loadScreenerPrices()" id="scrBtn" class="scr-refresh-btn">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M10 6A4 4 0 11 6 2a4 4 0 012.83 1.17L10 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><polyline points="10,2 10,4.5 7.5,4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Aggiorna
         </button>
 
         <!-- Status -->
-        <span id="scrStatus" style="font-family:DM Mono,monospace;font-size:10px;color:#404040;margin-left:auto;white-space:nowrap;letter-spacing:.05em"></span>
+        <span id="scrStatus" class="scr-status"></span>
       </div>
 
-      <!-- ═══ HEADER COLONNE ════════════════════════════════════════════════ -->
-      <div id="scrColHeader" style="display:grid;grid-template-columns:48px 1fr 120px 88px 88px 88px 88px 88px;padding:7px 24px;background:#0c0c0c;border-bottom:1px solid rgba(255,255,255,.05)">
+      <!-- ── COLONNE HEADER ────────────────────────────────────────────────── -->
+      <div class="scr-header-row">
         <div></div>
-        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.12em;color:#383838;text-transform:uppercase">Asset</div>
-        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.12em;color:#383838;text-transform:uppercase;text-align:right;padding-right:8px">Prezzo</div>
-        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.12em;color:#383838;text-transform:uppercase;text-align:center;cursor:pointer;user-select:none" onclick="document.getElementById('scrSort').value='change-desc';sortScreener()" title="Ordina per variazione giornaliera">1D ↕</div>
-        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.12em;color:#383838;text-transform:uppercase;text-align:center">1W</div>
-        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.12em;color:#383838;text-transform:uppercase;text-align:center">1M</div>
-        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.12em;color:#383838;text-transform:uppercase;text-align:center">3M</div>
-        <div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:.12em;color:#383838;text-transform:uppercase;text-align:center">1Y</div>
+        <div>Asset</div>
+        <div style="text-align:right">Prezzo</div>
+        <div style="text-align:center">1G</div>
+        <div style="text-align:center">1S</div>
+        <div style="text-align:center">1M</div>
+        <div style="text-align:center">3M</div>
+        <div style="text-align:center">1A</div>
       </div>
 
-      <!-- ═══ LISTA ══════════════════════════════════════════════════════════ -->
-      <div id="screenerList"></div>
+      <!-- ── LISTA ─────────────────────────────────────────────────────────── -->
+      <div id="screenerList" style="flex:1;overflow-y:auto"></div>
 
     </div>
 
@@ -5604,13 +5789,16 @@ function initScreener() {
 
 function filterScreener() {
   var q = ((document.getElementById('scrSearch')||{}).value||'').toLowerCase();
-  var cat = (document.getElementById('scrCat')||{}).value||'';
+  var activeBtn = document.querySelector('.scr-cat-btn.active');
+  var cat = activeBtn ? activeBtn.dataset.cat : '';
   _screenerFiltered = SCREENER_DB.filter(function(a) {
-    return (!q || a.t.toLowerCase().includes(q) || a.n.toLowerCase().includes(q) || a.sec.toLowerCase().includes(q))
-        && (!cat || a.cat===cat);
+    return (!cat || a.cat===cat)
+        && (!q || a.t.toLowerCase().includes(q) || a.n.toLowerCase().includes(q) || a.sec.toLowerCase().includes(q));
   });
   sortScreener(true);
+  renderScreenerList();
 }
+
 
 function sortScreener(skipRender) {
   var s = (document.getElementById('scrSort')||{}).value||'name';
@@ -5632,77 +5820,91 @@ function renderScreenerList() {
   var loaded = Object.keys(_screenerPrices).length;
   var status = document.getElementById('scrStatus');
   if (status && !_screenerLoading) {
-    status.textContent = loaded + ' prezzi · ' + _screenerFiltered.length + ' asset';
+    status.textContent = loaded ? loaded + ' prezzi \u00b7 ' + _screenerFiltered.length + ' asset' : _screenerFiltered.length + ' asset';
   }
 
-  // Placeholder se ancora vuoto
-  if (_screenerFiltered.length === 0) {
-    list.innerHTML = '<div style="padding:60px 24px;text-align:center;color:#404040;font-family:DM Mono,monospace;font-size:12px;letter-spacing:.05em">Nessun asset trovato</div>';
+  if (!_screenerFiltered.length) {
+    list.innerHTML = '<div style="padding:60px 24px;text-align:center;color:#303030;font-family:DM Mono,monospace;font-size:11px;letter-spacing:.08em">NESSUN ASSET</div>';
     return;
   }
 
-  // Se nessun prezzo ancora, mostra skeleton
-  if (loaded === 0) {
-    var skRows = '';
-    for (var s=0; s<12; s++) {
-      skRows += '<div style="display:grid;grid-template-columns:' + '48px 1fr 120px 88px 88px 88px 88px 88px' + ';align-items:center;padding:11px 24px;border-bottom:1px solid rgba(255,255,255,.03)">'
-        + '<div style="width:32px;height:32px;border-radius:8px;background:#1a1a1a"></div>'
-        + '<div style="height:10px;width:' + (60+Math.floor(s*7)%40) + 'px;background:#1a1a1a;border-radius:4px;margin:2px 0"></div>'
+  // Skeleton se nessun prezzo
+  if (!loaded) {
+    var sk = '';
+    for (var i=0; i<16; i++) {
+      var w1 = 40 + (i*17)%50, w2 = 60 + (i*11)%60;
+      sk += '<div class="scr-row" style="background:' + (i%2?'#0d0d0d':'#101010') + '">'
+        + '<div style="width:28px;height:28px;border-radius:6px" class="scr-skeleton"></div>'
+        + '<div><div class="scr-skeleton" style="width:'+w1+'px;height:9px;margin-bottom:5px"></div>'
+        + '<div class="scr-skeleton" style="width:'+w2+'px;height:8px"></div></div>'
         + '<div></div><div></div><div></div><div></div><div></div><div></div>'
         + '</div>';
     }
-    list.innerHTML = '<div style="padding:16px 24px 8px;font-family:DM Mono,monospace;font-size:10px;color:#383838;letter-spacing:.1em">CARICAMENTO PREZZI IN CORSO...</div>' + skRows;
+    list.innerHTML = sk;
     return;
   }
 
-  var catColors = {
+  var CAT_COL = {
     "azioni-usa":"#4A90D9","azioni-europa":"#4CAF7E","etf":"#9B59B6",
     "crypto":"#F7931A","forex":"#E08A3A","materie-prime":"#C9A84C",
-    "obbligazioni":"#5B8DB8","indici":"#E05A5A"
+    "obbligazioni":"#5B8DB8","indici":"#E05A5A","azioni-asia":"#E08A3A"
   };
 
   var html = _screenerFiltered.map(function(a, i) {
-    var p = _screenerPrices[a.t] || {};
-    var hasPrice = p.price != null;
-    var logoHtml = getAssetLogo(a);
-    var catColor = catColors[a.cat] || '#8A8580';
-    var rowBg = i % 2 === 0 ? '#111' : '#0e0e0e';
+    var p   = _screenerPrices[a.t] || {};
+    var col = CAT_COL[a.cat] || '#8A8580';
+    var bg  = i%2 ? '#0d0d0d' : '#101010';
 
-    return '<div class="scr-row" data-bg="' + rowBg + '" style="'
-      + 'display:grid;grid-template-columns:' + '48px 1fr 120px 88px 88px 88px 88px 88px' + ';'
-      + 'align-items:center;padding:10px 24px;border-bottom:1px solid rgba(255,255,255,.035);'
-      + 'background:' + rowBg + ';transition:background .1s;cursor:default"'
-      + ' onmouseenter="this.style.background=\'#1c1a14\'"'
-      + ' onmouseleave="this.style.background=this.dataset.bg">'
+    // Logo
+    var logo;
+    if (a.cat==='azioni-usa'||a.cat==='azioni-europa'||a.cat==='azioni-asia') {
+      var tk = a.t.replace(/\.(L|PA|DE|MI|AS|SW|CO)$/,'').replace(/-B\.CO$/,'');
+      logo = '<img src="https://assets.parqet.com/logos/symbol/'+encodeURIComponent(tk)+'" class="scr-logo"'
+           + ' onerror="this.replaceWith(Object.assign(document.createElement(\'span\'),{textContent:\''+a.t.charAt(0)+'\',className:\'scr-logo\',style:\'display:flex;align-items:center;justify-content:center;font-family:DM Mono,monospace;font-size:11px;font-weight:700;color:'+col+';background:'+col+'22\'}))">';
+    } else {
+      var icons = {crypto:'\u20BF',forex:'\uD83D\uDCB1',etf:'\uD83C\uDFDB','materie-prime':'\uD83D\uDEE2',indici:'\uD83D\uDCCA',obbligazioni:'\uD83C\uDFDB'};
+      var ic = icons[a.cat] || a.t.charAt(0);
+      logo = '<span class="scr-logo" style="display:flex;align-items:center;justify-content:center;font-size:'+(a.cat==='crypto'||a.cat==='forex'?'13':'11')+'px;color:'+col+';background:'+col+'15">'+ic+'</span>';
+    }
 
-      // Logo 48px
-      + '<div style="display:flex;align-items:center;justify-content:center">' + logoHtml + '</div>'
-
-      // Ticker + nome + badge (1fr)
-      + '<div style="min-width:0;padding-right:12px">'
-        + '<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:3px">'
-          + '<span style="font-family:DM Mono,monospace;font-size:12px;font-weight:700;color:#E8E4DC;letter-spacing:.06em">' + a.t + '</span>'
-          + '<span style="font-size:9px;padding:1px 6px;border-radius:3px;border:1px solid ' + catColor + '44;color:' + catColor + ';letter-spacing:.08em;text-transform:uppercase;font-family:DM Mono,monospace;white-space:nowrap">' + a.sec + '</span>'
-        + '</div>'
-        + '<div style="font-size:11px;color:#4a4a45;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.01em">' + a.n + '</div>'
-      + '</div>'
-
-      // Prezzo 120px
-      + '<div style="text-align:right;font-family:DM Mono,monospace;font-size:12px;color:#D4CFCA;font-weight:600;padding-right:8px;letter-spacing:.02em">'
-        + (hasPrice ? formatScrPrice(p.price, a.cat) : '<span style="color:#252525">—</span>')
-      + '</div>'
-
-      // Variazioni 88px x5
-      + '<div style="text-align:center">' + fmtChgBadge(p.d1)   + '</div>'
-      + '<div style="text-align:center">' + fmtChgBadge(p.d5)   + '</div>'
-      + '<div style="text-align:center">' + fmtChgBadge(p.d30)  + '</div>'
-      + '<div style="text-align:center">' + fmtChgBadge(p.d90)  + '</div>'
-      + '<div style="text-align:center">' + fmtChgBadge(p.d365) + '</div>'
-    + '</div>';
+    return '<div class="scr-row" data-bg="'+bg+'" style="background:'+bg+'"'
+      +' onmouseenter="this.style.background=\'#1a1712\'" onmouseleave="this.style.background=this.dataset.bg">'
+      +'<div style="display:flex;align-items:center;justify-content:center">'+logo+'</div>'
+      +'<div style="min-width:0;padding-right:8px">'
+        +'<div style="display:flex;align-items:center"><span class="scr-ticker">'+a.t+'</span>'
+        +'<span class="scr-badge" style="border:1px solid '+col+'33;color:'+col+';">'+a.sec+'</span></div>'
+        +'<div class="scr-name">'+a.n+'</div>'
+      +'</div>'
+      +'<div class="scr-price">'+(p.price!=null ? formatScrPrice(p.price,a.cat) : '<span style="color:#222">\u2014</span>')+'</div>'
+      +'<div style="text-align:center">'+fmtChg(p.d1)+'</div>'
+      +'<div style="text-align:center">'+fmtChg(p.d5)+'</div>'
+      +'<div style="text-align:center">'+fmtChg(p.d30)+'</div>'
+      +'<div style="text-align:center">'+fmtChg(p.d90)+'</div>'
+      +'<div style="text-align:center">'+fmtChg(p.d365)+'</div>'
+    +'</div>';
   }).join('');
 
   list.innerHTML = html;
 }
+
+function fmtChg(v) {
+  if (v==null) return '<span class="scr-chg null">\u2014</span>';
+  var cls = v>=0 ? 'up' : 'dn';
+  return '<span class="scr-chg '+cls+'">'+(v>=0?'+':'')+v.toFixed(2)+'%</span>';
+}
+
+function scrSetCat(btn, cat) {
+  document.querySelectorAll('.scr-cat-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  // Aggiorna il select nascosto per compatibilità
+  _screenerFiltered = SCREENER_DB.filter(function(a){
+    var q = ((document.getElementById('scrSearch')||{}).value||'').toLowerCase();
+    return (!cat || a.cat===cat) && (!q || a.t.toLowerCase().includes(q) || a.n.toLowerCase().includes(q));
+  });
+  sortScreener(true);
+  renderScreenerList();
+}
+
 
 function fmtChgBadge(v) {
   if (v == null) return '<span style="color:#252525;font-family:DM Mono,monospace;font-size:10px">—</span>';
