@@ -221,9 +221,9 @@ input[type=range].wi-range::-webkit-slider-thumb{-webkit-appearance:none;width:1
 .market-ticker::before{content:'';position:absolute;left:0;top:0;bottom:0;width:80px;background:linear-gradient(to right,var(--surface),transparent);z-index:2;pointer-events:none;}
 .market-ticker::after{content:'';position:absolute;right:0;top:0;bottom:0;width:80px;background:linear-gradient(to left,var(--surface),transparent);z-index:2;pointer-events:none;}
 .ticker-label{position:absolute;left:16px;z-index:3;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;color:var(--gold);text-transform:uppercase;font-weight:500;}
-.ticker-track{display:flex;gap:0;animation:tickerScroll 40s linear infinite;white-space:nowrap;padding-left:120px;}
+.ticker-track{display:flex;gap:0;animation:tickerScroll var(--ticker-dur,392s) linear infinite paused;white-space:nowrap;}
 .ticker-track:hover{animation-play-state:paused;}
-.ticker-item{display:inline-flex;align-items:center;gap:8px;padding:0 24px;font-family:'DM Mono',monospace;font-size:11px;border-right:1px solid var(--border);}
+.ticker-item{display:inline-flex;align-items:center;gap:8px;padding:0 20px;font-family:'DM Mono',monospace;font-size:11px;border-right:1px solid var(--border);}
 .ti-name{color:var(--muted);font-size:10px;}
 .ti-val{color:var(--text);font-weight:500;}
 .ti-chg.up{color:var(--green);}
@@ -1655,7 +1655,7 @@ function renderTable() {
     }
     const tp=a.targetPct||15;
     const bc=a.risk==='low'?'var(--green)':a.risk==='medium'?'var(--orange)':'var(--red)';
-    const sparkHtml='<canvas id="spark_'+a.id+'" width="80" height="32" style="display:block"></canvas>';
+    const sparkHtml='<div style="display:flex;justify-content:flex-end;align-items:center"><canvas id="spark_'+a.id+'" width="80" height="32" style="display:block"></canvas></div>';
     return '<tr data-idx="'+i+'" class="asset-row"><td><div class="ticker" style="color:'+a.color+'">'+a.ticker+'</div><div class="asset-name">'+a.name+'</div></td>'
       +'<td><div style="font-family:DM Mono,monospace;font-size:13px">'+a.invested.toLocaleString('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0})+'</div><div style="font-size:10px;color:var(--muted)">'+pct+'%</div></td>'
       +'<td>'+(a.buyPrice>0?'<div style="font-family:DM Mono,monospace;font-size:12px">'+a.buyPrice.toLocaleString('it-IT',{style:'currency',currency:'EUR'})+'</div><div style="font-size:10px;color:var(--muted)">x'+(a.qty||'---')+'</div>':'<span style="color:var(--muted);font-size:11px">---</span>')+'</td>'
@@ -2619,32 +2619,22 @@ async function loadMarketTicker() {
 function initTickerDOM() {
   var track = document.getElementById('tickerTrack');
   if (!track) return;
-  // Genera tutti gli item + duplicato per loop seamless
   var html = '';
-  // Prima copia
-  TICKER_SYMBOLS.forEach(function(sym) {
-    var icon = sym.icon || '';
-    html += '<div class="ticker-item">'
-      + '<span class="ti-icon">' + icon + '</span>'
-      + '<span class="ti-name">' + sym.label + '</span>'
-      + '<span class="ti-val" id="tk-' + sym.id + '">---</span>'
-      + '<span class="ti-chg" id="tk-' + sym.id + '-c">---</span>'
-      + '</div>';
-  });
-  // Seconda copia per loop seamless
-  TICKER_SYMBOLS.forEach(function(sym) {
-    var icon = sym.icon || '';
-    html += '<div class="ticker-item">'
-      + '<span class="ti-icon">' + icon + '</span>'
-      + '<span class="ti-name">' + sym.label + '</span>'
-      + '<span class="ti-val" id="tk-' + sym.id + 'b">---</span>'
-      + '<span class="ti-chg" id="tk-' + sym.id + 'b-c">---</span>'
-      + '</div>';
+  [1, 2].forEach(function(copy) {
+    TICKER_SYMBOLS.forEach(function(sym) {
+      var sfx = copy === 2 ? 'b' : '';
+      html += '<div class="ticker-item">'
+        + '<span class="ti-name">' + sym.label + '</span>'
+        + '<span class="ti-val loading" id="tk-' + sym.id + sfx + '">···</span>'
+        + '<span class="ti-chg" id="tk-' + sym.id + (copy===2?'b-c':'-c') + '"></span>'
+        + '</div>';
+    });
   });
   track.innerHTML = html;
-  // Adatta velocità animazione alla lunghezza
-  var speed = TICKER_SYMBOLS.length * 4; // 4s per simbolo
-  track.style.animationDuration = speed + 's';
+  // Imposta durata e AVVIA l'animazione dopo che il contenuto è pronto
+  var dur = (TICKER_SYMBOLS.length * 4) + 's';
+  track.style.animationDuration = dur;
+  track.style.animationPlayState = 'running';
 }
 
 function startTickerRefresh() {
