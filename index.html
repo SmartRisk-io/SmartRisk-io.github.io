@@ -54,6 +54,7 @@ window.addEventListener('load', () => {
       renderAll(); checkOnboarding(); updateNotifBtn(); applyLang();
       setTimeout(()=>switchTab('portafoglio', document.getElementById('tab-btn-portafoglio')), 0);
       loadMorningBrief();
+      startTickerRefresh();
     } else {
       document.getElementById('loginScreen').style.display='flex';
       document.getElementById('appShell').style.display='none';
@@ -2068,7 +2069,7 @@ function switchTab(id, el) {
   if (id==='rischio')   renderRiskMatrix();
   if (id==='panoramica') renderPanoramica();
   if (id==='mappa')     setTimeout(renderGeoMap, 50);
-  if (id==='obiettivo') { loadGoal(); renderBenchmark(); renderCrashTest(); renderAllocOutput(60,30,10); }
+  if (id==='obiettivo') { loadGoal(); renderBenchmark(); renderCrashTest(); renderAllocOutput(60,30,10); renderGoalTips(0,0,9,0,20,null); }
   if (id==='storico')   renderStorico();
   if (id==='screener')  initScreener();
   if (id==='verdetti')  renderVerdetti();
@@ -2563,7 +2564,7 @@ function setTicker(id, val, chg, fmt) {
   ['','b'].forEach(suffix => {
     const valEl = document.getElementById('tk-'+id+suffix);
     const chgEl = document.getElementById('tk-'+id+'-c'+suffix) || document.getElementById('tk-'+id+'b-c');
-    if (valEl) valEl.textContent = fmtVal(val);
+    if (valEl) { valEl.textContent = fmtVal(val); valEl.classList.remove('loading'); }
     if (chgEl) { chgEl.textContent = chgStr; chgEl.className = 'ti-chg '+cls; }
   });
 }
@@ -3387,118 +3388,99 @@ function renderGoalTips(current, monthly, annRet, target, baseYears, mc) {
   var el = document.getElementById('goalTipsGrid');
   var sec = document.getElementById('goalTipsSection');
   if (!el) return;
-  if (!target || target <= 0) {
-    sec && (sec.style.display = 'none');
-    return;
-  }
   sec && (sec.style.display = 'block');
 
-  var pct = mc ? Math.round(mc.prob) : 0;
+  var pct  = mc ? Math.round(mc.prob) : 0;
   var tips = [];
-  var gap  = target - current;
 
-  // Calcola impatti
-  var monthlyPlus200 = runMonteCarlo(current, monthly + 200, annRet, target, Math.ceil(baseYears || 20), 5000);
-  var monthlyPlus500 = runMonteCarlo(current, monthly + 500, annRet, target, Math.ceil(baseYears || 20), 5000);
-  var retPlus1       = runMonteCarlo(current, monthly, annRet + 1, target, Math.ceil(baseYears || 20), 5000);
-  var retPlus2       = runMonteCarlo(current, monthly, annRet + 2, target, Math.ceil(baseYears || 20), 5000);
+  if (target && target > 0 && mc) {
+    // ── Tips personalizzate con obiettivo impostato ──────────────────────
+    var years = Math.ceil(baseYears || 20);
 
-  var yearsM = yearsToGoal(current, monthly, annRet, target);
-  var yearsM200 = yearsToGoal(current, monthly + 200, annRet, target);
-  var yearsM500 = yearsToGoal(current, monthly + 500, annRet, target);
-  var yearsR1   = yearsToGoal(current, monthly, annRet + 1, target);
+    var mc200  = runMonteCarlo(current, (monthly||0)+200, annRet, target, years, 4000);
+    var mc500  = runMonteCarlo(current, (monthly||0)+500, annRet, target, years, 4000);
+    var mcR1   = runMonteCarlo(current, monthly||0, annRet+1, target, years, 4000);
 
-  // Suggerimento 1: aumenta versamento di 200€
-  if (monthly > 0 || true) {
-    var pctDiff = Math.round(monthlyPlus200.prob) - pct;
-    var yearsDiff = yearsM && yearsM200 ? Math.round((yearsM - yearsM200) * 10) / 10 : null;
+    var ym     = yearsToGoal(current, monthly||0, annRet, target);
+    var ym200  = yearsToGoal(current, (monthly||0)+200, annRet, target);
+    var ym500  = yearsToGoal(current, (monthly||0)+500, annRet, target);
+    var ymR1   = yearsToGoal(current, monthly||0, annRet+1, target);
+
+    var d200  = (pct < 95) ? (Math.round(mc200.prob) - pct) : 0;
+    var d500  = (pct < 95) ? (Math.round(mc500.prob) - pct) : 0;
+    var dR1   = (pct < 95) ? (Math.round(mcR1.prob)  - pct) : 0;
+    var yDiff200 = ym && ym200 ? Math.round((ym - ym200)*10)/10 : null;
+    var yDiff500 = ym && ym500 ? Math.round((ym - ym500)*10)/10 : null;
+    var yDiffR1  = ym && ymR1  ? Math.round((ym - ymR1 )*10)/10 : null;
+
     tips.push({
-      icon: '',
-      col: '#4CAF7E',
-      title: '+200€/mese',
-      body: pctDiff > 0
-        ? '+' + pctDiff + '% probabilità' + (yearsDiff ? ' · ' + yearsDiff + ' anni prima' : '')
-        : yearsDiff ? yearsDiff + ' anni prima' : 'Migliora il piano',
-      detail: 'Versando ' + (monthly + 200) + '€/mese invece di ' + (monthly || 0) + '€, arrivi all\'obiettivo con maggiore certezza.',
-      impact: pctDiff > 0 ? '+' + pctDiff + '%' : '↑',
-      impactCol: '#4CAF7E'
+      col:'#4CAF7E', title:'+200 EUR/mese',
+      impact: d200 > 0 ? '+'+d200+'% probabilità' : (yDiff200 ? yDiff200+' anni prima' : 'Impatto positivo'),
+      detail: 'Versando '+(( monthly||0)+200)+'€/mese invece di '+((monthly||0))+'€, il capitale finale aumenta significativamente grazie alla capitalizzazione composta.'
     });
-  }
-
-  // Suggerimento 2: aumenta versamento di 500€
-  if (monthly >= 0) {
-    var pctDiff2 = Math.round(monthlyPlus500.prob) - pct;
-    var yearsDiff2 = yearsM && yearsM500 ? Math.round((yearsM - yearsM500) * 10) / 10 : null;
     tips.push({
-      icon: '',
-      col: '#C9A84C',
-      title: '+500€/mese',
-      body: pctDiff2 > 0
-        ? '+' + pctDiff2 + '% probabilità' + (yearsDiff2 ? ' · ' + yearsDiff2 + ' anni prima' : '')
-        : yearsDiff2 ? yearsDiff2 + ' anni prima' : 'Impatto significativo',
-      detail: 'Con ' + (monthly + 500) + '€/mese raggiungi l\'obiettivo molto prima riducendo il rischio di mancarlo.',
-      impact: pctDiff2 > 0 ? '+' + pctDiff2 + '%' : '↑↑',
-      impactCol: '#C9A84C'
+      col:'#C9A84C', title:'+500 EUR/mese',
+      impact: d500 > 0 ? '+'+d500+'% probabilità' : (yDiff500 ? yDiff500+' anni prima' : 'Impatto elevato'),
+      detail: 'Un versamento mensile maggiore riduce la dipendenza dal rendimento di mercato, abbassando il rischio complessivo del piano.'
     });
-  }
-
-  // Suggerimento 3: aumenta rendimento +1%
-  var pctDiffR1 = Math.round(retPlus1.prob) - pct;
-  var yearsDiffR1 = yearsM && yearsR1 ? Math.round((yearsM - yearsR1) * 10) / 10 : null;
-  tips.push({
-    icon: '',
-    col: '#4A90D9',
-    title: '+1% rendimento annuo',
-    body: pctDiffR1 > 0
-      ? '+' + pctDiffR1 + '% probabilità' + (yearsDiffR1 ? ' · ' + yearsDiffR1 + ' anni prima' : '')
-      : yearsDiffR1 ? yearsDiffR1 + ' anni prima' : 'Migliora la strategia',
-    detail: 'Passare da ' + annRet + '% a ' + (annRet + 1) + '% annuo (es. ETF azionario vs bond) può fare la differenza nel lungo periodo.',
-    impact: pctDiffR1 > 0 ? '+' + pctDiffR1 + '%' : '↑',
-    impactCol: '#4A90D9'
-  });
-
-  // Suggerimento 4: allarga orizzonte temporale
-  if (pct < 75 && baseYears) {
-    var extraYears = 3;
-    var mcExt = runMonteCarlo(current, monthly, annRet, target, Math.ceil(baseYears + extraYears), 5000);
-    var pctDiffExt = Math.round(mcExt.prob) - pct;
     tips.push({
-      icon: '',
-      col: '#9B59B6',
-      title: '+' + extraYears + ' anni orizzonte',
-      body: pctDiffExt > 0 ? '+' + pctDiffExt + '% probabilità' : 'Più tempo = meno pressione',
-      detail: 'Estendere l\'orizzonte di ' + extraYears + ' anni al ' + Math.round(baseYears + extraYears) + ' riduce la pressione e aumenta la probabilità di successo.',
-      impact: pctDiffExt > 0 ? '+' + pctDiffExt + '%' : '↑',
-      impactCol: '#9B59B6'
+      col:'#4A90D9', title:'+1% rendimento annuo',
+      impact: dR1 > 0 ? '+'+dR1+'% probabilità' : (yDiffR1 ? yDiffR1+' anni prima' : 'Differenza nel lungo periodo'),
+      detail: 'Passare da un portafoglio obbligazionario a uno bilanciato o azionario può aggiungere 1-2% di rendimento annuo storico.'
     });
-  }
 
-  // Suggerimento 5: abbassa il target se probabilità molto bassa
-  if (pct < 30 && target > 0) {
-    var targetR = Math.round(target * 0.8 / 1000) * 1000;
-    var mcR = runMonteCarlo(current, monthly, annRet, targetR, Math.ceil(baseYears || 20), 5000);
-    tips.push({
-      icon: '',
-      col: '#E08A3A',
-      title: 'Obiettivo ridotto a ' + fmtK(targetR),
-      body: Math.round(mcR.prob) + '% probabilità (da ' + pct + '%)',
-      detail: 'Un obiettivo più realistico di ' + fmtK(targetR) + ' (80% del target) è raggiungibile con probabilità molto più alta.',
-      impact: Math.round(mcR.prob) + '%',
-      impactCol: '#E08A3A'
-    });
+    if (pct < 70 && baseYears) {
+      var mc3y = runMonteCarlo(current, monthly||0, annRet, target, years+3, 4000);
+      var d3y  = Math.round(mc3y.prob) - pct;
+      tips.push({
+        col:'#9B59B6', title:'+3 anni di orizzonte',
+        impact: d3y > 0 ? '+'+d3y+'% probabilità' : 'Riduce la pressione',
+        detail: 'Estendere l\'orizzonte temporale di 3 anni riduce la volatilità complessiva e aumenta la probabilità di successo senza modificare i versamenti.'
+      });
+    }
+
+    if (pct < 35 && target > 0) {
+      var target80 = Math.round(target * 0.8 / 1000) * 1000;
+      var mc80 = runMonteCarlo(current, monthly||0, annRet, target80, years, 4000);
+      tips.push({
+        col:'#E08A3A', title:'Obiettivo a '+fmtK(target80),
+        impact: Math.round(mc80.prob)+'% probabilità (da '+pct+'%)',
+        detail: 'Un obiettivo pari all\'80% del target attuale ('+(fmtK(target80))+') ha probabilità di successo molto più alte. Valutare un approccio progressivo.'
+      });
+    }
+  } else {
+    // ── Tips generiche educative (nessun obiettivo impostato) ────────────
+    tips = [
+      {
+        col:'#4CAF7E', title:'Regola del 10%',
+        impact:'Principio fondamentale',
+        detail:'Destinare almeno il 10% del reddito mensile al risparmio investito è il punto di partenza raccomandato dalla pianificazione finanziaria indipendente.'
+      },
+      {
+        col:'#4A90D9', title:'Diversificazione per asset class',
+        impact:'Riduce la volatilità del -30-40%',
+        detail:'Un portafoglio bilanciato 60/30/10 (azionario/obbligazionario/liquidità) riduce storicamente la volatilità mantenendo rendimenti competitivi.'
+      },
+      {
+        col:'#C9A84C', title:'Capitalizzazione composta',
+        impact:'Effetto esponenziale nel tempo',
+        detail:'Con un rendimento del 9% annuo, 10.000€ diventano 56.000€ in 20 anni senza versare nulla di aggiuntivo. Iniziare prima vale più che versare di più tardi.'
+      },
+      {
+        col:'#9B59B6', title:'Imposta un obiettivo reale',
+        impact:'Aumenta il tasso di successo del 42%',
+        detail:'Chi pianifica con un obiettivo preciso (cifra + scadenza) raggiunge i propri target finanziari con frequenza significativamente maggiore rispetto a chi risparmia senza piano.'
+      }
+    ];
   }
 
   el.innerHTML = tips.map(function(t) {
-    return '<div style="background:#111;border:1px solid rgba(255,255,255,.05);border-radius:10px;padding:14px 16px;border-top:2px solid ' + t.col + '">'
-      + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
-        + '<div style="display:flex;align-items:center;gap:7px">'
-          + '<span style="font-size:15px">' + t.icon + '</span>'
-          + '<span style="font-family:DM Mono,monospace;font-size:11px;font-weight:700;color:#D4CFCA">' + t.title + '</span>'
-        + '</div>'
-        + '<span style="font-family:DM Mono,monospace;font-size:12px;font-weight:700;color:' + t.impactCol + '">' + t.impact + '</span>'
+    return '<div style="background:#0d0d0d;border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:16px 18px;border-left:3px solid '+t.col+'">'
+      + '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px">'
+        + '<span style="font-family:DM Mono,monospace;font-size:11px;font-weight:700;color:#D4CFCA;line-height:1.4">' + t.title + '</span>'
+        + '<span style="font-family:DM Mono,monospace;font-size:10px;font-weight:600;color:'+t.col+';white-space:nowrap;margin-left:8px;flex-shrink:0">' + t.impact + '</span>'
       + '</div>'
-      + '<div style="font-family:DM Mono,monospace;font-size:10px;color:' + t.col + ';font-weight:600;margin-bottom:5px">' + t.body + '</div>'
-      + '<div style="font-family:DM Mono,monospace;font-size:10px;color:#484840;line-height:1.6">' + t.detail + '</div>'
+      + '<div style="font-family:DM Mono,monospace;font-size:10px;color:#484840;line-height:1.65">' + t.detail + '</div>'
     + '</div>';
   }).join('');
 }
