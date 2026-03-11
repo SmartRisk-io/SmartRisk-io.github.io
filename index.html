@@ -1616,7 +1616,7 @@ function applyLang() {
   // Update tab labels
   document.querySelectorAll('.tab[data-tab]').forEach(btn => {
     const tabId = btn.getAttribute('data-tab');
-    const keyMap = {panoramica:'panoramica',portafoglio:'portfolio',calcolatore:'calculator',rischio:'riskMatrix',strategia:'strategy',heatmap:'heatmap',ai:'aiTab',news:'markets',segnali:'signals',mappa:'mappa',obiettivo:'obiettivo'};
+    const keyMap = {panoramica:'panoramica',portafoglio:'portfolio',calcolatore:'calculator',rischio:'riskMatrix',strategia:'strategy',heatmap:'heatmap',ai:'aiTab',news:'markets',segnali:'signals',mappa:'mappa',obiettivo:'Obiettivo'};
     if (keyMap[tabId]) btn.textContent = t(keyMap[tabId]);
   });
   const altroBtn = document.querySelector('#altroDropdown > .tab');
@@ -4900,17 +4900,9 @@ const SCREENER_DB = [
   {t:'^TYX',n:'US 30Y Yield',cat:'indici',sec:'index',id:'tyx'},
   {t:'^IRX',n:'US 3M Yield',cat:'indici',sec:'index',id:'irx'},
   {t:'EURONEXT:FESX',n:'EuroStoxx Fut',cat:'indici',sec:'index',id:'euronext:fes'},
-  {t:'TLT',n:'iShares 20Y US',cat:'obbligazioni',sec:'bonds',id:'tlt1'},
-  {t:'SHY',n:'iShares 1-3Y',cat:'obbligazioni',sec:'bonds',id:'shy1'},
-  {t:'IEI',n:'iShares 3-7Y',cat:'obbligazioni',sec:'bonds',id:'iei1'},
   {t:'IEF',n:'iShares 7-10Y',cat:'obbligazioni',sec:'bonds',id:'ief'},
-  {t:'BNDX',n:'Vanguard Intl',cat:'obbligazioni',sec:'bonds',id:'bndx1'},
-  {t:'EMB',n:'EM Bond',cat:'obbligazioni',sec:'bonds',id:'emb1'},
-  {t:'LQD',n:'Corp IG Bond',cat:'obbligazioni',sec:'bonds',id:'lqd1'},
-  {t:'HYG',n:'High Yield',cat:'obbligazioni',sec:'bonds',id:'hyg1'},
   {t:'MBB',n:'Mortgage Bond',cat:'obbligazioni',sec:'bonds',id:'mbb'},
-  {t:'TIPS',n:'iShares TIPS',cat:'obbligazioni',sec:'bonds',id:'tips'}
-,
+  {t:'TIPS',n:'iShares TIPS',cat:'obbligazioni',sec:'bonds',id:'tips'},
   {t:'SNOW',n:'Snowflake',cat:'azioni-usa',sec:'technology',id:'snow'},
   {t:'RBLX',n:'Roblox',cat:'azioni-usa',sec:'technology',id:'rblx'},
   {t:'U',n:'Unity',cat:'azioni-usa',sec:'technology',id:'u'},
@@ -5279,7 +5271,6 @@ const SCREENER_DB = [
   {t:'7751.T',n:'Canon',cat:'azioni-asia',sec:'technology',id:'7751t'},
   {t:'6594.T',n:'Nidec',cat:'azioni-asia',sec:'industrials',id:'6594t'},
   {t:'MSTR',n:'MicroStrategy',cat:'azioni-usa',sec:'technology',id:'mstr'},
-  {t:'RBLX',n:'Roblox',cat:'azioni-usa',sec:'technology',id:'rblx1'},
   {t:'SNAP',n:'Snap',cat:'azioni-usa',sec:'technology',id:'snap'},
   {t:'PINS',n:'Pinterest',cat:'azioni-usa',sec:'technology',id:'pins'},
   {t:'TWTR',n:'X Corp',cat:'azioni-usa',sec:'technology',id:'twtr'},
@@ -5298,7 +5289,6 @@ const SCREENER_DB = [
   {t:'WYNN',n:'Wynn Resorts',cat:'azioni-usa',sec:'consumer',id:'wynn'},
   {t:'HAS',n:'Hasbro',cat:'azioni-usa',sec:'consumer',id:'has'},
   {t:'MAT',n:'Mattel',cat:'azioni-usa',sec:'consumer',id:'mat'},
-  {t:'NKE',n:'Nike',cat:'azioni-usa',sec:'consumer',id:'nke1'},
   {t:'UAA',n:'Under Armour',cat:'azioni-usa',sec:'consumer',id:'uaa'},
   {t:'VFC',n:'VF Corp',cat:'azioni-usa',sec:'consumer',id:'vfc'},
   {t:'PVH',n:'PVH Corp',cat:'azioni-usa',sec:'consumer',id:'pvh'},
@@ -5311,7 +5301,6 @@ const SCREENER_DB = [
   {t:'PAGS',n:'PagSeguro',cat:'azioni-usa',sec:'finance',id:'pags'},
   {t:'STO',n:'Stoneco',cat:'azioni-usa',sec:'finance',id:'sto'},
   {t:'NU',n:'Nu Holdings',cat:'azioni-usa',sec:'finance',id:'nu'},
-  {t:'MELI',n:'MercadoLibre',cat:'azioni-usa',sec:'technology',id:'meli1'},
   {t:'VTEX',n:'VTEX',cat:'azioni-usa',sec:'technology',id:'vtex'},
   {t:'TOTVS',n:'Totvs',cat:'azioni-usa',sec:'technology',id:'totvs'},
   {t:'XP',n:'XP Inc',cat:'azioni-usa',sec:'finance',id:'xp'},
@@ -5328,18 +5317,12 @@ const SCREENER_DB = [
   {t:'BILI',n:'Bilibili',cat:'azioni-usa',sec:'media',id:'bili'},
   {t:'WB',n:'Weibo',cat:'azioni-usa',sec:'media',id:'wb'},
   {t:'NTES',n:'NetEase',cat:'azioni-usa',sec:'technology',id:'ntes'},
-  {t:'ZM',n:'Zoom',cat:'azioni-usa',sec:'technology',id:'zm1'},
-  {t:'DOCU',n:'DocuSign',cat:'azioni-usa',sec:'technology',id:'docu1'},
-  {t:'TWLO',n:'Twilio',cat:'azioni-usa',sec:'technology',id:'twlo1'},
-  {t:'OKTA',n:'Okta',cat:'azioni-usa',sec:'technology',id:'okta1'},
-  {t:'SNOW',n:'Snowflake',cat:'azioni-usa',sec:'technology',id:'snow1'},
   {t:'DBX',n:'Dropbox',cat:'azioni-usa',sec:'technology',id:'dbx'},
   {t:'BOX',n:'Box',cat:'azioni-usa',sec:'technology',id:'box'},
   {t:'ZI',n:'ZoomInfo',cat:'azioni-usa',sec:'technology',id:'zi'},
   {t:'FROG',n:'JFrog',cat:'azioni-usa',sec:'technology',id:'frog'},
   {t:'ESTC',n:'Elastic',cat:'azioni-usa',sec:'technology',id:'estc'},
   {t:'CFLT',n:'Confluent',cat:'azioni-usa',sec:'technology',id:'cflt'},
-  {t:'DDOG',n:'Datadog',cat:'azioni-usa',sec:'technology',id:'ddog1'},
   {t:'WIX',n:'Wix',cat:'azioni-usa',sec:'technology',id:'wix'},
   {t:'MNTV',n:'Momentive',cat:'azioni-usa',sec:'technology',id:'mntv'},
   {t:'ASAN',n:'Asana',cat:'azioni-usa',sec:'technology',id:'asan'},
@@ -5352,63 +5335,6 @@ const SCREENER_DB = [
   {t:'BLKB',n:'Blackbaud',cat:'azioni-usa',sec:'technology',id:'blkb'},
   {t:'SWI',n:'SolarWinds',cat:'azioni-usa',sec:'technology',id:'swi'},
   {t:'SMAR',n:'Smartsheet',cat:'azioni-usa',sec:'technology',id:'smar'},
-  {t:'BOTZ',n:'Global Robotics',cat:'etf',sec:'etf',id:'botz1'},
-  {t:'LIT',n:'Lithium Battery',cat:'etf',sec:'etf',id:'lit1'},
-  {t:'REMX',n:'Rare Earth',cat:'etf',sec:'etf',id:'remx1'},
-  {t:'COPX',n:'Global Copper',cat:'etf',sec:'etf',id:'copx1'},
-  {t:'GDX',n:'Gold Miners',cat:'etf',sec:'etf',id:'gdx1'},
-  {t:'GDXJ',n:'Jr Gold Miners',cat:'etf',sec:'etf',id:'gdxj1'},
-  {t:'XOP',n:'Oil Gas Expl',cat:'etf',sec:'etf',id:'xop1'},
-  {t:'OIH',n:'Oil Services',cat:'etf',sec:'etf',id:'oih1'},
-  {t:'XME',n:'Metals Mining',cat:'etf',sec:'etf',id:'xme1'},
-  {t:'IBB',n:'iShares Biotech',cat:'etf',sec:'etf',id:'ibb1'},
-  {t:'XBI',n:'SPDR Biotech',cat:'etf',sec:'etf',id:'xbi1'},
-  {t:'IHI',n:'Medical Devices',cat:'etf',sec:'etf',id:'ihi1'},
-  {t:'FINX',n:'Global FinTech',cat:'etf',sec:'etf',id:'finx1'},
-  {t:'HACK',n:'Cybersecurity',cat:'etf',sec:'etf',id:'hack1'},
-  {t:'CIBR',n:'Cybersec ETF',cat:'etf',sec:'etf',id:'cibr1'},
-  {t:'SKYY',n:'First Trust Cloud',cat:'etf',sec:'etf',id:'skyy1'},
-  {t:'CLOU',n:'Global X Cloud',cat:'etf',sec:'etf',id:'clou1'},
-  {t:'WCLD',n:'WisdomTree Cloud',cat:'etf',sec:'etf',id:'wcld1'},
-  {t:'ARKK',n:'ARK Innovation',cat:'etf',sec:'etf',id:'arkk1'},
-  {t:'ARKG',n:'ARK Genomics',cat:'etf',sec:'etf',id:'arkg1'},
-  {t:'ARKW',n:'ARK Web 3.0',cat:'etf',sec:'etf',id:'arkw1'},
-  {t:'EURL',n:'Direxion EU Bull',cat:'etf',sec:'etf',id:'eurl1'},
-  {t:'EWQ',n:'iShares France',cat:'etf',sec:'etf',id:'ewq1'},
-  {t:'EWI',n:'iShares Italy',cat:'etf',sec:'etf',id:'ewi1'},
-  {t:'EWP',n:'iShares Spain',cat:'etf',sec:'etf',id:'ewp1'},
-  {t:'EWU',n:'iShares UK',cat:'etf',sec:'etf',id:'ewu1'},
-  {t:'EWG',n:'iShares Germany',cat:'etf',sec:'etf',id:'ewg1'},
-  {t:'EWJ',n:'iShares Japan',cat:'etf',sec:'etf',id:'ewj1'},
-  {t:'EWZ',n:'iShares Brazil',cat:'etf',sec:'etf',id:'ewz1'},
-  {t:'EWT',n:'iShares Taiwan',cat:'etf',sec:'etf',id:'ewt1'},
-  {t:'EWY',n:'iShares Korea',cat:'etf',sec:'etf',id:'ewy1'},
-  {t:'EWA',n:'iShares Australia',cat:'etf',sec:'etf',id:'ewa1'},
-  {t:'FXI',n:'iShares China',cat:'etf',sec:'etf',id:'fxi1'},
-  {t:'MCHI',n:'iShares MSCI China',cat:'etf',sec:'etf',id:'mchi1'},
-  {t:'KWEB',n:'KraneShares China',cat:'etf',sec:'etf',id:'kweb1'},
-  {t:'ACWI',n:'iShares MSCI ACWI',cat:'etf',sec:'etf',id:'acwi1'},
-  {t:'EFA',n:'iShares EAFE',cat:'etf',sec:'etf',id:'efa1'},
-  {t:'EEM',n:'iShares MSCI EM',cat:'etf',sec:'etf',id:'eem1'},
-  {t:'VGK',n:'Vanguard European',cat:'etf',sec:'etf',id:'vgk1'},
-  {t:'VPL',n:'Vanguard Pacific',cat:'etf',sec:'etf',id:'vpl1'},
-  {t:'VSS',n:'Vanguard FTSE Small',cat:'etf',sec:'etf',id:'vss1'},
-  {t:'VB',n:'Vanguard Small Cap',cat:'etf',sec:'etf',id:'vb1'},
-  {t:'VO',n:'Vanguard Mid Cap',cat:'etf',sec:'etf',id:'vo1'},
-  {t:'VIG',n:'Vanguard Dividend',cat:'etf',sec:'etf',id:'vig1'},
-  {t:'VYM',n:'Vanguard High Yield Div',cat:'etf',sec:'etf',id:'vym1'},
-  {t:'DGRO',n:'Dividend Growth',cat:'etf',sec:'etf',id:'dgro1'},
-  {t:'SDY',n:'SPDR Dividend',cat:'etf',sec:'etf',id:'sdy1'},
-  {t:'SCHD',n:'Schwab Dividend',cat:'etf',sec:'etf',id:'schd1'},
-  {t:'DVY',n:'iShares Select Div',cat:'etf',sec:'etf',id:'dvy1'},
-  {t:'NOBL',n:'ProShares Dividend',cat:'etf',sec:'etf',id:'nobl1'},
-  {t:'IWM',n:'iShares Russell 2K',cat:'etf',sec:'etf',id:'iwm1'},
-  {t:'IJH',n:'iShares S&P 400',cat:'etf',sec:'etf',id:'ijh1'},
-  {t:'IEMG',n:'iShares Core EM',cat:'etf',sec:'etf',id:'iemg1'},
-  {t:'BNDX',n:'Vanguard Intl Bond',cat:'etf',sec:'etf',id:'bndx2'},
-  {t:'VNQI',n:'Vanguard Intl REIT',cat:'etf',sec:'etf',id:'vnqi1'},
-  {t:'VNQ',n:'Vanguard REIT',cat:'etf',sec:'etf',id:'vnq1'},
-  {t:'IYR',n:'iShares REIT',cat:'etf',sec:'etf',id:'iyr1'},
   {t:'REM',n:'iShares Mortgage',cat:'etf',sec:'etf',id:'rem'},
   {t:'MORT',n:'VanEck Mortgage',cat:'etf',sec:'etf',id:'mort'},
   {t:'EQQQ.DE',n:'Invesco EQQQ',cat:'etf',sec:'etf',id:'eqqqde'},
@@ -5423,222 +5349,19 @@ const SCREENER_DB = [
   {t:'PHAG.L',n:'WisdomTree Silver',cat:'etf',sec:'etf',id:'phagl'},
   {t:'OILW.L',n:'WisdomTree Oil',cat:'etf',sec:'etf',id:'oilwl'},
   {t:'BRNT.L',n:'WisdomTree Brent',cat:'etf',sec:'etf',id:'brntl'},
-  {t:'DOGE-USD',n:'Dogecoin',cat:'crypto',sec:'crypto',id:'dogeusd1'},
-  {t:'SHIB-USD',n:'Shiba Inu',cat:'crypto',sec:'crypto',id:'shibusd1'},
-  {t:'TRX-USD',n:'TRON',cat:'crypto',sec:'crypto',id:'trxusd1'},
-  {t:'TON-USD',n:'Toncoin',cat:'crypto',sec:'crypto',id:'tonusd1'},
-  {t:'AVAX-USD',n:'Avalanche',cat:'crypto',sec:'crypto',id:'avaxusd1'},
-  {t:'DOT-USD',n:'Polkadot',cat:'crypto',sec:'crypto',id:'dotusd1'},
-  {t:'MATIC-USD',n:'Polygon',cat:'crypto',sec:'crypto',id:'maticusd1'},
-  {t:'LINK-USD',n:'Chainlink',cat:'crypto',sec:'crypto',id:'linkusd1'},
-  {t:'ADA-USD',n:'Cardano',cat:'crypto',sec:'crypto',id:'adausd1'},
-  {t:'UNI-USD',n:'Uniswap',cat:'crypto',sec:'crypto',id:'uniusd1'},
-  {t:'LTC-USD',n:'Litecoin',cat:'crypto',sec:'crypto',id:'ltcusd1'},
-  {t:'ATOM-USD',n:'Cosmos',cat:'crypto',sec:'crypto',id:'atomusd1'},
-  {t:'NEAR-USD',n:'NEAR Protocol',cat:'crypto',sec:'crypto',id:'nearusd1'},
-  {t:'APT-USD',n:'Aptos',cat:'crypto',sec:'crypto',id:'aptusd1'},
-  {t:'OP-USD',n:'Optimism',cat:'crypto',sec:'crypto',id:'opusd1'},
-  {t:'ARB-USD',n:'Arbitrum',cat:'crypto',sec:'crypto',id:'arbusd1'},
-  {t:'FIL-USD',n:'Filecoin',cat:'crypto',sec:'crypto',id:'filusd1'},
-  {t:'INJ-USD',n:'Injective',cat:'crypto',sec:'crypto',id:'injusd1'},
-  {t:'SUI-USD',n:'Sui',cat:'crypto',sec:'crypto',id:'suiusd1'},
-  {t:'PEPE-USD',n:'Pepe',cat:'crypto',sec:'crypto',id:'pepeusd1'},
-  {t:'WLD-USD',n:'Worldcoin',cat:'crypto',sec:'crypto',id:'wldusd1'},
-  {t:'JUP-USD',n:'Jupiter',cat:'crypto',sec:'crypto',id:'jupusd1'},
-  {t:'ENA-USD',n:'Ethena',cat:'crypto',sec:'crypto',id:'enausd1'},
-  {t:'STRK-USD',n:'Starknet',cat:'crypto',sec:'crypto',id:'strkusd1'},
-  {t:'BONK-USD',n:'Bonk',cat:'crypto',sec:'crypto',id:'bonkusd1'},
-  {t:'FLOKI-USD',n:'Floki',cat:'crypto',sec:'crypto',id:'flokiusd1'},
   {t:'SEI-USD',n:'Sei',cat:'crypto',sec:'crypto',id:'seiusd'},
   {t:'TIA-USD',n:'Celestia',cat:'crypto',sec:'crypto',id:'tiausd'},
-  {t:'PYTH-USD',n:'Pyth',cat:'crypto',sec:'crypto',id:'pythusd1'},
-  {t:'MANTA-USD',n:'Manta',cat:'crypto',sec:'crypto',id:'mantausd1'},
-  {t:'ALI=F',n:'Aluminum',cat:'commodity',sec:'commodity',id:'alif1'},
-  {t:'ZO=F',n:'Oat',cat:'commodity',sec:'commodity',id:'zof1'},
-  {t:'ZR=F',n:'Rough Rice',cat:'commodity',sec:'commodity',id:'zrf1'},
-  {t:'GF=F',n:'Feeder Cattle',cat:'commodity',sec:'commodity',id:'gff1'},
-  {t:'LH=F',n:'Lean Hogs',cat:'commodity',sec:'commodity',id:'lhf1'},
-  {t:'CT=F',n:'Cotton',cat:'commodity',sec:'commodity',id:'ctf1'},
-  {t:'OJ=F',n:'Orange Juice',cat:'commodity',sec:'commodity',id:'ojf1'},
-  {t:'LBS=F',n:'Lumber',cat:'commodity',sec:'commodity',id:'lbsf1'},
-  {t:'LE=F',n:'Live Cattle',cat:'commodity',sec:'commodity',id:'lef1'},
-  {t:'PB=F',n:'Pork Bellies',cat:'commodity',sec:'commodity',id:'pbf1'},
-  {t:'ZL=F',n:'Soybean Oil',cat:'commodity',sec:'commodity',id:'zlf1'},
   {t:'ZM=F',n:'Soybean Meal',cat:'commodity',sec:'commodity',id:'zmf'},
-  {t:'UX=F',n:'Uranium',cat:'commodity',sec:'commodity',id:'uxf1'},
-  {t:'ND=F',n:'Palladium Fut',cat:'commodity',sec:'commodity',id:'ndf1'},
-  {t:'ZB=F',n:'US 30Y Bond',cat:'commodity',sec:'commodity',id:'zbf1'},
-  {t:'ZN=F',n:'US 10Y Note',cat:'commodity',sec:'commodity',id:'znf1'},
-  {t:'ZF=F',n:'US 5Y Note',cat:'commodity',sec:'commodity',id:'zff1'},
-  {t:'ZT=F',n:'US 2Y Note',cat:'commodity',sec:'commodity',id:'ztf1'},
-  {t:'^BFX',n:'BEL 20',cat:'indici',sec:'index',id:'bfx1'},
-  {t:'^AEX',n:'AEX',cat:'indici',sec:'index',id:'aex1'},
-  {t:'^SSMI',n:'SMI',cat:'indici',sec:'index',id:'ssmi1'},
-  {t:'^BSESN',n:'BSE Sensex',cat:'indici',sec:'index',id:'bsesn1'},
-  {t:'^NSEI',n:'NIFTY 50',cat:'indici',sec:'index',id:'nsei1'},
-  {t:'^TWII',n:'Taiwan TAIEX',cat:'indici',sec:'index',id:'twii1'},
-  {t:'^KS11',n:'KOSPI',cat:'indici',sec:'index',id:'ks111'},
-  {t:'^BVSP',n:'Bovespa',cat:'indici',sec:'index',id:'bvsp1'},
-  {t:'^MERV',n:'Merval',cat:'indici',sec:'index',id:'merv1'},
-  {t:'^MXX',n:'IPC Mexico',cat:'indici',sec:'index',id:'mxx1'},
-  {t:'^TYX',n:'US 30Y Yield',cat:'indici',sec:'index',id:'tyx1'},
-  {t:'^FVX',n:'US 5Y Yield',cat:'indici',sec:'index',id:'fvx1'},
-  {t:'MBB',n:'Mortgage Bond',cat:'obbligazioni',sec:'bonds',id:'mbb1'},
   {t:'VTIP',n:'Vanguard TIPS',cat:'obbligazioni',sec:'bonds',id:'vtip'},
   {t:'BSV',n:'Vanguard Short Bond',cat:'obbligazioni',sec:'bonds',id:'bsv'},
   {t:'FLRN',n:'SPDR Float Rate',cat:'obbligazioni',sec:'bonds',id:'flrn'},
-  {t:'ZARX=X',n:'USD/ZAR',cat:'forex',sec:'forex',id:'zarxx1'},
-  {t:'TRYB=X',n:'USD/TRY',cat:'forex',sec:'forex',id:'trybx1'},
-  {t:'PLNX=X',n:'USD/PLN',cat:'forex',sec:'forex',id:'plnxx1'},
-  {t:'DKKX=X',n:'USD/DKK',cat:'forex',sec:'forex',id:'dkkxx1'},
-  {t:'SEKX=X',n:'USD/SEK',cat:'forex',sec:'forex',id:'sekxx1'},
   {t:'SGDX=X',n:'USD/SGD',cat:'forex',sec:'forex',id:'sgdxx'},
-  {t:'ABNB',n:'Airbnb',cat:'azioni-usa',sec:'consumer',id:'abnb1'},
   {t:'DASH',n:'DoorDash',cat:'azioni-usa',sec:'consumer',id:'dash'},
-  {t:'UBER',n:'Uber',cat:'azioni-usa',sec:'technology',id:'uber1'},
-  {t:'LYFT',n:'Lyft',cat:'azioni-usa',sec:'technology',id:'lyft1'},
-  {t:'RIVN',n:'Rivian',cat:'azioni-usa',sec:'consumer',id:'rivn1'},
-  {t:'LCID',n:'Lucid',cat:'azioni-usa',sec:'consumer',id:'lcid1'},
   {t:'CHPT',n:'ChargePoint',cat:'azioni-usa',sec:'consumer',id:'chpt'},
-  {t:'FSLR',n:'First Solar',cat:'azioni-usa',sec:'energy',id:'fslr1'},
-  {t:'ENPH',n:'Enphase Energy',cat:'azioni-usa',sec:'energy',id:'enph1'},
-  {t:'CEG',n:'Constellation Energy',cat:'azioni-usa',sec:'utilities',id:'ceg1'},
-  {t:'VST',n:'Vistra Energy',cat:'azioni-usa',sec:'utilities',id:'vst1'},
   {t:'GEV',n:'GE Vernova',cat:'azioni-usa',sec:'utilities',id:'gev'},
-  {t:'ARM',n:'ARM Holdings',cat:'azioni-usa',sec:'technology',id:'arm1'},
-  {t:'SMCI',n:'Super Micro Computer',cat:'azioni-usa',sec:'technology',id:'smci1'},
-  {t:'ANET',n:'Arista Networks',cat:'azioni-usa',sec:'technology',id:'anet1'},
-  {t:'MRVL',n:'Marvell Technology',cat:'azioni-usa',sec:'technology',id:'mrvl1'},
-  {t:'MPWR',n:'Monolithic Power',cat:'azioni-usa',sec:'technology',id:'mpwr1'},
-  {t:'AMBA',n:'Ambarella',cat:'azioni-usa',sec:'technology',id:'amba1'},
-  {t:'AEM',n:'Agnico Eagle',cat:'azioni-usa',sec:'materials',id:'aem1'},
-  {t:'WPM',n:'Wheaton Precious',cat:'azioni-usa',sec:'materials',id:'wpm1'},
-  {t:'NEM',n:'Newmont',cat:'azioni-usa',sec:'materials',id:'nem1'},
   {t:'GOLD',n:'Barrick Gold',cat:'azioni-usa',sec:'materials',id:'gold1'},
-  {t:'PLD',n:'Prologis',cat:'azioni-usa',sec:'realestate',id:'pld1'},
-  {t:'AMT',n:'American Tower',cat:'azioni-usa',sec:'realestate',id:'amt1'},
-  {t:'EQIX',n:'Equinix',cat:'azioni-usa',sec:'realestate',id:'eqix1'},
-  {t:'DLR',n:'Digital Realty',cat:'azioni-usa',sec:'realestate',id:'dlr1'},
-  {t:'CCI',n:'Crown Castle',cat:'azioni-usa',sec:'realestate',id:'cci1'},
-  {t:'PSA',n:'Public Storage',cat:'azioni-usa',sec:'realestate',id:'psa1'},
-  {t:'O',n:'Realty Income',cat:'azioni-usa',sec:'realestate',id:'o1'},
-  {t:'VICI',n:'VICI Properties',cat:'azioni-usa',sec:'realestate',id:'vici1'},
-  {t:'MAR',n:'Marriott',cat:'azioni-usa',sec:'consumer',id:'mar1'},
-  {t:'HLT',n:'Hilton',cat:'azioni-usa',sec:'consumer',id:'hlt1'},
-  {t:'CCL',n:'Carnival',cat:'azioni-usa',sec:'consumer',id:'ccl1'},
-  {t:'RCL',n:'Royal Caribbean',cat:'azioni-usa',sec:'consumer',id:'rcl1'},
-  {t:'NCLH',n:'Norwegian Cruise',cat:'azioni-usa',sec:'consumer',id:'nclh1'},
-  {t:'UAL',n:'United Airlines',cat:'azioni-usa',sec:'consumer',id:'ual1'},
-  {t:'DAL',n:'Delta Air Lines',cat:'azioni-usa',sec:'consumer',id:'dal1'},
-  {t:'AAL',n:'American Airlines',cat:'azioni-usa',sec:'consumer',id:'aal1'},
-  {t:'LUV',n:'Southwest Airlines',cat:'azioni-usa',sec:'consumer',id:'luv1'},
-  {t:'X',n:'US Steel',cat:'azioni-usa',sec:'materials',id:'x1'},
-  {t:'NUE',n:'Nucor',cat:'azioni-usa',sec:'materials',id:'nue1'},
-  {t:'FCX',n:'Freeport-McMoRan',cat:'azioni-usa',sec:'materials',id:'fcx1'},
-  {t:'AA',n:'Alcoa',cat:'azioni-usa',sec:'materials',id:'aa1'},
-  {t:'APD',n:'Air Products',cat:'azioni-usa',sec:'materials',id:'apd1'},
-  {t:'LIN',n:'Linde',cat:'azioni-usa',sec:'materials',id:'lin1'},
-  {t:'ECL',n:'Ecolab',cat:'azioni-usa',sec:'materials',id:'ecl1'},
-  {t:'DOW',n:'Dow Inc',cat:'azioni-usa',sec:'materials',id:'dow1'},
-  {t:'OXY',n:'Occidental Petroleum',cat:'azioni-usa',sec:'energy',id:'oxy1'},
-  {t:'DVN',n:'Devon Energy',cat:'azioni-usa',sec:'energy',id:'dvn1'},
-  {t:'HAL',n:'Halliburton',cat:'azioni-usa',sec:'energy',id:'hal1'},
-  {t:'SLB',n:'Schlumberger',cat:'azioni-usa',sec:'energy',id:'slb1'},
-  {t:'COP',n:'ConocoPhillips',cat:'azioni-usa',sec:'energy',id:'cop1'},
-  {t:'MPC',n:'Marathon Petroleum',cat:'azioni-usa',sec:'energy',id:'mpc1'},
-  {t:'PSX',n:'Phillips 66',cat:'azioni-usa',sec:'energy',id:'psx1'},
-  {t:'VLO',n:'Valero Energy',cat:'azioni-usa',sec:'energy',id:'vlo1'},
-  {t:'KMI',n:'Kinder Morgan',cat:'azioni-usa',sec:'energy',id:'kmi1'},
-  {t:'WMB',n:'Williams Companies',cat:'azioni-usa',sec:'energy',id:'wmb1'},
-  {t:'ISRG',n:'Intuitive Surgical',cat:'azioni-usa',sec:'healthcare',id:'isrg1'},
-  {t:'EW',n:'Edwards Lifesciences',cat:'azioni-usa',sec:'healthcare',id:'ew1'},
-  {t:'BSX',n:'Boston Scientific',cat:'azioni-usa',sec:'healthcare',id:'bsx1'},
-  {t:'MDT',n:'Medtronic',cat:'azioni-usa',sec:'healthcare',id:'mdt1'},
-  {t:'SYK',n:'Stryker',cat:'azioni-usa',sec:'healthcare',id:'syk1'},
-  {t:'ALL',n:'Allstate',cat:'azioni-usa',sec:'finance',id:'all1'},
-  {t:'TRV',n:'Travelers',cat:'azioni-usa',sec:'finance',id:'trv1'},
-  {t:'CB',n:'Chubb',cat:'azioni-usa',sec:'finance',id:'cb1'},
-  {t:'MET',n:'MetLife',cat:'azioni-usa',sec:'finance',id:'met1'},
-  {t:'PRU',n:'Prudential',cat:'azioni-usa',sec:'finance',id:'pru1'},
-  {t:'AFL',n:'Aflac',cat:'azioni-usa',sec:'finance',id:'afl1'},
-  {t:'CME',n:'CME Group',cat:'azioni-usa',sec:'finance',id:'cme1'},
-  {t:'ICE',n:'Intercontinental Exchange',cat:'azioni-usa',sec:'finance',id:'ice1'},
-  {t:'CBOE',n:'CBOE Global',cat:'azioni-usa',sec:'finance',id:'cboe1'},
-  {t:'SPGI',n:'S&P Global',cat:'azioni-usa',sec:'finance',id:'spgi1'},
-  {t:'MCO',n:'Moodys',cat:'azioni-usa',sec:'finance',id:'mco1'},
-  {t:'MSCI',n:'MSCI Inc',cat:'azioni-usa',sec:'finance',id:'msci'},
-  {t:'BOTZ',n:'Global Robotics ETF',cat:'etf',sec:'etf',id:'botz2'},
-  {t:'LIT',n:'Lithium Battery ETF',cat:'etf',sec:'etf',id:'lit2'},
-  {t:'REMX',n:'Rare Earth ETF',cat:'etf',sec:'etf',id:'remx2'},
-  {t:'COPX',n:'Global Copper ETF',cat:'etf',sec:'etf',id:'copx2'},
-  {t:'GDX',n:'Gold Miners ETF',cat:'etf',sec:'etf',id:'gdx2'},
-  {t:'GDXJ',n:'Jr Gold Miners ETF',cat:'etf',sec:'etf',id:'gdxj2'},
-  {t:'XOP',n:'Oil Gas Expl ETF',cat:'etf',sec:'etf',id:'xop2'},
-  {t:'OIH',n:'Oil Services ETF',cat:'etf',sec:'etf',id:'oih2'},
-  {t:'IBB',n:'iShares Biotech',cat:'etf',sec:'etf',id:'ibb2'},
-  {t:'XBI',n:'SPDR Biotech',cat:'etf',sec:'etf',id:'xbi2'},
-  {t:'FINX',n:'Global FinTech ETF',cat:'etf',sec:'etf',id:'finx2'},
-  {t:'HACK',n:'Cybersecurity ETF',cat:'etf',sec:'etf',id:'hack2'},
-  {t:'CIBR',n:'First Trust Cybersec',cat:'etf',sec:'etf',id:'cibr2'},
-  {t:'SKYY',n:'First Trust Cloud',cat:'etf',sec:'etf',id:'skyy2'},
-  {t:'CLOU',n:'Global X Cloud',cat:'etf',sec:'etf',id:'clou2'},
-  {t:'ARKK',n:'ARK Innovation',cat:'etf',sec:'etf',id:'arkk2'},
-  {t:'ARKG',n:'ARK Genomics',cat:'etf',sec:'etf',id:'arkg2'},
-  {t:'ARKW',n:'ARK Web 3.0',cat:'etf',sec:'etf',id:'arkw2'},
-  {t:'EWJ',n:'iShares Japan',cat:'etf',sec:'etf',id:'ewj2'},
-  {t:'EWZ',n:'iShares Brazil',cat:'etf',sec:'etf',id:'ewz2'},
-  {t:'EWT',n:'iShares Taiwan',cat:'etf',sec:'etf',id:'ewt2'},
-  {t:'EWY',n:'iShares Korea',cat:'etf',sec:'etf',id:'ewy2'},
-  {t:'EWA',n:'iShares Australia',cat:'etf',sec:'etf',id:'ewa2'},
-  {t:'FXI',n:'iShares China Large',cat:'etf',sec:'etf',id:'fxi2'},
-  {t:'MCHI',n:'iShares MSCI China',cat:'etf',sec:'etf',id:'mchi2'},
-  {t:'KWEB',n:'KraneShares China',cat:'etf',sec:'etf',id:'kweb2'},
-  {t:'ACWI',n:'iShares MSCI ACWI',cat:'etf',sec:'etf',id:'acwi2'},
-  {t:'EFA',n:'iShares EAFE',cat:'etf',sec:'etf',id:'efa2'},
-  {t:'EEM',n:'iShares MSCI EM',cat:'etf',sec:'etf',id:'eem2'},
-  {t:'VGK',n:'Vanguard European',cat:'etf',sec:'etf',id:'vgk2'},
-  {t:'VPL',n:'Vanguard Pacific',cat:'etf',sec:'etf',id:'vpl2'},
-  {t:'IWM',n:'iShares Russell 2000',cat:'etf',sec:'etf',id:'iwm2'},
-  {t:'VNQ',n:'Vanguard REIT',cat:'etf',sec:'etf',id:'vnq2'},
-  {t:'SCHD',n:'Schwab Dividend',cat:'etf',sec:'etf',id:'schd2'},
-  {t:'VIG',n:'Vanguard Dividend',cat:'etf',sec:'etf',id:'vig2'},
-  {t:'VYM',n:'Vanguard High Yield',cat:'etf',sec:'etf',id:'vym2'},
-  {t:'DOGE-USD',n:'Dogecoin',cat:'crypto',sec:'crypto',id:'dogeusd2'},
-  {t:'SHIB-USD',n:'Shiba Inu',cat:'crypto',sec:'crypto',id:'shibusd2'},
-  {t:'TRX-USD',n:'TRON',cat:'crypto',sec:'crypto',id:'trxusd2'},
-  {t:'ADA-USD',n:'Cardano',cat:'crypto',sec:'crypto',id:'adausd2'},
-  {t:'AVAX-USD',n:'Avalanche',cat:'crypto',sec:'crypto',id:'avaxusd2'},
-  {t:'DOT-USD',n:'Polkadot',cat:'crypto',sec:'crypto',id:'dotusd2'},
-  {t:'MATIC-USD',n:'Polygon',cat:'crypto',sec:'crypto',id:'maticusd2'},
-  {t:'LINK-USD',n:'Chainlink',cat:'crypto',sec:'crypto',id:'linkusd2'},
-  {t:'UNI-USD',n:'Uniswap',cat:'crypto',sec:'crypto',id:'uniusd2'},
-  {t:'LTC-USD',n:'Litecoin',cat:'crypto',sec:'crypto',id:'ltcusd2'},
-  {t:'ATOM-USD',n:'Cosmos',cat:'crypto',sec:'crypto',id:'atomusd2'},
-  {t:'NEAR-USD',n:'NEAR Protocol',cat:'crypto',sec:'crypto',id:'nearusd2'},
-  {t:'APT-USD',n:'Aptos',cat:'crypto',sec:'crypto',id:'aptusd2'},
-  {t:'OP-USD',n:'Optimism',cat:'crypto',sec:'crypto',id:'opusd2'},
-  {t:'ARB-USD',n:'Arbitrum',cat:'crypto',sec:'crypto',id:'arbusd2'},
-  {t:'PEPE-USD',n:'Pepe',cat:'crypto',sec:'crypto',id:'pepeusd2'},
-  {t:'INJ-USD',n:'Injective',cat:'crypto',sec:'crypto',id:'injusd2'},
-  {t:'SUI-USD',n:'Sui',cat:'crypto',sec:'crypto',id:'suiusd2'},
-  {t:'ALI=F',n:'Aluminum Futures',cat:'commodity',sec:'commodity',id:'alif2'},
-  {t:'ZO=F',n:'Oat Futures',cat:'commodity',sec:'commodity',id:'zof2'},
-  {t:'GF=F',n:'Feeder Cattle',cat:'commodity',sec:'commodity',id:'gff2'},
-  {t:'LH=F',n:'Lean Hogs',cat:'commodity',sec:'commodity',id:'lhf2'},
-  {t:'CT=F',n:'Cotton Futures',cat:'commodity',sec:'commodity',id:'ctf2'},
-  {t:'OJ=F',n:'Orange Juice',cat:'commodity',sec:'commodity',id:'ojf2'},
-  {t:'LBS=F',n:'Lumber Futures',cat:'commodity',sec:'commodity',id:'lbsf2'},
-  {t:'ZL=F',n:'Soybean Oil',cat:'commodity',sec:'commodity',id:'zlf2'},
-  {t:'^BFX',n:'BEL 20',cat:'indici',sec:'index',id:'bfx2'},
-  {t:'^AEX',n:'AEX',cat:'indici',sec:'index',id:'aex2'},
-  {t:'^SSMI',n:'SMI',cat:'indici',sec:'index',id:'ssmi2'},
-  {t:'^BSESN',n:'BSE Sensex',cat:'indici',sec:'index',id:'bsesn2'},
-  {t:'^NSEI',n:'NIFTY 50',cat:'indici',sec:'index',id:'nsei2'},
-  {t:'^TWII',n:'Taiwan TAIEX',cat:'indici',sec:'index',id:'twii2'},
-  {t:'^KS11',n:'KOSPI',cat:'indici',sec:'index',id:'ks112'},
-  {t:'^BVSP',n:'Bovespa',cat:'indici',sec:'index',id:'bvsp2'},
-  {t:'^TYX',n:'US 30Y Yield',cat:'indici',sec:'index',id:'tyx2'},
-  {t:'^FVX',n:'US 5Y Yield',cat:'indici',sec:'index',id:'fvx2'}];;
+  {t:'MSCI',n:'MSCI Inc',cat:'azioni-usa',sec:'finance',id:'msci'}
+];;
 
 // ── Logo helpers ─────────────────────────────────────────────────────────────
 // Mappa ticker → dominio Clearbit per loghi aziende
@@ -5863,7 +5586,7 @@ function renderScreenerList() {
       logo = '<img src="https://assets.parqet.com/logos/symbol/'+encodeURIComponent(tk)+'" class="scr-logo"'
            + ' onerror="this.replaceWith(Object.assign(document.createElement(\'span\'),{textContent:\''+a.t.charAt(0)+'\',className:\'scr-logo\',style:\'display:flex;align-items:center;justify-content:center;font-family:DM Mono,monospace;font-size:11px;font-weight:700;color:'+col+';background:'+col+'22\'}))">';
     } else {
-      var icons = {crypto:'\u20BF',forex:'\uD83D\uDCB1',etf:'\uD83C\uDFDB','materie-prime':'\uD83D\uDEE2',indici:'\uD83D\uDCCA',obbligazioni:'\uD83C\uDFDB'};
+      var icons = {crypto:'₿',forex:'FX',etf:'ETF','materie-prime':'$',indici:'IX',obbligazioni:'%','azioni-asia':'AS'};
       var ic = icons[a.cat] || a.t.charAt(0);
       logo = '<span class="scr-logo" style="display:flex;align-items:center;justify-content:center;font-size:'+(a.cat==='crypto'||a.cat==='forex'?'13':'11')+'px;color:'+col+';background:'+col+'15">'+ic+'</span>';
     }
@@ -5978,23 +5701,24 @@ async function loadScreenerPrices() {
   var done = 0, total = tickers.length;
 
   async function fetchOne(ticker) {
-    // Prova Worker prima
     try {
-      var r = await fetch(WORKER_URL + '/price?ticker=' + encodeURIComponent(ticker),
-        {signal: AbortSignal.timeout(6000)});
+      var r = await fetch(WORKER_URL + '/price?ticker=' + encodeURIComponent(ticker) + '&history=1',
+        {signal: AbortSignal.timeout(8000)});
       if (r.ok) {
         var d = await r.json();
         if (d && d.price != null) {
+          var d1 = d.change != null ? d.change : (d.previousClose ? (d.price-d.previousClose)/d.previousClose*100 : null);
           _screenerPrices[ticker] = {
-            price: d.price,
-            d1:    d.change != null ? d.change : (d.price && d.previousClose ? (d.price-d.previousClose)/d.previousClose*100 : null),
-            d5: null, d30: null, d90: null, d365: null
+            price: d.price, d1: d1,
+            d5:   d.week    != null ? (d.price-d.week)   /d.week   *100 : null,
+            d30:  d.month   != null ? (d.price-d.month)  /d.month  *100 : null,
+            d90:  d.quarter != null ? (d.price-d.quarter)/d.quarter*100 : null,
+            d365: d.year    != null ? (d.price-d.year)   /d.year   *100 : null
           };
           return;
         }
       }
     } catch(e) {}
-    // Fallback Yahoo diretto
     try {
       var yUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(ticker) + '?interval=1d&range=2d';
       var proxy = 'https://api.allorigins.win/get?url=' + encodeURIComponent(yUrl);
@@ -6005,8 +5729,7 @@ async function loadScreenerPrices() {
       if (meta && meta.regularMarketPrice != null) {
         var price = meta.regularMarketPrice;
         var prev  = meta.chartPreviousClose || meta.previousClose;
-        var d1 = (prev && prev > 0) ? (price - prev) / prev * 100 : null;
-        _screenerPrices[ticker] = { price: price, d1: d1, d5: null, d30: null, d90: null, d365: null };
+        _screenerPrices[ticker] = { price: price, d1: (prev&&prev>0)?(price-prev)/prev*100:null, d5:null,d30:null,d90:null,d365:null };
       }
     } catch(e2) {}
   }
@@ -6037,73 +5760,5 @@ function addToPortfolio(ticker, name) {
 
 
 </script>
-
-<!-- ALTRO MENU (body-level per evitare overflow clipping) -->
-<div id="altroMenu" style="display:none;position:fixed;background:var(--surface2);border:1px solid var(--border);border-radius:12px;min-width:180px;overflow:hidden;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,.7)">
-  <button onclick="switchTab('mappa');closeAltro()" style="display:flex;align-items:center;gap:10px;width:100%;padding:13px 18px;background:none;border:none;border-bottom:1px solid var(--border);color:var(--text);text-align:left;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;transition:background .15s" onmouseover="this.style.background='rgba(201,168,76,.1)';this.style.color='var(--gold)'" onmouseout="this.style.background='none';this.style.color='var(--text)'">Mappa Geografica</button>
-  <button onclick="switchTab('verdetti');closeAltro()" style="display:flex;align-items:center;gap:10px;width:100%;padding:13px 18px;background:none;border:none;border-bottom:1px solid var(--border);color:var(--text);text-align:left;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;transition:background .15s" onmouseover="this.style.background='rgba(201,168,76,.1)';this.style.color='var(--gold)'" onmouseout="this.style.background='none';this.style.color='var(--text)'">Verdetti</button>
-  <button onclick="switchTab('storico');closeAltro()" style="display:flex;align-items:center;gap:10px;width:100%;padding:13px 18px;background:none;border:none;color:var(--text);text-align:left;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;transition:background .15s" onmouseover="this.style.background='rgba(201,168,76,.1)';this.style.color='var(--gold)'" onmouseout="this.style.background='none';this.style.color='var(--text)'">Storico</button>
-</div>
-
-<!-- ═══ ASSET DETAIL PANEL (Bloomberg style) ═══════════════════════════ -->
-<div id="assetPanel" style="display:none;position:fixed;top:0;right:0;width:420px;height:100vh;background:#0D0D0D;border-left:1px solid rgba(201,168,76,.25);z-index:10000;overflow-y:auto;font-family:'DM Mono',monospace;flex-direction:column">
-  <!-- Header -->
-  <div id="apHeader" style="background:#141414;border-bottom:1px solid rgba(201,168,76,.2);padding:16px 20px;position:sticky;top:0;z-index:1">
-    <div style="display:flex;align-items:center;gap:10px">
-      <div id="apColor" style="width:4px;height:36px;border-radius:2px;background:#C9A84C;flex-shrink:0"></div>
-      <div>
-        <div style="display:flex;align-items:baseline;gap:8px">
-          <span id="apTicker" style="font-size:22px;font-weight:700;color:#F0EDE6;font-family:'Playfair Display',serif"></span>
-          <span id="apLivePrice" style="font-size:18px;font-family:'DM Mono',monospace;color:#C9A84C"></span>
-          <span id="apChange" style="font-size:12px;padding:2px 7px;border-radius:4px"></span>
-        </div>
-        <div id="apName" style="font-size:11px;color:#8A8580;margin-top:2px;letter-spacing:.05em"></div>
-      </div>
-      <button onclick="closeAssetPanel()" style="margin-left:auto;background:none;border:none;color:#8A8580;cursor:pointer;font-size:22px;line-height:1;padding:4px">×</button>
-    </div>
-  </div>
-
-  <!-- Body -->
-  <div style="padding:20px;display:flex;flex-direction:column;gap:16px">
-
-    <!-- KPI row -->
-    <div id="apKpis" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"></div>
-
-    <!-- Chart placeholder -->
-    <div style="background:#141414;border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:14px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-        <span style="font-size:10px;letter-spacing:.1em;color:#8A8580;text-transform:uppercase">Andamento P&L</span>
-        <div style="display:flex;gap:4px" id="apChartBtns"></div>
-      </div>
-      <canvas id="apChart" width="340" height="120" style="display:block;max-width:100%"></canvas>
-    </div>
-
-    <!-- Posizione -->
-    <div style="background:#141414;border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:14px">
-      <div style="font-size:10px;letter-spacing:.1em;color:#8A8580;text-transform:uppercase;margin-bottom:12px"> Posizione</div>
-      <div id="apPosition" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"></div>
-    </div>
-
-    <!-- Livelli tecnici -->
-    <div style="background:#141414;border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:14px">
-      <div style="font-size:10px;letter-spacing:.1em;color:#8A8580;text-transform:uppercase;margin-bottom:12px"> Livelli Tecnici</div>
-      <div id="apLevels" style="display:flex;flex-direction:column;gap:6px"></div>
-    </div>
-
-    <!-- Azioni rapide -->
-    <div style="display:flex;gap:8px">
-      <button id="apEditBtn" style="flex:1;padding:10px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:8px;color:#C9A84C;cursor:pointer;font-size:12px;font-family:inherit">️ Modifica</button>
-      <button id="apAiBtn" style="flex:1;padding:10px;background:rgba(74,144,217,.1);border:1px solid rgba(74,144,217,.3);border-radius:8px;color:#4A90D9;cursor:pointer;font-size:12px;font-family:inherit"> Analisi AI</button>
-      <button id="apDeleteBtn" style="padding:10px 14px;background:rgba(224,90,90,.08);border:1px solid rgba(224,90,90,.2);border-radius:8px;color:#E05A5A;cursor:pointer;font-size:14px;font-family:inherit"></button>
-    </div>
-
-    <!-- AI Analysis result -->
-    <div id="apAiResult" style="display:none;background:#141414;border:1px solid rgba(74,144,217,.2);border-radius:8px;padding:14px;font-size:12px;line-height:1.6;color:#F0EDE6"></div>
-
-  </div>
-</div>
-<!-- Overlay -->
-<div id="assetPanelOverlay" onclick="closeAssetPanel()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9999;backdrop-filter:blur(2px)"></div>
-
 </body>
 </html>
