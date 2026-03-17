@@ -2223,7 +2223,7 @@ async function loadSegnali() {
             </div>
             <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
               <div style="background:${cc};color:${textOnColor};padding:4px 12px;border-radius:20px;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;text-transform:uppercase;white-space:nowrap">${s.azione}</div>
-              ${pnlStr?`<div style="font-family:'DM Mono',monospace;font-size:11px;color:${pnlColor}">${pnlStr} acq.</div>`:''}
+              ${pnlStr?('<div style="font-family:\'DM Mono\',monospace;font-size:11px;color:'+pnlColor+'">'+pnlStr+' acq.</div>'):''}  
             </div>
           </div>
           <div style="font-size:12px;color:#C0BDB8;line-height:1.65;flex:1">${s.motivazione}</div>
@@ -2648,12 +2648,14 @@ function renderPanorSummary() {
     { label:'Miglior asset', val: best ? best.ticker : '—', sub: best ? (((best.currentPrice-best.buyPrice)/best.buyPrice)*100).toFixed(1)+'%' : '', accent:'var(--gold)' },
   ];
 
-  el.innerHTML = items.map(it => `
-    <div style="background:var(--surface);padding:18px 20px">
-      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">${it.label}</div>
-      <div style="font-size:20px;font-weight:600;color:${it.accent||'var(--text)'};line-height:1">${it.val}</div>
-      ${it.sub ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:5px">${it.sub}</div>` : ''}
-    </div>`).join('');
+  el.innerHTML = items.map(it => {
+    const sub = it.sub ? '<div style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--muted);margin-top:5px">'+it.sub+'</div>' : '';
+    return '<div style="background:var(--surface);padding:18px 20px">'
+      + '<div style="font-family:\'DM Mono\',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">'+it.label+'</div>'
+      + '<div style="font-size:20px;font-weight:600;color:'+(it.accent||'var(--text)')+';line-height:1">'+it.val+'</div>'
+      + sub
+      + '</div>';
+  }).join('');
 }
 
 
@@ -3189,7 +3191,7 @@ function mercatiRender() {
           </div>
         </div>
       </td>
-      <td style="padding:11px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:var(--text)">${priceTxt}${hasPrice?`<span style="font-size:9px;color:var(--muted);margin-left:3px">${a.currency||''}</span>`:''}</td>
+      <td style="padding:11px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:var(--text)">${priceTxt}${hasPrice?('<span style="font-size:9px;color:var(--muted);margin-left:3px">'+(a.currency||'')+'</span>'):''}</td>
       <td style="padding:11px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:${chgColor}">${chgTxt}</td>
       <td style="padding:11px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">${a.previousClose?a.previousClose.toFixed(2):'—'}</td>
       <td style="padding:11px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">${a.high52w?a.high52w.toFixed(2):'—'}</td>
