@@ -984,64 +984,53 @@ svg.donut{transform:rotate(-90deg);}
     <!-- PANORAMICA -->
     <div class="tab-content" id="tab-panoramica">
 
-      <!-- Morning Brief bar -->
-      <div id="morningBrief" style="background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(74,144,217,.06));border:1px solid rgba(201,168,76,.25);border-radius:12px;padding:20px 24px;margin-bottom:24px;display:none;position:relative;overflow:hidden;">
-        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--blue),var(--purple))"></div>
-        <div class="brief-header">
-          <span class="brief-icon">☀️</span>
-          <span class="brief-title">Morning Brief</span>
-          <span class="brief-date" id="briefDate"></span>
-          <button onclick="document.getElementById('morningBrief').style.display='none'" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;margin-left:8px">×</button>
-        </div>
-        <div class="brief-text" id="briefText">Caricamento...</div>
-        <div class="brief-pills" id="briefPills"></div>
-      </div>
-
-      <!-- KPI cards -->
-      <div id="panorSummary" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:24px"></div>
-
-      <!-- Row 1: donut + P&L chart -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-        <div class="card" style="padding:20px">
-          <div class="section-title" style="margin-bottom:16px">Composizione portafoglio</div>
-          <div style="display:flex;align-items:center;gap:20px">
-            <div style="position:relative;flex-shrink:0">
-              <svg id="donutPanor" width="120" height="120" viewBox="0 0 120 120">
-                <circle cx="60" cy="60" r="46" fill="none" stroke="var(--surface2)" stroke-width="18"/>
-              </svg>
-              <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center">
-                <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--gold)" id="donutPanorVal">—</div>
-                <div style="font-size:9px;color:var(--muted)">investito</div>
-              </div>
-            </div>
-            <div id="donutPanorLegend" style="flex:1;display:flex;flex-direction:column;gap:5px"></div>
-          </div>
-        </div>
-        <div class="card" style="padding:20px">
-          <div class="section-title" style="margin-bottom:16px">Performance per asset</div>
-          <div id="pnlBars" style="display:flex;flex-direction:column;gap:6px"></div>
-        </div>
-      </div>
-
-      <!-- Row 2: risk breakdown + top movers -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-        <div class="card" style="padding:20px">
-          <div class="section-title" style="margin-bottom:14px">Distribuzione rischio</div>
-          <div id="riskBreakdown" style="display:flex;flex-direction:column;gap:10px"></div>
-        </div>
-        <div class="card" style="padding:20px">
-          <div class="section-title" style="margin-bottom:14px">Asset in evidenza</div>
-          <div id="panorMovers" style="display:flex;flex-direction:column;gap:8px"></div>
-        </div>
-      </div>
-
-      <!-- Row 3: allocation by sector -->
-      <div class="card" style="padding:20px;margin-bottom:16px">
-        <div class="section-title" style="margin-bottom:14px">Allocazione settoriale</div>
-        <div id="sectorAlloc" style="display:flex;flex-direction:column;gap:8px"></div>
-      </div>
-
+  <!-- Morning Brief (collassato di default, aperto solo se dati pronti) -->
+  <div id="morningBrief" style="display:none;border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:18px 22px;margin-bottom:28px;position:relative;overflow:hidden;">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--blue))"></div>
+    <div class="brief-header">
+      <span class="brief-icon">☀️</span>
+      <span class="brief-title">Morning Brief</span>
+      <span class="brief-date" id="briefDate"></span>
+      <button onclick="document.getElementById('morningBrief').style.display='none'" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;margin-left:auto;padding:0 4px">×</button>
     </div>
+    <div class="brief-text" id="briefText"></div>
+    <div class="brief-pills" id="briefPills"></div>
+  </div>
+
+  <!-- KPI row -->
+  <div id="panorSummary" style="display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--border);border-radius:10px;overflow:hidden;margin-bottom:28px;border:1px solid var(--border)"></div>
+
+  <!-- Main grid: sinistra P&L bars, destra movers -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:22px">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:18px">Performance asset</div>
+      <div id="pnlBars" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:22px">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:18px">Asset in evidenza</div>
+      <div id="panorMovers" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+
+  </div>
+
+  <!-- Bottom grid: rischio + settori -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:22px">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:18px">Distribuzione rischio</div>
+      <div id="riskBreakdown" style="display:flex;flex-direction:column;gap:12px"></div>
+    </div>
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:22px">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:18px">Allocazione settoriale</div>
+      <div id="sectorAlloc" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+
+  </div>
+
+</div>
     <!-- PORTAFOGLIO -->
     <div class="tab-content active" id="tab-portafoglio">
       </div>
@@ -2633,7 +2622,6 @@ let panorDonutChart = null;
 
 function renderPanoramica() {
   renderPanorSummary();
-  renderPanorDonutNew();
   renderPanorPnlBars();
   renderPanorMovers();
   renderRiskBreakdown();
@@ -2641,167 +2629,155 @@ function renderPanoramica() {
 }
 
 function renderPanorSummary() {
-  const el = document.getElementById('panorSummary'); if(!el) return;
-  const tot = assets.reduce((s,a)=>s+a.invested,0);
-  const withPrice = assets.filter(a=>a.currentPrice>0&&a.buyPrice>0);
-  const totalVal = assets.reduce((s,a)=>s+(a.currentPrice>0?a.currentPrice/a.buyPrice*a.invested:a.invested),0);
-  const totalPnl = totalVal - tot;
-  const totalPnlPct = tot>0 ? totalPnl/tot*100 : 0;
-  const winners = withPrice.filter(a=>a.currentPrice>=a.buyPrice).length;
-  const best = withPrice.reduce((b,a)=>((a.currentPrice-a.buyPrice)/a.buyPrice>(b.currentPrice-b.buyPrice)/b.buyPrice)?a:b, withPrice[0]);
-  const worst = withPrice.reduce((b,a)=>((a.currentPrice-a.buyPrice)/a.buyPrice<(b.currentPrice-b.buyPrice)/b.buyPrice)?a:b, withPrice[0]);
+  const el = document.getElementById('panorSummary');
+  if (!el) return;
+  const tot = assets.reduce((s,a)=>s+a.invested, 0);
+  const withP = assets.filter(a=>a.currentPrice>0&&a.buyPrice>0);
+  const totalVal = assets.reduce((s,a)=>s+(a.currentPrice>0?a.currentPrice/a.buyPrice*a.invested:a.invested), 0);
+  const pnl = totalVal - tot;
+  const pnlPct = tot>0 ? pnl/tot*100 : 0;
+  const winners = withP.filter(a=>a.currentPrice>=a.buyPrice).length;
+  const best = withP.length ? withP.reduce((b,a)=>((a.currentPrice-a.buyPrice)/a.buyPrice>(b.currentPrice-b.buyPrice)/b.buyPrice)?a:b) : null;
 
-  const cards = [
-    {label:'Investito', val:'€'+Math.round(tot).toLocaleString('it-IT'), color:'var(--gold)', icon:'💰'},
-    {label:'Valore attuale', val:'€'+Math.round(totalVal).toLocaleString('it-IT'), color:totalVal>=tot?'var(--green)':'var(--red)', icon:'📊'},
-    {label:'P&L totale', val:(totalPnl>=0?'+':'')+totalPnl.toFixed(0)+'€', sub:(totalPnlPct>=0?'+':'')+totalPnlPct.toFixed(1)+'%', color:totalPnl>=0?'var(--green)':'var(--red)', icon:'📈'},
-    {label:'Posizioni', val:assets.length, sub:withPrice.length+' con prezzo', color:'var(--blue)', icon:'🗂'},
-    {label:'Win rate', val:withPrice.length>0?Math.round(winners/withPrice.length*100)+'%':'—', sub:winners+'/'+withPrice.length+' in guadagno', color:'var(--green)', icon:'🏆'},
-    {label:'Miglior asset', val:best?best.ticker:'—', sub:best?((best.currentPrice-best.buyPrice)/best.buyPrice*100).toFixed(1)+'%':'', color:'var(--green)', icon:'⭐'},
+  const items = [
+    { label:'Investito',     val:'€'+Math.round(tot).toLocaleString('it-IT') },
+    { label:'Valore',        val:'€'+Math.round(totalVal).toLocaleString('it-IT'), accent: totalVal>=tot?'var(--green)':'var(--red)' },
+    { label:'P&L',           val:(pnl>=0?'+':'')+pnl.toFixed(0)+'€', sub:(pnlPct>=0?'+':'')+pnlPct.toFixed(2)+'%', accent: pnl>=0?'var(--green)':'var(--red)' },
+    { label:'Posizioni',     val:assets.length, sub: withP.length+' valorizzate' },
+    { label:'Win rate',      val: withP.length ? Math.round(winners/withP.length*100)+'%' : '—', sub: winners+'/'+withP.length+' in gain', accent:'var(--green)' },
+    { label:'Miglior asset', val: best ? best.ticker : '—', sub: best ? (((best.currentPrice-best.buyPrice)/best.buyPrice)*100).toFixed(1)+'%' : '', accent:'var(--gold)' },
   ];
-  el.innerHTML = cards.map(c=>`
-    <div style="background:var(--surface2);border-radius:10px;padding:14px 16px;border:1px solid var(--border);position:relative;overflow:hidden">
-      <div style="position:absolute;top:0;left:0;bottom:0;width:3px;background:${c.color};border-radius:3px 0 0 3px"></div>
-      <div style="font-size:18px;margin-bottom:4px">${c.icon}</div>
-      <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">${c.label}</div>
-      <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:${c.color};line-height:1.1">${c.val}</div>
-      ${c.sub?`<div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px">${c.sub}</div>`:''}
+
+  el.innerHTML = items.map(it => `
+    <div style="background:var(--surface);padding:18px 20px">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">${it.label}</div>
+      <div style="font-size:20px;font-weight:600;color:${it.accent||'var(--text)'};line-height:1">${it.val}</div>
+      ${it.sub ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:5px">${it.sub}</div>` : ''}
     </div>`).join('');
 }
 
-function renderPanorDonutNew() {
-  const svg = document.getElementById('donutPanor'); if(!svg) return;
-  const valEl = document.getElementById('donutPanorVal');
-  const legEl = document.getElementById('donutPanorLegend');
-  const tot = assets.reduce((s,a)=>s+a.invested,0);
-  if(valEl) valEl.textContent = tot>0?'€'+Math.round(tot).toLocaleString('it-IT'):'—';
-  if(assets.length===0){if(legEl)legEl.innerHTML='';return;}
-  const cx=60,cy=60,r=46,sw=18;
-  let angle=-Math.PI/2;
-  let paths='<circle cx="60" cy="60" r="46" fill="none" stroke="var(--surface2)" stroke-width="18"/>';
-  const sorted = [...assets].sort((a,b)=>b.invested-a.invested);
-  sorted.forEach(a=>{
-    const frac=a.invested/tot;
-    const arc=frac*2*Math.PI;
-    const x1=cx+r*Math.cos(angle), y1=cy+r*Math.sin(angle);
-    const x2=cx+r*Math.cos(angle+arc), y2=cy+r*Math.sin(angle+arc);
-    const large=arc>Math.PI?1:0;
-    paths+=`<path d="M${x1.toFixed(2)},${y1.toFixed(2)} A${r},${r} 0 ${large},1 ${x2.toFixed(2)},${y2.toFixed(2)}" fill="none" stroke="${a.color}" stroke-width="${sw}" stroke-linecap="butt"/>`;
-    angle+=arc;
-  });
-  svg.innerHTML=paths;
-  if(legEl) {
-    const top5=sorted.slice(0,5);
-    legEl.innerHTML=top5.map(a=>`
-      <div style="display:flex;align-items:center;gap:6px">
-        <div style="width:8px;height:8px;border-radius:50%;background:${a.color};flex-shrink:0"></div>
-        <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text);flex:1">${a.ticker}</span>
-        <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">${(a.invested/tot*100).toFixed(0)}%</span>
-      </div>`).join('');
-    if(sorted.length>5) legEl.innerHTML+=`<div style="font-size:10px;color:var(--muted);margin-top:2px">+${sorted.length-5} altri</div>`;
-  }
-}
+
+function renderPanorDonutNew() { /* non usata */ }
 
 function renderPanorPnlBars() {
-  const el = document.getElementById('pnlBars'); if(!el) return;
-  const withPrice = assets.filter(a=>a.currentPrice>0&&a.buyPrice>0);
-  if(withPrice.length===0){el.innerHTML='<div style="color:var(--muted);font-size:12px">Aggiorna prezzi per vedere la performance</div>';return;}
-  const sorted=[...withPrice].sort((a,b)=>{
-    const pa=(a.currentPrice-a.buyPrice)/a.buyPrice;
-    const pb=(b.currentPrice-b.buyPrice)/b.buyPrice;
-    return pb-pa;
-  });
-  const shown=sorted.slice(0,8);
-  const maxAbs=Math.max(...shown.map(a=>Math.abs((a.currentPrice-a.buyPrice)/a.buyPrice*100)),0.1);
-  el.innerHTML=shown.map(a=>{
-    const pct=(a.currentPrice-a.buyPrice)/a.buyPrice*100;
-    const barW=Math.abs(pct)/maxAbs*100;
-    const color=pct>=0?'var(--green)':'var(--red)';
-    return `<div style="display:flex;align-items:center;gap:8px">
-      <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);width:48px;flex-shrink:0">${a.ticker}</span>
-      <div style="flex:1;background:var(--surface2);border-radius:3px;height:6px;overflow:hidden">
-        <div style="width:${barW.toFixed(0)}%;height:100%;background:${color};border-radius:3px;transition:width .4s"></div>
-      </div>
-      <span style="font-family:'DM Mono',monospace;font-size:10px;color:${color};width:52px;text-align:right;flex-shrink:0">${pct>=0?'+':''}${pct.toFixed(1)}%</span>
-    </div>`;
+  const el = document.getElementById('pnlBars');
+  if (!el) return;
+  const withP = assets.filter(a=>a.currentPrice>0&&a.buyPrice>0);
+  if (!withP.length) {
+    el.innerHTML = '<div style="font-size:12px;color:var(--muted)">Aggiorna i prezzi per vedere la performance.</div>';
+    return;
+  }
+  const sorted = [...withP].sort((a,b)=>((b.currentPrice-b.buyPrice)/b.buyPrice)-((a.currentPrice-a.buyPrice)/a.buyPrice));
+  const shown = sorted.slice(0, 8);
+  const maxAbs = Math.max(...shown.map(a=>Math.abs((a.currentPrice-a.buyPrice)/a.buyPrice*100)), 0.01);
+
+  el.innerHTML = shown.map(a => {
+    const pct = (a.currentPrice-a.buyPrice)/a.buyPrice*100;
+    const w = Math.abs(pct)/maxAbs*100;
+    const col = pct>=0 ? 'var(--green)' : 'var(--red)';
+    return `
+      <div style="display:grid;grid-template-columns:44px 1fr 52px;align-items:center;gap:10px">
+        <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);font-weight:600">${a.ticker}</span>
+        <div style="height:4px;background:var(--surface2);border-radius:2px;overflow:hidden">
+          <div style="width:${w.toFixed(1)}%;height:100%;background:${col};border-radius:2px"></div>
+        </div>
+        <span style="font-family:'DM Mono',monospace;font-size:11px;color:${col};text-align:right">${pct>=0?'+':''}${pct.toFixed(1)}%</span>
+      </div>`;
   }).join('');
 }
+
 
 function renderPanorMovers() {
-  const el = document.getElementById('panorMovers'); if(!el) return;
-  const withPrice = assets.filter(a=>a.currentPrice>0&&a.buyPrice>0);
-  if(withPrice.length===0){el.innerHTML='<div style="color:var(--muted);font-size:12px">Aggiorna prezzi</div>';return;}
-  const sorted=[...withPrice].sort((a,b)=>{
-    return ((b.currentPrice-b.buyPrice)/b.buyPrice)-((a.currentPrice-a.buyPrice)/a.buyPrice);
-  });
-  const shown=sorted.length<=4?sorted:[sorted[0],sorted[1],...sorted.slice(-2)];
-  el.innerHTML=shown.map(a=>{
-    const pct=(a.currentPrice-a.buyPrice)/a.buyPrice*100;
-    const color=pct>=0?'var(--green)':'var(--red)';
-    const pnlEur=(a.currentPrice/a.buyPrice*a.invested)-a.invested;
-    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surface2);border-radius:8px;border-left:3px solid ${a.color}">
-      <div>
-        <span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:700;color:var(--gold)">${a.ticker}</span>
-        <span style="font-size:10px;color:var(--muted);margin-left:6px">€${a.currentPrice?.toFixed(2)||'—'}</span>
-      </div>
-      <div style="text-align:right">
-        <div style="font-family:'DM Mono',monospace;font-size:12px;font-weight:700;color:${color}">${pct>=0?'+':''}${pct.toFixed(1)}%</div>
-        <div style="font-size:9px;color:var(--muted)">${pnlEur>=0?'+':''}€${Math.abs(pnlEur).toFixed(0)}</div>
-      </div>
-    </div>`;
-  }).join('');
-}
+  const el = document.getElementById('panorMovers');
+  if (!el) return;
+  const withP = assets.filter(a=>a.currentPrice>0&&a.buyPrice>0);
+  if (!withP.length) {
+    el.innerHTML = '<div style="font-size:12px;color:var(--muted)">Aggiorna i prezzi.</div>';
+    return;
+  }
+  const sorted = [...withP].sort((a,b)=>((b.currentPrice-b.buyPrice)/b.buyPrice)-((a.currentPrice-a.buyPrice)/a.buyPrice));
+  const shown = sorted.length<=4 ? sorted : [sorted[0], sorted[1], ...sorted.slice(-2)];
 
-function renderRiskBreakdown() {
-  const el = document.getElementById('riskBreakdown'); if(!el) return;
-  const tot = assets.reduce((s,a)=>s+a.invested,0);
-  if(tot===0){el.innerHTML='<div style="color:var(--muted);font-size:12px">Nessun dato</div>';return;}
-  const groups = {
-    'Basso rischio': {color:'var(--green)', assets:assets.filter(a=>a.risk==='low')},
-    'Medio rischio': {color:'var(--orange)', assets:assets.filter(a=>a.risk==='medium')},
-    'Alto rischio':  {color:'var(--red)',   assets:assets.filter(a=>a.risk==='high')},
-  };
-  el.innerHTML = Object.entries(groups).map(([label,g])=>{
-    const val=g.assets.reduce((s,a)=>s+a.invested,0);
-    const pct=tot>0?val/tot*100:0;
-    if(val===0) return '';
-    return `<div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-        <span style="font-size:11px;color:var(--muted)">${label}</span>
-        <span style="font-family:'DM Mono',monospace;font-size:11px;color:${g.color}">${pct.toFixed(0)}% · €${Math.round(val).toLocaleString('it-IT')}</span>
-      </div>
-      <div style="background:var(--surface2);border-radius:3px;height:7px;overflow:hidden">
-        <div style="width:${pct.toFixed(0)}%;height:100%;background:${g.color};border-radius:3px;transition:width .4s"></div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function renderSectorAlloc() {
-  const el = document.getElementById('sectorAlloc'); if(!el) return;
-  const tot = assets.reduce((s,a)=>s+a.invested,0);
-  if(tot===0){el.innerHTML='<div style="color:var(--muted);font-size:12px">Nessun dato</div>';return;}
-  const sectorMap={};
-  assets.forEach(a=>{
-    const sec=a.sector||a.type||'Altro';
-    sectorMap[sec]=(sectorMap[sec]||0)+a.invested;
-  });
-  const sorted=Object.entries(sectorMap).sort((a,b)=>b[1]-a[1]).slice(0,8);
-  const colors=['var(--gold)','var(--blue)','var(--green)','var(--purple)','var(--orange)','var(--red)','#4ECDC4','#95A5A6'];
-  el.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">`+
-    sorted.map(([sec,val],i)=>{
-      const pct=val/tot*100;
-      return `<div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:3px">
-          <span style="font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px">${sec}</span>
-          <span style="font-family:'DM Mono',monospace;font-size:10px;color:${colors[i]}">${pct.toFixed(0)}%</span>
+  el.innerHTML = shown.map(a => {
+    const pct = (a.currentPrice-a.buyPrice)/a.buyPrice*100;
+    const pnlEur = (a.currentPrice/a.buyPrice*a.invested)-a.invested;
+    const col = pct>=0 ? 'var(--green)' : 'var(--red)';
+    return `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface2);border-radius:8px;">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:3px;height:32px;background:${a.color||'var(--gold)'};border-radius:2px"></div>
+          <div>
+            <div style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--text)">${a.ticker}</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:1px">€${a.currentPrice?.toFixed(2)||'—'}</div>
+          </div>
         </div>
-        <div style="background:var(--surface2);border-radius:3px;height:5px;overflow:hidden">
-          <div style="width:${pct.toFixed(0)}%;height:100%;background:${colors[i]};border-radius:3px;transition:width .4s"></div>
+        <div style="text-align:right">
+          <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:${col}">${pct>=0?'+':''}${pct.toFixed(2)}%</div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:1px">${pnlEur>=0?'+':''}€${pnlEur.toFixed(0)}</div>
         </div>
       </div>`;
-    }).join('')+`</div>`;
+  }).join('');
 }
+
+
+function renderRiskBreakdown() {
+  const el = document.getElementById('riskBreakdown');
+  if (!el) return;
+  const tot = assets.reduce((s,a)=>s+a.invested, 0);
+  if (!tot) { el.innerHTML='<div style="font-size:12px;color:var(--muted)">Nessun dato</div>'; return; }
+
+  const groups = [
+    { label:'Basso',  color:'var(--green)',  items: assets.filter(a=>a.risk==='low')  },
+    { label:'Medio',  color:'var(--orange)', items: assets.filter(a=>a.risk==='medium')},
+    { label:'Alto',   color:'var(--red)',    items: assets.filter(a=>a.risk==='high')  },
+  ];
+
+  el.innerHTML = groups.filter(g=>g.items.length).map(g => {
+    const val = g.items.reduce((s,a)=>s+a.invested, 0);
+    const pct = val/tot*100;
+    return `
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+          <span style="font-size:11px;color:var(--text)">${g.label} rischio</span>
+          <span style="font-family:'DM Mono',monospace;font-size:11px;color:${g.color}">${pct.toFixed(0)}%&nbsp;&nbsp;€${Math.round(val).toLocaleString('it-IT')}</span>
+        </div>
+        <div style="height:4px;background:var(--surface2);border-radius:2px;overflow:hidden">
+          <div style="width:${pct.toFixed(1)}%;height:100%;background:${g.color};border-radius:2px;transition:width .5s ease"></div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+
+function renderSectorAlloc() {
+  const el = document.getElementById('sectorAlloc');
+  if (!el) return;
+  const tot = assets.reduce((s,a)=>s+a.invested, 0);
+  if (!tot) { el.innerHTML='<div style="font-size:12px;color:var(--muted)">Nessun dato</div>'; return; }
+
+  const map = {};
+  assets.forEach(a => {
+    const k = a.sector || a.type || 'Altro';
+    map[k] = (map[k]||0) + a.invested;
+  });
+  const rows = Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,7);
+  const colors = ['var(--gold)','var(--blue)','var(--green)','var(--purple)','var(--orange)','var(--red)','var(--muted)'];
+
+  el.innerHTML = rows.map(([sec, val], i) => {
+    const pct = val/tot*100;
+    return `
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">
+          <span style="font-size:11px;color:var(--text);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${sec}</span>
+          <span style="font-family:'DM Mono',monospace;font-size:11px;color:${colors[i]}">${pct.toFixed(0)}%</span>
+        </div>
+        <div style="height:4px;background:var(--surface2);border-radius:2px;overflow:hidden">
+          <div style="width:${pct.toFixed(1)}%;height:100%;background:${colors[i]};border-radius:2px;transition:width .5s ease"></div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
 
 // legacy: keep panorDonutChart var to avoid undefined errors
 let panorDonutChart = null;
