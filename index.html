@@ -967,7 +967,7 @@ svg.donut{transform:rotate(-90deg);}
       <button class="tab" id="tab-btn-rischio" onclick="switchTab('rischio',this)" data-tab="rischio">Matrice Rischio</button>
       <button class="tab" id="tab-btn-strategia" onclick="switchTab('strategia',this)" data-tab="strategia">Strategia</button>
       <button class="tab" id="tab-btn-heatmap" onclick="switchTab('heatmap',this)" data-tab="heatmap">Heatmap</button>
-      <button class="tab" id="tab-btn-ai" onclick="switchTab('ai',this)" data-tab="ai">Analisi AI</button>
+      <!-- Analisi AI rimossa dalla navbar -->
       <button class="tab" id="tab-btn-news" onclick="switchTab('news',this)" data-tab="news">Mercati</button>
       <button class="tab" id="tab-btn-segnali" onclick="switchTab('segnali',this)" data-tab="segnali">Segnali</button>
       <button class="tab" id="tab-btn-insights" onclick="switchTab('insights',this)" data-tab="insights">Insights ✦</button>
@@ -983,7 +983,8 @@ svg.donut{transform:rotate(-90deg);}
     </div>
     <!-- PANORAMICA -->
     <div class="tab-content" id="tab-panoramica">
-      <!-- Morning Brief -->
+
+      <!-- Morning Brief bar -->
       <div id="morningBrief" style="background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(74,144,217,.06));border:1px solid rgba(201,168,76,.25);border-radius:12px;padding:20px 24px;margin-bottom:24px;display:none;position:relative;overflow:hidden;">
         <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--blue),var(--purple))"></div>
         <div class="brief-header">
@@ -996,32 +997,51 @@ svg.donut{transform:rotate(-90deg);}
         <div class="brief-pills" id="briefPills"></div>
       </div>
 
-      <!-- Summary cards row -->
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:24px" id="panorSummary"></div>
+      <!-- KPI cards -->
+      <div id="panorSummary" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:24px"></div>
 
-      <!-- DNA Radar + quick stats -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px">
-        <div class="card" id="dnaCard">
-          <div class="section-title">DNA del Portafoglio</div>
-          <div class="dna-wrap">
-            <canvas id="dnaCanvas" width="200" height="200" class="dna-chart"></canvas>
-            <div class="dna-legend" id="dnaLegend"></div>
+      <!-- Row 1: donut + P&L chart -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+        <div class="card" style="padding:20px">
+          <div class="section-title" style="margin-bottom:16px">Composizione portafoglio</div>
+          <div style="display:flex;align-items:center;gap:20px">
+            <div style="position:relative;flex-shrink:0">
+              <svg id="donutPanor" width="120" height="120" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="46" fill="none" stroke="var(--surface2)" stroke-width="18"/>
+              </svg>
+              <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center">
+                <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--gold)" id="donutPanorVal">—</div>
+                <div style="font-size:9px;color:var(--muted)">investito</div>
+              </div>
+            </div>
+            <div id="donutPanorLegend" style="flex:1;display:flex;flex-direction:column;gap:5px"></div>
           </div>
         </div>
-        <div class="card">
-          <div class="section-title">Composizione</div>
-          <canvas id="panorDonut" height="180"></canvas>
-          <div id="panorDonutLegend" style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px"></div>
+        <div class="card" style="padding:20px">
+          <div class="section-title" style="margin-bottom:16px">Performance per asset</div>
+          <div id="pnlBars" style="display:flex;flex-direction:column;gap:6px"></div>
         </div>
       </div>
 
-      <!-- Top movers -->
-      <div class="card">
-        <div class="section-title">Asset in evidenza</div>
-        <div id="panorMovers" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px"></div>
+      <!-- Row 2: risk breakdown + top movers -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+        <div class="card" style="padding:20px">
+          <div class="section-title" style="margin-bottom:14px">Distribuzione rischio</div>
+          <div id="riskBreakdown" style="display:flex;flex-direction:column;gap:10px"></div>
+        </div>
+        <div class="card" style="padding:20px">
+          <div class="section-title" style="margin-bottom:14px">Asset in evidenza</div>
+          <div id="panorMovers" style="display:flex;flex-direction:column;gap:8px"></div>
+        </div>
       </div>
-    </div>
 
+      <!-- Row 3: allocation by sector -->
+      <div class="card" style="padding:20px;margin-bottom:16px">
+        <div class="section-title" style="margin-bottom:14px">Allocazione settoriale</div>
+        <div id="sectorAlloc" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+
+    </div>
     <!-- PORTAFOGLIO -->
     <div class="tab-content active" id="tab-portafoglio">
       </div>
@@ -1165,37 +1185,72 @@ svg.donut{transform:rotate(-90deg);}
     </div>
     <!-- MERCATI -->
     <div class="tab-content" id="tab-news">
+
+      <!-- Header -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
         <div>
-          <div class="section-title" style="margin:0" data-i18n="dailyBriefing">Briefing mercati giornaliero</div>
-          <div style="font-size:12px;color:var(--muted);margin-top:4px">Analisi AI con contesto geopolitico aggiornato</div>
+          <div class="section-title" style="margin:0">Mercati live</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px" id="mercatiLastUpdate">Aggiornamento prezzi in tempo reale</div>
         </div>
-        <button class="btn btn-blue" onclick="loadMarketNews()" data-i18n="updateBriefing">Aggiorna briefing</button>
-      </div>
-      <div id="newsLoading" style="display:none;text-align:center;padding:48px">
-        <div style="font-size:40px;margin-bottom:12px">&#127757;</div>
-        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:6px">Analisi in corso...</div>
-        <div style="font-size:12px;color:var(--muted)">Recupero dati macroeconomici e geopolitici</div>
-      </div>
-      <div id="newsEmpty" style="text-align:center;padding:48px">
-        <div style="font-size:40px;margin-bottom:12px">&#127757;</div>
-        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px" data-i18n="briefingMarkets">Briefing mercati</div>
-        <div style="font-size:13px;color:var(--muted);margin-bottom:20px">Clicca per ricevere l'analisi giornaliera dei mercati.</div>
-        <button onclick="loadMarketNews()" class="btn btn-blue" style="padding:12px 28px;justify-content:center" data-i18n="loadBriefing">Carica briefing</button>
-      </div>
-      <div id="newsContent" style="display:none">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
-          <div class="card" id="newsMacro"></div>
-          <div class="card" id="newsGeo"></div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="btn btn-blue" onclick="loadMercatiPrices()" id="mercatiRefreshBtn">↻ Aggiorna prezzi</button>
         </div>
-        <div class="card" style="margin-bottom:16px" id="newsSettori"></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
-          <div class="card" id="newsOpportunita"></div>
-          <div class="card" id="newsRischi"></div>
-        </div>
-        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-align:right" id="newsDate"></div>
       </div>
-    </div>
+
+      <!-- Filtri categoria -->
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px" id="mercatiCatFilter">
+        <button onclick="mercatiSetCat('all',this)" class="tab active" style="padding:6px 14px;font-size:11px">Tutto</button>
+        <button onclick="mercatiSetCat('stocks-usa',this)" class="tab" style="padding:6px 14px;font-size:11px">Azioni USA</button>
+        <button onclick="mercatiSetCat('stocks-eu',this)" class="tab" style="padding:6px 14px;font-size:11px">Europa</button>
+        <button onclick="mercatiSetCat('stocks-asia',this)" class="tab" style="padding:6px 14px;font-size:11px">Asia</button>
+        <button onclick="mercatiSetCat('etf',this)" class="tab" style="padding:6px 14px;font-size:11px">ETF</button>
+        <button onclick="mercatiSetCat('crypto',this)" class="tab" style="padding:6px 14px;font-size:11px">Crypto</button>
+        <button onclick="mercatiSetCat('forex',this)" class="tab" style="padding:6px 14px;font-size:11px">Forex</button>
+        <button onclick="mercatiSetCat('cfd',this)" class="tab" style="padding:6px 14px;font-size:11px">Indici</button>
+        <button onclick="mercatiSetCat('commodities',this)" class="tab" style="padding:6px 14px;font-size:11px">Materie prime</button>
+      </div>
+
+      <!-- Barra ricerca + ordinamento -->
+      <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap">
+        <input type="text" id="mercatiSearch" placeholder="Cerca ticker o nome..." oninput="mercatiRender()"
+          style="flex:1;min-width:180px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 14px;color:var(--text);font-size:13px;outline:none">
+        <select id="mercatiSort" onchange="mercatiRender()"
+          style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:12px;cursor:pointer">
+          <option value="default">Ordine default</option>
+          <option value="change_desc">Variazione ↓</option>
+          <option value="change_asc">Variazione ↑</option>
+          <option value="price_desc">Prezzo ↓</option>
+          <option value="price_asc">Prezzo ↑</option>
+          <option value="name_asc">Nome A-Z</option>
+        </select>
+      </div>
+
+      <!-- Stats bar -->
+      <div id="mercatiStats" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-bottom:18px"></div>
+
+      <!-- Tabella prezzi -->
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse" id="mercatiTable">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border)">
+              <th style="text-align:left;padding:10px 12px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap">Asset</th>
+              <th style="text-align:right;padding:10px 12px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase">Prezzo</th>
+              <th style="text-align:right;padding:10px 12px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase">Var. %</th>
+              <th style="text-align:right;padding:10px 12px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase">Prec. chiusura</th>
+              <th style="text-align:right;padding:10px 12px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase">52W Max</th>
+              <th style="text-align:right;padding:10px 12px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase">52W Min</th>
+              <th style="text-align:center;padding:10px 12px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase">Trend</th>
+            </tr>
+          </thead>
+          <tbody id="mercatiBody">
+            <tr><td colspan="7" style="text-align:center;padding:48px;color:var(--muted);font-size:13px">
+              Clicca "Aggiorna prezzi" per caricare i dati live →
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="mercatiPagination" style="display:flex;justify-content:center;gap:8px;margin-top:16px;flex-wrap:wrap"></div>
+
     </div>
     <!-- MAPPA GEO -->
     <div class="tab-content" id="tab-mappa">
@@ -2577,120 +2632,179 @@ async function loadMorningBrief() {
 let panorDonutChart = null;
 
 function renderPanoramica() {
-  if (document.getElementById('tab-panoramica')?.style.display === 'none') return;
   renderPanorSummary();
-  renderPanorDonut();
+  renderPanorDonutNew();
+  renderPanorPnlBars();
   renderPanorMovers();
-  setTimeout(drawDNA, 60);
+  renderRiskBreakdown();
+  renderSectorAlloc();
 }
 
 function renderPanorSummary() {
   const el = document.getElementById('panorSummary'); if(!el) return;
-  const tot = assets.reduce((s,a) => s+a.invested, 0);
+  const tot = assets.reduce((s,a)=>s+a.invested,0);
   const withPrice = assets.filter(a=>a.currentPrice>0&&a.buyPrice>0);
-  const totalVal = assets.reduce((s,a) => s+(a.currentPrice>0?a.currentPrice/a.buyPrice*a.invested:a.invested),0);
+  const totalVal = assets.reduce((s,a)=>s+(a.currentPrice>0?a.currentPrice/a.buyPrice*a.invested:a.invested),0);
   const totalPnl = totalVal - tot;
   const totalPnlPct = tot>0 ? totalPnl/tot*100 : 0;
   const winners = withPrice.filter(a=>a.currentPrice>=a.buyPrice).length;
-  const riskLow = assets.filter(a=>a.risk==='low').reduce((s,a)=>s+a.invested,0);
-  const riskPct = tot>0?riskLow/tot*100:0;
+  const best = withPrice.reduce((b,a)=>((a.currentPrice-a.buyPrice)/a.buyPrice>(b.currentPrice-b.buyPrice)/b.buyPrice)?a:b, withPrice[0]);
+  const worst = withPrice.reduce((b,a)=>((a.currentPrice-a.buyPrice)/a.buyPrice<(b.currentPrice-b.buyPrice)/b.buyPrice)?a:b, withPrice[0]);
 
   const cards = [
-    { label:'Investito', value:'€'+Math.round(tot).toLocaleString('it-IT'), color:'var(--gold)' },
-    { label:'Valore attuale', value:'€'+Math.round(totalVal).toLocaleString('it-IT'), color: totalVal>=tot?'var(--green)':'var(--red)' },
-    { label:'P&L totale', value:(totalPnl>=0?'+':'')+totalPnl.toFixed(0)+' ('+totalPnlPct.toFixed(1)+'%)', color:totalPnl>=0?'var(--green)':'var(--red)' },
-    { label:'Asset', value:assets.length+' posizioni', color:'var(--blue)' },
-    { label:'Winner', value:withPrice.length>0?winners+'/'+withPrice.length:'---', color:'var(--green)' },
-    { label:'Peso difensivo', value:riskPct.toFixed(0)+'%', color:'var(--gold)' },
+    {label:'Investito', val:'€'+Math.round(tot).toLocaleString('it-IT'), color:'var(--gold)', icon:'💰'},
+    {label:'Valore attuale', val:'€'+Math.round(totalVal).toLocaleString('it-IT'), color:totalVal>=tot?'var(--green)':'var(--red)', icon:'📊'},
+    {label:'P&L totale', val:(totalPnl>=0?'+':'')+totalPnl.toFixed(0)+'€', sub:(totalPnlPct>=0?'+':'')+totalPnlPct.toFixed(1)+'%', color:totalPnl>=0?'var(--green)':'var(--red)', icon:'📈'},
+    {label:'Posizioni', val:assets.length, sub:withPrice.length+' con prezzo', color:'var(--blue)', icon:'🗂'},
+    {label:'Win rate', val:withPrice.length>0?Math.round(winners/withPrice.length*100)+'%':'—', sub:winners+'/'+withPrice.length+' in guadagno', color:'var(--green)', icon:'🏆'},
+    {label:'Miglior asset', val:best?best.ticker:'—', sub:best?((best.currentPrice-best.buyPrice)/best.buyPrice*100).toFixed(1)+'%':'', color:'var(--green)', icon:'⭐'},
   ];
   el.innerHTML = cards.map(c=>`
-    <div style="background:var(--surface2);border-radius:10px;padding:14px 16px;border:1px solid var(--border);border-left:3px solid ${c.color}">
-      <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">${c.label}</div>
-      <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:${c.color};line-height:1.2">${c.value}</div>
+    <div style="background:var(--surface2);border-radius:10px;padding:14px 16px;border:1px solid var(--border);position:relative;overflow:hidden">
+      <div style="position:absolute;top:0;left:0;bottom:0;width:3px;background:${c.color};border-radius:3px 0 0 3px"></div>
+      <div style="font-size:18px;margin-bottom:4px">${c.icon}</div>
+      <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">${c.label}</div>
+      <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:${c.color};line-height:1.1">${c.val}</div>
+      ${c.sub?`<div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px">${c.sub}</div>`:''}
     </div>`).join('');
 }
 
-function renderPanorDonut() {
-  const canvas = document.getElementById('panorDonut'); if(!canvas) return;
-  const legend = document.getElementById('panorDonutLegend');
-  if(assets.length===0){canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);if(legend)legend.innerHTML='';return;}
+function renderPanorDonutNew() {
+  const svg = document.getElementById('donutPanor'); if(!svg) return;
+  const valEl = document.getElementById('donutPanorVal');
+  const legEl = document.getElementById('donutPanorLegend');
   const tot = assets.reduce((s,a)=>s+a.invested,0);
-  const data = assets.map(a=>({label:a.ticker,value:a.invested,color:a.color}));
-  const ctx = canvas.getContext('2d');
-  if(panorDonutChart){panorDonutChart.destroy();panorDonutChart=null;}
-  panorDonutChart = new Chart(ctx,{
-    type:'doughnut',
-    data:{labels:data.map(d=>d.label),datasets:[{data:data.map(d=>d.value),backgroundColor:data.map(d=>d.color),borderWidth:2,borderColor:'var(--surface)'}]},
-    options:{responsive:true,maintainAspectRatio:true,cutout:'70%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'€'+Math.round(c.raw).toLocaleString('it-IT')+' ('+((c.raw/tot)*100).toFixed(1)+'%)'}}}}
+  if(valEl) valEl.textContent = tot>0?'€'+Math.round(tot).toLocaleString('it-IT'):'—';
+  if(assets.length===0){if(legEl)legEl.innerHTML='';return;}
+  const cx=60,cy=60,r=46,sw=18;
+  let angle=-Math.PI/2;
+  let paths='<circle cx="60" cy="60" r="46" fill="none" stroke="var(--surface2)" stroke-width="18"/>';
+  const sorted = [...assets].sort((a,b)=>b.invested-a.invested);
+  sorted.forEach(a=>{
+    const frac=a.invested/tot;
+    const arc=frac*2*Math.PI;
+    const x1=cx+r*Math.cos(angle), y1=cy+r*Math.sin(angle);
+    const x2=cx+r*Math.cos(angle+arc), y2=cy+r*Math.sin(angle+arc);
+    const large=arc>Math.PI?1:0;
+    paths+=`<path d="M${x1.toFixed(2)},${y1.toFixed(2)} A${r},${r} 0 ${large},1 ${x2.toFixed(2)},${y2.toFixed(2)}" fill="none" stroke="${a.color}" stroke-width="${sw}" stroke-linecap="butt"/>`;
+    angle+=arc;
   });
-  if(legend) legend.innerHTML = data.map(d=>`<span style="display:inline-flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)"><span style="width:8px;height:8px;border-radius:50%;background:${d.color};flex-shrink:0"></span>${d.label}</span>`).join('');
+  svg.innerHTML=paths;
+  if(legEl) {
+    const top5=sorted.slice(0,5);
+    legEl.innerHTML=top5.map(a=>`
+      <div style="display:flex;align-items:center;gap:6px">
+        <div style="width:8px;height:8px;border-radius:50%;background:${a.color};flex-shrink:0"></div>
+        <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text);flex:1">${a.ticker}</span>
+        <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">${(a.invested/tot*100).toFixed(0)}%</span>
+      </div>`).join('');
+    if(sorted.length>5) legEl.innerHTML+=`<div style="font-size:10px;color:var(--muted);margin-top:2px">+${sorted.length-5} altri</div>`;
+  }
+}
+
+function renderPanorPnlBars() {
+  const el = document.getElementById('pnlBars'); if(!el) return;
+  const withPrice = assets.filter(a=>a.currentPrice>0&&a.buyPrice>0);
+  if(withPrice.length===0){el.innerHTML='<div style="color:var(--muted);font-size:12px">Aggiorna prezzi per vedere la performance</div>';return;}
+  const sorted=[...withPrice].sort((a,b)=>{
+    const pa=(a.currentPrice-a.buyPrice)/a.buyPrice;
+    const pb=(b.currentPrice-b.buyPrice)/b.buyPrice;
+    return pb-pa;
+  });
+  const shown=sorted.slice(0,8);
+  const maxAbs=Math.max(...shown.map(a=>Math.abs((a.currentPrice-a.buyPrice)/a.buyPrice*100)),0.1);
+  el.innerHTML=shown.map(a=>{
+    const pct=(a.currentPrice-a.buyPrice)/a.buyPrice*100;
+    const barW=Math.abs(pct)/maxAbs*100;
+    const color=pct>=0?'var(--green)':'var(--red)';
+    return `<div style="display:flex;align-items:center;gap:8px">
+      <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);width:48px;flex-shrink:0">${a.ticker}</span>
+      <div style="flex:1;background:var(--surface2);border-radius:3px;height:6px;overflow:hidden">
+        <div style="width:${barW.toFixed(0)}%;height:100%;background:${color};border-radius:3px;transition:width .4s"></div>
+      </div>
+      <span style="font-family:'DM Mono',monospace;font-size:10px;color:${color};width:52px;text-align:right;flex-shrink:0">${pct>=0?'+':''}${pct.toFixed(1)}%</span>
+    </div>`;
+  }).join('');
 }
 
 function renderPanorMovers() {
   const el = document.getElementById('panorMovers'); if(!el) return;
   const withPrice = assets.filter(a=>a.currentPrice>0&&a.buyPrice>0);
-  if(withPrice.length===0){el.innerHTML='<div style="color:var(--muted);font-size:13px;grid-column:1/-1">Aggiorna i prezzi per vedere i movimenti</div>';return;}
-  const sorted = [...withPrice].sort((a,b)=>{
-    const pa=(a.currentPrice-a.buyPrice)/a.buyPrice, pb=(b.currentPrice-b.buyPrice)/b.buyPrice;
-    return pb-pa;
+  if(withPrice.length===0){el.innerHTML='<div style="color:var(--muted);font-size:12px">Aggiorna prezzi</div>';return;}
+  const sorted=[...withPrice].sort((a,b)=>{
+    return ((b.currentPrice-b.buyPrice)/b.buyPrice)-((a.currentPrice-a.buyPrice)/a.buyPrice);
   });
-  // Top 3 best + worst 2
-  const shown = sorted.length<=5 ? sorted : [...sorted.slice(0,3),...sorted.slice(-2)];
-  el.innerHTML = shown.map(a=>{
-    const pnlPct=((a.currentPrice-a.buyPrice)/a.buyPrice*100);
+  const shown=sorted.length<=4?sorted:[sorted[0],sorted[1],...sorted.slice(-2)];
+  el.innerHTML=shown.map(a=>{
+    const pct=(a.currentPrice-a.buyPrice)/a.buyPrice*100;
+    const color=pct>=0?'var(--green)':'var(--red)';
     const pnlEur=(a.currentPrice/a.buyPrice*a.invested)-a.invested;
-    const color=pnlPct>=0?'var(--green)':'var(--red)';
-    return `<div style="background:var(--surface2);border-radius:10px;padding:14px;border:1px solid var(--border);border-left:3px solid ${a.color}">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <span style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--gold)">${a.ticker}</span>
-        <span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:${color}">${pnlPct>=0?'+':''}${pnlPct.toFixed(1)}%</span>
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surface2);border-radius:8px;border-left:3px solid ${a.color}">
+      <div>
+        <span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:700;color:var(--gold)">${a.ticker}</span>
+        <span style="font-size:10px;color:var(--muted);margin-left:6px">€${a.currentPrice?.toFixed(2)||'—'}</span>
       </div>
-      <div style="font-family:'DM Mono',monospace;font-size:11px;color:${color}">${pnlEur>=0?'+':''}€${Math.abs(pnlEur).toFixed(0)}</div>
-      <div style="font-size:10px;color:var(--muted);margin-top:3px">€${a.currentPrice?.toFixed(2)||'---'} / acq. €${a.buyPrice?.toFixed(2)||'---'}</div>
+      <div style="text-align:right">
+        <div style="font-family:'DM Mono',monospace;font-size:12px;font-weight:700;color:${color}">${pct>=0?'+':''}${pct.toFixed(1)}%</div>
+        <div style="font-size:9px;color:var(--muted)">${pnlEur>=0?'+':''}€${Math.abs(pnlEur).toFixed(0)}</div>
+      </div>
     </div>`;
   }).join('');
 }
 
-// ─── GEO MAP ──────────────────────────────────────────────────────────────────
-const GEO_COLORS = {
-  USA:             '#4A90D9',
-  Europa:          '#4CAF7E',
-  Giappone:        '#E08A3A',
-  Taiwan:          '#E05A5A',
-  EmergingMarkets: '#9B59B6',
-  Altro:           '#8A8580',
-};
+function renderRiskBreakdown() {
+  const el = document.getElementById('riskBreakdown'); if(!el) return;
+  const tot = assets.reduce((s,a)=>s+a.invested,0);
+  if(tot===0){el.innerHTML='<div style="color:var(--muted);font-size:12px">Nessun dato</div>';return;}
+  const groups = {
+    'Basso rischio': {color:'var(--green)', assets:assets.filter(a=>a.risk==='low')},
+    'Medio rischio': {color:'var(--orange)', assets:assets.filter(a=>a.risk==='medium')},
+    'Alto rischio':  {color:'var(--red)',   assets:assets.filter(a=>a.risk==='high')},
+  };
+  el.innerHTML = Object.entries(groups).map(([label,g])=>{
+    const val=g.assets.reduce((s,a)=>s+a.invested,0);
+    const pct=tot>0?val/tot*100:0;
+    if(val===0) return '';
+    return `<div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:11px;color:var(--muted)">${label}</span>
+        <span style="font-family:'DM Mono',monospace;font-size:11px;color:${g.color}">${pct.toFixed(0)}% · €${Math.round(val).toLocaleString('it-IT')}</span>
+      </div>
+      <div style="background:var(--surface2);border-radius:3px;height:7px;overflow:hidden">
+        <div style="width:${pct.toFixed(0)}%;height:100%;background:${g.color};border-radius:3px;transition:width .4s"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
 
-const GEO_FLAGS = {
-  USA:'🇺🇸', Europa:'🇪🇺', Giappone:'🇯🇵', Taiwan:'🇹🇼', EmergingMarkets:'🌏', Altro:'🌐'
-};
+function renderSectorAlloc() {
+  const el = document.getElementById('sectorAlloc'); if(!el) return;
+  const tot = assets.reduce((s,a)=>s+a.invested,0);
+  if(tot===0){el.innerHTML='<div style="color:var(--muted);font-size:12px">Nessun dato</div>';return;}
+  const sectorMap={};
+  assets.forEach(a=>{
+    const sec=a.sector||a.type||'Altro';
+    sectorMap[sec]=(sectorMap[sec]||0)+a.invested;
+  });
+  const sorted=Object.entries(sectorMap).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const colors=['var(--gold)','var(--blue)','var(--green)','var(--purple)','var(--orange)','var(--red)','#4ECDC4','#95A5A6'];
+  el.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">`+
+    sorted.map(([sec,val],i)=>{
+      const pct=val/tot*100;
+      return `<div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+          <span style="font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px">${sec}</span>
+          <span style="font-family:'DM Mono',monospace;font-size:10px;color:${colors[i]}">${pct.toFixed(0)}%</span>
+        </div>
+        <div style="background:var(--surface2);border-radius:3px;height:5px;overflow:hidden">
+          <div style="width:${pct.toFixed(0)}%;height:100%;background:${colors[i]};border-radius:3px;transition:width .4s"></div>
+        </div>
+      </div>`;
+    }).join('')+`</div>`;
+}
 
-// SVG world map paths (simplified key regions)
-const MAP_PATHS = {
-  USA:    "M 90 85 L 200 85 L 210 120 L 195 145 L 155 150 L 130 145 L 90 130 Z",
-  Canada: "M 85 40 L 210 40 L 212 83 L 90 83 Z",
-  Mexico: "M 95 150 L 155 152 L 150 175 L 110 180 Z",
-  Europa: "M 310 65 L 400 60 L 415 95 L 400 120 L 350 125 L 310 110 Z",
-  Russia: "M 380 30 L 600 25 L 605 80 L 390 85 Z",
-  Africa: "M 320 130 L 410 125 L 420 230 L 340 240 L 305 190 Z",
-  MiddleEast:"M 400 110 L 450 105 L 460 145 L 410 150 Z",
-  India:  "M 490 130 L 550 125 L 555 190 L 510 200 Z",
-  China:  "M 555 75 L 650 70 L 660 135 L 570 140 Z",
-  Giappone:"M 660 80 L 690 78 L 695 105 L 665 108 Z",
-  Taiwan: "M 645 125 L 658 122 L 660 135 L 648 137 Z",
-  SEAsia: "M 570 150 L 650 145 L 660 195 L 580 200 Z",
-  Australia:"M 580 200 L 680 195 L 685 255 L 590 260 Z",
-  SouthAmerica:"M 155 190 L 250 185 L 265 300 L 175 310 Z",
-};
-
-// Map regions to GEO_KB keys
-const MAP_REGION_TO_GEO = {
-  USA:'USA', Europa:'Europa', Giappone:'Giappone', Taiwan:'Taiwan',
-  China:'EmergingMarkets', India:'EmergingMarkets', SEAsia:'EmergingMarkets',
-  SouthAmerica:'Altro', Africa:'Altro', Australia:'Altro',
-  MiddleEast:'Altro', Canada:'USA', Russia:'Altro', Mexico:'Altro',
-};
-
+// legacy: keep panorDonutChart var to avoid undefined errors
+let panorDonutChart = null;
 function computeGeoExposure() {
   const result = {};
   const tot = assets.reduce((s,a) => s + a.invested, 0);
@@ -2915,6 +3029,259 @@ if ('serviceWorker' in navigator) {
       .catch(err => console.log('SW error:', err));
   });
 }
+
+// ─── MERCATI LIVE ─────────────────────────────────────────────────────────────
+
+const MERCATI_DB_DEFAULT = [
+  {t:'AAPL',n:'Apple Inc.',cat:'stocks-usa',sec:'Technology'},
+  {t:'MSFT',n:'Microsoft Corp.',cat:'stocks-usa',sec:'Technology'},
+  {t:'NVDA',n:'NVIDIA Corp.',cat:'stocks-usa',sec:'Technology'},
+  {t:'GOOGL',n:'Alphabet Inc.',cat:'stocks-usa',sec:'Technology'},
+  {t:'AMZN',n:'Amazon.com',cat:'stocks-usa',sec:'Consumer'},
+  {t:'META',n:'Meta Platforms',cat:'stocks-usa',sec:'Technology'},
+  {t:'TSLA',n:'Tesla Inc.',cat:'stocks-usa',sec:'Automotive'},
+  {t:'JPM',n:'JPMorgan Chase',cat:'stocks-usa',sec:'Finance'},
+  {t:'V',n:'Visa Inc.',cat:'stocks-usa',sec:'Finance'},
+  {t:'JNJ',n:'Johnson & Johnson',cat:'stocks-usa',sec:'Healthcare'},
+  {t:'WMT',n:'Walmart Inc.',cat:'stocks-usa',sec:'Consumer'},
+  {t:'NFLX',n:'Netflix Inc.',cat:'stocks-usa',sec:'Technology'},
+  {t:'AMD',n:'Advanced Micro Devices',cat:'stocks-usa',sec:'Technology'},
+  {t:'PYPL',n:'PayPal Holdings',cat:'stocks-usa',sec:'Finance'},
+  {t:'INTC',n:'Intel Corp.',cat:'stocks-usa',sec:'Technology'},
+  {t:'QCOM',n:'Qualcomm',cat:'stocks-usa',sec:'Technology'},
+  {t:'DIS',n:'Walt Disney Co.',cat:'stocks-usa',sec:'Media'},
+  {t:'BA',n:'Boeing Co.',cat:'stocks-usa',sec:'Industrials'},
+  {t:'GS',n:'Goldman Sachs',cat:'stocks-usa',sec:'Finance'},
+  {t:'NKE',n:'Nike Inc.',cat:'stocks-usa',sec:'Consumer'},
+  {t:'ASML',n:'ASML Holding',cat:'stocks-eu',sec:'Technology'},
+  {t:'NOVO-B.CO',n:'Novo Nordisk',cat:'stocks-eu',sec:'Healthcare'},
+  {t:'MC.PA',n:'LVMH',cat:'stocks-eu',sec:'Consumer'},
+  {t:'SAP.DE',n:'SAP SE',cat:'stocks-eu',sec:'Technology'},
+  {t:'NESN.SW',n:'Nestlé',cat:'stocks-eu',sec:'Consumer'},
+  {t:'AZN.L',n:'AstraZeneca',cat:'stocks-eu',sec:'Healthcare'},
+  {t:'SIE.DE',n:'Siemens AG',cat:'stocks-eu',sec:'Industrials'},
+  {t:'SHEL.L',n:'Shell plc',cat:'stocks-eu',sec:'Energy'},
+  {t:'HSBA.L',n:'HSBC Holdings',cat:'stocks-eu',sec:'Finance'},
+  {t:'ROG.SW',n:'Roche Holding',cat:'stocks-eu',sec:'Healthcare'},
+  {t:'UCG.MI',n:'UniCredit',cat:'stocks-eu',sec:'Finance'},
+  {t:'ISP.MI',n:'Intesa Sanpaolo',cat:'stocks-eu',sec:'Finance'},
+  {t:'ENI.MI',n:'ENI S.p.A.',cat:'stocks-eu',sec:'Energy'},
+  {t:'ENEL.MI',n:'Enel',cat:'stocks-eu',sec:'Utilities'},
+  {t:'RACE.MI',n:'Ferrari N.V.',cat:'stocks-eu',sec:'Automotive'},
+  {t:'TSM',n:'Taiwan Semiconductor',cat:'stocks-asia',sec:'Technology'},
+  {t:'SONY',n:'Sony Group',cat:'stocks-asia',sec:'Technology'},
+  {t:'BABA',n:'Alibaba Group',cat:'stocks-asia',sec:'Technology'},
+  {t:'TM',n:'Toyota Motor',cat:'stocks-asia',sec:'Automotive'},
+  {t:'INFY',n:'Infosys Limited',cat:'stocks-asia',sec:'Technology'},
+  {t:'SPY',n:'SPDR S&P 500',cat:'etf',sec:'US Broad'},
+  {t:'QQQ',n:'Invesco QQQ Trust',cat:'etf',sec:'US Tech'},
+  {t:'VWCE',n:'Vanguard FTSE All-World',cat:'etf',sec:'Global'},
+  {t:'IWDA',n:'iShares MSCI World',cat:'etf',sec:'Global'},
+  {t:'VUAA',n:'Vanguard S&P 500 EUR',cat:'etf',sec:'US Broad'},
+  {t:'CSPX',n:'iShares Core S&P 500',cat:'etf',sec:'US Broad'},
+  {t:'EQQQ',n:'Invesco NASDAQ 100 EUR',cat:'etf',sec:'US Tech'},
+  {t:'TLT',n:'iShares 20yr Treasury',cat:'etf',sec:'Bonds'},
+  {t:'GLD',n:'SPDR Gold Shares',cat:'etf',sec:'Gold'},
+  {t:'ARKK',n:'ARK Innovation ETF',cat:'etf',sec:'Innovation'},
+  {t:'BTC-USD',n:'Bitcoin',cat:'crypto',sec:'Layer1'},
+  {t:'ETH-USD',n:'Ethereum',cat:'crypto',sec:'Layer1'},
+  {t:'BNB-USD',n:'BNB',cat:'crypto',sec:'Exchange'},
+  {t:'SOL-USD',n:'Solana',cat:'crypto',sec:'Layer1'},
+  {t:'XRP-USD',n:'XRP',cat:'crypto',sec:'Payments'},
+  {t:'ADA-USD',n:'Cardano',cat:'crypto',sec:'Layer1'},
+  {t:'DOGE-USD',n:'Dogecoin',cat:'crypto',sec:'Meme'},
+  {t:'AVAX-USD',n:'Avalanche',cat:'crypto',sec:'Layer1'},
+  {t:'LINK-USD',n:'Chainlink',cat:'crypto',sec:'Oracle'},
+  {t:'DOT-USD',n:'Polkadot',cat:'crypto',sec:'Layer0'},
+  {t:'EURUSD=X',n:'EUR/USD',cat:'forex',sec:'Major'},
+  {t:'GBPUSD=X',n:'GBP/USD',cat:'forex',sec:'Major'},
+  {t:'USDJPY=X',n:'USD/JPY',cat:'forex',sec:'Major'},
+  {t:'USDCHF=X',n:'USD/CHF',cat:'forex',sec:'Major'},
+  {t:'AUDUSD=X',n:'AUD/USD',cat:'forex',sec:'Major'},
+  {t:'USDCAD=X',n:'USD/CAD',cat:'forex',sec:'Major'},
+  {t:'^GSPC',n:'S&P 500',cat:'cfd',sec:'US Index'},
+  {t:'^DJI',n:'Dow Jones 30',cat:'cfd',sec:'US Index'},
+  {t:'^IXIC',n:'NASDAQ Composite',cat:'cfd',sec:'US Index'},
+  {t:'^GDAXI',n:'DAX 40',cat:'cfd',sec:'EU Index'},
+  {t:'^FCHI',n:'CAC 40',cat:'cfd',sec:'EU Index'},
+  {t:'^FTSE',n:'FTSE 100',cat:'cfd',sec:'EU Index'},
+  {t:'^MIB',n:'FTSE MIB',cat:'cfd',sec:'EU Index'},
+  {t:'^N225',n:'Nikkei 225',cat:'cfd',sec:'Asia Index'},
+  {t:'^VIX',n:'VIX Volatility',cat:'cfd',sec:'Volatility'},
+  {t:'GC=F',n:'Gold Futures',cat:'commodities',sec:'Precious Metal'},
+  {t:'SI=F',n:'Silver Futures',cat:'commodities',sec:'Precious Metal'},
+  {t:'CL=F',n:'Crude Oil WTI',cat:'commodities',sec:'Energy'},
+  {t:'NG=F',n:'Natural Gas',cat:'commodities',sec:'Energy'},
+  {t:'ZW=F',n:'Wheat Futures',cat:'commodities',sec:'Agriculture'},
+  {t:'ZC=F',n:'Corn Futures',cat:'commodities',sec:'Agriculture'},
+];
+
+let mercatiData = {};        // {ticker: {price, change, currency, name, ...}}
+let mercatiCat = 'all';
+let mercatiPage = 1;
+const MERCATI_PER_PAGE = 50;
+
+function mercatiSetCat(cat, btn) {
+  mercatiCat = cat;
+  mercatiPage = 1;
+  document.querySelectorAll('#mercatiCatFilter .tab').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  mercatiRender();
+}
+
+function mercatiGetFiltered() {
+  const q = (document.getElementById('mercatiSearch')?.value||'').toLowerCase().trim();
+  const sort = document.getElementById('mercatiSort')?.value||'default';
+  let list = MERCATI_DB_DEFAULT;
+  if(mercatiCat !== 'all') list = list.filter(a=>a.cat===mercatiCat);
+  if(q) list = list.filter(a=>a.t.toLowerCase().includes(q)||a.n.toLowerCase().includes(q)||a.sec.toLowerCase().includes(q));
+  // Attach live data
+  list = list.map(a=>({...a, ...(mercatiData[a.t]||{})}));
+  // Sort
+  if(sort==='change_desc') list.sort((a,b)=>(b.change||0)-(a.change||0));
+  else if(sort==='change_asc') list.sort((a,b)=>(a.change||0)-(b.change||0));
+  else if(sort==='price_desc') list.sort((a,b)=>(b.price||0)-(a.price||0));
+  else if(sort==='price_asc') list.sort((a,b)=>(a.price||0)-(b.price||0));
+  else if(sort==='name_asc') list.sort((a,b)=>a.n.localeCompare(b.n));
+  return list;
+}
+
+function mercatiRender() {
+  const list = mercatiGetFiltered();
+  const totalPages = Math.ceil(list.length / MERCATI_PER_PAGE);
+  if(mercatiPage > totalPages) mercatiPage = 1;
+  const start = (mercatiPage-1)*MERCATI_PER_PAGE;
+  const page = list.slice(start, start+MERCATI_PER_PAGE);
+
+  // Stats bar
+  const statsEl = document.getElementById('mercatiStats');
+  if(statsEl) {
+    const withPrice = list.filter(a=>a.price);
+    const gainers = withPrice.filter(a=>a.change>0).length;
+    const losers = withPrice.filter(a=>a.change<0).length;
+    const avgChg = withPrice.length>0 ? withPrice.reduce((s,a)=>s+(a.change||0),0)/withPrice.length : 0;
+    statsEl.innerHTML = [
+      {label:'Asset totali', val:list.length, color:'var(--blue)'},
+      {label:'Con prezzo', val:withPrice.length, color:'var(--gold)'},
+      {label:'In rialzo', val:gainers, color:'var(--green)'},
+      {label:'In ribasso', val:losers, color:'var(--red)'},
+      {label:'Var. media', val:(avgChg>=0?'+':'')+avgChg.toFixed(2)+'%', color:avgChg>=0?'var(--green)':'var(--red)'},
+    ].map(s=>`<div style="background:var(--surface2);border-radius:8px;padding:10px 14px;border:1px solid var(--border)">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">${s.label}</div>
+      <div style="font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:${s.color}">${s.val}</div>
+    </div>`).join('');
+  }
+
+  // Tabella
+  const tbody = document.getElementById('mercatiBody');
+  if(!tbody) return;
+  if(page.length===0){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted);font-size:13px">Nessun risultato</td></tr>';return;}
+
+  tbody.innerHTML = page.map(a=>{
+    const hasPrice = !!a.price;
+    const chgColor = !hasPrice ? 'var(--muted)' : a.change>0?'var(--green)':a.change<0?'var(--red)':'var(--muted)';
+    const chgTxt = !hasPrice ? '—' : (a.change>=0?'+':'')+a.change.toFixed(2)+'%';
+    const priceTxt = hasPrice ? (a.price<0.01?a.price.toFixed(6):a.price<1?a.price.toFixed(4):a.price<100?a.price.toFixed(2):a.price.toLocaleString('en-US',{maximumFractionDigits:2})) : '—';
+
+    // Trend bar: distanza tra 52w min e max
+    let trendBar = '';
+    if(hasPrice && a.high52w && a.low52w && a.high52w>a.low52w) {
+      const pos = Math.max(0,Math.min(100,(a.price-a.low52w)/(a.high52w-a.low52w)*100));
+      trendBar = `<div style="position:relative;height:4px;background:var(--surface2);border-radius:2px;width:80px;margin:0 auto">
+        <div style="position:absolute;left:0;width:${pos.toFixed(0)}%;height:100%;background:${a.change>=0?'var(--green)':'var(--red)'};border-radius:2px"></div>
+        <div style="position:absolute;left:${pos.toFixed(0)}%;top:-3px;width:3px;height:10px;background:var(--text);border-radius:1px;transform:translateX(-50%)"></div>
+      </div>`;
+    } else {
+      trendBar = '<div style="color:var(--muted);font-size:11px;text-align:center">—</div>';
+    }
+
+    const catBadge = {
+      'stocks-usa':'🇺🇸','stocks-eu':'🇪🇺','stocks-asia':'🌏',
+      'etf':'📦','crypto':'₿','forex':'💱','cfd':'📊','commodities':'🏭'
+    }[a.cat]||'';
+
+    return `<tr style="border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .15s"
+      onmouseover="this.style.background='var(--surface2)'"
+      onmouseout="this.style.background=''"
+      onclick="mercatiSelectAsset('${a.t}','${a.n.replace(/'/g,'').substring(0,30)}')">
+      <td style="padding:11px 12px;text-align:left">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:34px;height:34px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">${catBadge}</div>
+          <div>
+            <div style="font-family:'DM Mono',monospace;font-size:12px;font-weight:700;color:var(--gold)">${a.t}</div>
+            <div style="font-size:10px;color:var(--muted);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.name||a.n}</div>
+          </div>
+        </div>
+      </td>
+      <td style="padding:11px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:var(--text)">${priceTxt}${hasPrice?`<span style="font-size:9px;color:var(--muted);margin-left:3px">${a.currency||''}</span>`:''}</td>
+      <td style="padding:11px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:${chgColor}">${chgTxt}</td>
+      <td style="padding:11px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">${a.previousClose?a.previousClose.toFixed(2):'—'}</td>
+      <td style="padding:11px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">${a.high52w?a.high52w.toFixed(2):'—'}</td>
+      <td style="padding:11px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">${a.low52w?a.low52w.toFixed(2):'—'}</td>
+      <td style="padding:11px 12px">${trendBar}</td>
+    </tr>`;
+  }).join('');
+
+  // Paginazione
+  const pagEl = document.getElementById('mercatiPagination');
+  if(pagEl && totalPages>1) {
+    let pages = [];
+    for(let i=1;i<=totalPages;i++) {
+      if(i===1||i===totalPages||Math.abs(i-mercatiPage)<=2) pages.push(i);
+      else if(pages[pages.length-1]!=='...') pages.push('...');
+    }
+    pagEl.innerHTML = pages.map(p=>p==='...'
+      ? `<span style="color:var(--muted);padding:6px">…</span>`
+      : `<button onclick="mercatiPage=${p};mercatiRender()" style="background:${p===mercatiPage?'var(--gold)':'var(--surface2)'};color:${p===mercatiPage?'var(--dark)':'var(--muted)'};border:1px solid var(--border);border-radius:6px;padding:6px 12px;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer">${p}</button>`
+    ).join('');
+  } else if(pagEl) pagEl.innerHTML='';
+}
+
+function mercatiSelectAsset(ticker, name) {
+  // Apri detail panel se esiste, altrimenti mostra mini info
+  if(typeof showAssetDetail==='function') { showAssetDetail(ticker); return; }
+  // Fallback: porta il ticker nel portafoglio
+  const d = mercatiData[ticker];
+  if(d) {
+    const msg = `${name} (${ticker}): ${d.price} ${d.currency||''} ${d.change>=0?'▲+':'▼'}${d.change?.toFixed(2)}%`;
+    if(typeof showToast==='function') showToast(msg);
+  }
+}
+
+async function loadMercatiPrices() {
+  const btn = document.getElementById('mercatiRefreshBtn');
+  if(btn) { btn.disabled=true; btn.textContent='Caricamento...'; }
+  const upd = document.getElementById('mercatiLastUpdate');
+
+  // Carica in batch da 20
+  const tickers = MERCATI_DB_DEFAULT.map(a=>a.t);
+  const BATCH = 20;
+  let loaded = 0;
+  const errors = [];
+
+  for(let i=0;i<tickers.length;i+=BATCH) {
+    const batch = tickers.slice(i,i+BATCH);
+    try {
+      const res = await fetch(`${WORKER_URL}/prices?tickers=${batch.map(encodeURIComponent).join(',')}`);
+      if(res.ok) {
+        const data = await res.json();
+        Object.assign(mercatiData, data.results||{});
+        loaded += Object.keys(data.results||{}).length;
+      }
+    } catch(e) { errors.push(e.message); }
+    // Render progressivo dopo ogni batch
+    mercatiRender();
+    await new Promise(r=>setTimeout(r,100));
+  }
+
+  if(upd) {
+    const now = new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+    upd.textContent = `Aggiornato alle ${now} · ${loaded} prezzi caricati`;
+  }
+  if(btn) { btn.disabled=false; btn.textContent='↻ Aggiorna prezzi'; }
+  mercatiRender();
+}
+
 </script>
 
 <!-- SCREENER ════════════════════════════════════════════════ -->
